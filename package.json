@@ -1,0 +1,12 @@
+{
+  "name": "ekenesports",
+  "private": true,
+  "scripts": {
+    "dev": "pnpm --filter @ekene/web dev",
+    "build": "pnpm --filter @ekene/web build",
+    "lint": "pnpm --filter @ekene/web lint"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

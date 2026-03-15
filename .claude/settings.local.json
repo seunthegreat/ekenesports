@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install:*)",
+      "Bash(pnpm create:*)",
+      "Bash(cd:*)",
+      "Bash(pnpm add:*)",
+      "Bash(npx next:*)",
+      "Bash(node:*)",
+      "Bash(npx tsx:*)",
+      "Bash(sleep:*)",
+      "Bash(curl:*)",
+      "Bash(npx:*)",
+      "WebSearch",
+      "WebFetch(domain:pixabay.com)",
+      "WebFetch(domain:www.pexels.com)",
+      "WebFetch(domain:mixkit.co)",
+      "WebFetch(domain:coverr.co)",
+      "Bash(ls:*)",
+      "Bash(find:*)"
+    ]
+  }
+}
