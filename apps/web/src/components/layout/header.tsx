@@ -21,10 +21,9 @@ export function Header() {
 
   const navLinks = [
     { href: "/products", label: t("products") },
-    { href: "/sports/football", label: t("football") },
-    { href: "/sports/basketball", label: t("basketball") },
-    { href: "/sports/running", label: t("running") },
-    { href: "/sports/gym-training", label: t("gym") },
+    { href: "/products?gender=men", label: t("men") },
+    { href: "/products?gender=women", label: t("women") },
+    { href: "/products?gender=kids", label: t("kids") },
   ];
 
   return (

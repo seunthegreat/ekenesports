@@ -21,13 +21,9 @@
   "nav": {
     "home": "Startseite",
     "products": "Alle Produkte",
-    "football": "Fussball",
-    "basketball": "Basketball",
-    "running": "Laufen",
-    "gym": "Fitness & Training",
-    "tennis": "Tennis",
-    "swimming": "Schwimmen",
-    "accessories": "Zubehoer"
+    "men": "Herren",
+    "women": "Damen",
+    "kids": "Kinder"
   },
   "home": {
     "heroTitle": "Hebe dein Spiel auf ein neues Level",
@@ -35,6 +31,7 @@
     "shopNow": "Jetzt einkaufen",
     "featuredTitle": "Ausgewaehlte Produkte",
     "categoriesTitle": "Nach Kategorie einkaufen",
+    "shopByTitle": "Nach Kategorie einkaufen",
     "sportsTitle": "Nach Sportart einkaufen",
     "newArrivalsTitle": "Neuheiten",
     "promoText": "Kostenloser Versand ab 50 EUR | Neue Saisonkollektion jetzt verfuegbar"

@@ -21,13 +21,9 @@
   "nav": {
     "home": "Home",
     "products": "All Products",
-    "football": "Football",
-    "basketball": "Basketball",
-    "running": "Running",
-    "gym": "Gym & Training",
-    "tennis": "Tennis",
-    "swimming": "Swimming",
-    "accessories": "Accessories"
+    "men": "Men",
+    "women": "Women",
+    "kids": "Kids"
   },
   "home": {
     "heroTitle": "Elevate Your Game",
@@ -35,6 +31,7 @@
     "shopNow": "Shop Now",
     "featuredTitle": "Featured Products",
     "categoriesTitle": "Shop by Category",
+    "shopByTitle": "Shop by Category",
     "sportsTitle": "Shop by Sport",
     "newArrivalsTitle": "New Arrivals",
     "promoText": "Free shipping on orders over €50 | New season collection now live"

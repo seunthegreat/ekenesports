@@ -17,7 +17,8 @@
       "WebFetch(domain:mixkit.co)",
       "WebFetch(domain:coverr.co)",
       "Bash(ls:*)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(pnpm build:*)"
     ]
   }
 }

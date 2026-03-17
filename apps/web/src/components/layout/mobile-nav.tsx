@@ -3,13 +3,19 @@
 import { Sheet } from "../ui/sheet";
 import { Link } from "@/i18n/routing";
 import { useTranslations } from "next-intl";
-import { sports, getCategoriesBySport } from "@/lib/data";
+import { sports } from "@/lib/data";
 import { ChevronRight } from "lucide-react";
 import { useState } from "react";
 
+const genderSections = [
+  { key: "men" as const, gender: "men" },
+  { key: "women" as const, gender: "women" },
+  { key: "kids" as const, gender: "kids" },
+];
+
 export function MobileNav({ open, onClose }: { open: boolean; onClose: () => void }) {
   const t = useTranslations("nav");
-  const [expandedSport, setExpandedSport] = useState<string | null>(null);
+  const [expandedSection, setExpandedSection] = useState<string | null>(null);
 
   return (
     <Sheet open={open} onClose={onClose} side="left" title={t("home")}>
@@ -21,18 +27,15 @@ export function MobileNav({ open, onClose }: { open: boolean; onClose: () => voi
         >
           {t("products")}
         </Link>
-        {sports.map((sport) => {
-          const cats = getCategoriesBySport(sport.slug);
-          const isExpanded = expandedSport === sport.id;
+        {genderSections.map((section) => {
+          const isExpanded = expandedSection === section.key;
           return (
-            <div key={sport.id} className="border-b">
+            <div key={section.key} className="border-b">
               <button
-                onClick={() => setExpandedSport(isExpanded ? null : sport.id)}
+                onClick={() => setExpandedSection(isExpanded ? null : section.key)}
                 className="w-full flex items-center justify-between py-3 px-2 text-sm font-semibold hover:text-primary"
               >
-                <span>
-                  {sport.icon} {sport.name}
-                </span>
+                <span>{t(section.key)}</span>
                 <ChevronRight
                   className={`w-4 h-4 transition-transform ${isExpanded ? "rotate-90" : ""}`}
                 />
@@ -40,20 +43,20 @@ export function MobileNav({ open, onClose }: { open: boolean; onClose: () => voi
               {isExpanded && (
                 <div className="pl-6 pb-2">
                   <Link
-                    href={`/sports/${sport.slug}`}
+                    href={`/products?gender=${section.gender}`}
                     onClick={onClose}
-                    className="block py-2 text-sm text-gray-600 hover:text-primary"
+                    className="block py-2 text-sm font-medium text-gray-600 hover:text-primary"
                   >
-                    All {sport.name}
+                    {t("products")}
                   </Link>
-                  {cats.map((cat) => (
+                  {sports.filter((s) => s.slug !== "accessories").map((sport) => (
                     <Link
-                      key={cat.id}
-                      href={`/categories/${cat.slug}`}
+                      key={sport.id}
+                      href={`/products?gender=${section.gender}&sport=${sport.slug}`}
                       onClick={onClose}
                       className="block py-2 text-sm text-gray-600 hover:text-primary"
                     >
-                      {cat.name}
+                      {sport.name}
                     </Link>
                   ))}
                 </div>

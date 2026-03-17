@@ -2,12 +2,30 @@
 
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/routing";
-import { sports } from "@/lib/data";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 
+const genderCategories = [
+  {
+    id: "men",
+    gender: "men",
+    image: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=600&h=800&fit=crop",
+  },
+  {
+    id: "women",
+    gender: "women",
+    image: "https://images.unsplash.com/photo-1518611012118-696072aa579a?w=600&h=800&fit=crop",
+  },
+  {
+    id: "kids",
+    gender: "kids",
+    image: "https://images.unsplash.com/photo-1596464716127-f2a82984de30?w=600&h=800&fit=crop",
+  },
+];
+
 export function SportSelector() {
   const t = useTranslations("home");
+  const tNav = useTranslations("nav");
   const sectionRef = useRef<HTMLDivElement>(null);
   const [isVisible, setIsVisible] = useState(false);
   const [hoveredId, setHoveredId] = useState<string | null>(null);
@@ -39,72 +57,68 @@ export function SportSelector() {
           isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
         }`}
       >
-        {t("sportsTitle")}
+        {t("shopByTitle")}
       </h2>
       <div
         ref={sectionRef}
-        className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide -mx-4 px-4 snap-x"
+        className="grid grid-cols-3 gap-4 md:gap-6"
         onMouseLeave={() => setHoveredId(null)}
       >
-        {sports.map((sport, index) => (
+        {genderCategories.map((cat, index) => (
           <Link
-            key={sport.id}
-            href={`/sports/${sport.slug}`}
-            className="flex-shrink-0 snap-start"
-            onMouseEnter={() => setHoveredId(sport.id)}
+            key={cat.id}
+            href={`/products?gender=${cat.gender}`}
+            onMouseEnter={() => setHoveredId(cat.id)}
           >
             <div
-              className="relative overflow-hidden rounded-xl transition-all duration-500 ease-out"
+              className="relative overflow-hidden aspect-[3/4] transition-all duration-500 ease-out"
               style={{
-                width: hoveredId === sport.id ? "11rem" : "10rem",
-                height: hoveredId === sport.id ? "11rem" : "10rem",
                 opacity: isVisible ? 1 : 0,
                 transform: isVisible
                   ? `translateY(0) scale(${
                       hasHover
-                        ? hoveredId === sport.id
-                          ? 1.05
-                          : 0.95
+                        ? hoveredId === cat.id
+                          ? 1.02
+                          : 0.98
                         : 1
                     })`
                   : "translateY(2.5rem)",
                 transitionDelay: isVisible ? `${index * 100}ms` : "0ms",
                 filter:
-                  hasHover && hoveredId !== sport.id
-                    ? "brightness(0.6)"
+                  hasHover && hoveredId !== cat.id
+                    ? "brightness(0.7)"
                     : "brightness(1)",
               }}
             >
               <Image
-                src={sport.image}
-                alt={sport.name}
+                src={cat.image}
+                alt={tNav(cat.id as "men" | "women" | "kids")}
                 fill
                 className={`object-cover transition-transform duration-500 ${
-                  hoveredId === sport.id ? "scale-110" : "scale-100"
+                  hoveredId === cat.id ? "scale-110" : "scale-100"
                 }`}
-                sizes="(min-width: 768px) 176px, 160px"
+                sizes="(max-width: 768px) 33vw, 400px"
               />
               <div
                 className={`absolute inset-0 transition-opacity duration-500 ${
-                  hoveredId === sport.id
+                  hoveredId === cat.id
                     ? "bg-gradient-to-t from-primary/80 via-primary/30 to-transparent"
                     : "bg-gradient-to-t from-black/70 to-transparent"
                 }`}
               />
-              <div className="absolute bottom-3 left-3 right-3 text-white">
+              <div className="absolute bottom-4 left-4 right-4 text-white">
                 <p
-                  className={`font-semibold transition-all duration-500 ${
-                    hoveredId === sport.id ? "text-base" : "text-sm"
+                  className={`font-heading font-bold transition-all duration-500 ${
+                    hoveredId === cat.id ? "text-xl md:text-2xl" : "text-lg md:text-xl"
                   }`}
                 >
-                  {sport.name}
+                  {tNav(cat.id as "men" | "women" | "kids")}
                 </p>
               </div>
-              {/* Shine overlay on hover */}
               <div
                 className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/20 to-transparent transition-opacity duration-500 pointer-events-none"
                 style={{
-                  opacity: hoveredId === sport.id ? 1 : 0,
+                  opacity: hoveredId === cat.id ? 1 : 0,
                 }}
               />
             </div>
