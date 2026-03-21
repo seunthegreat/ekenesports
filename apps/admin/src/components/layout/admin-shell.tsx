@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { Link } from "@/i18n/routing";
+import { usePathname } from "@/i18n/routing";
 import Image from "next/image";
 import {
   LayoutDashboard,
@@ -17,15 +17,17 @@ import {
   X,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useTranslations } from "next-intl";
+import { LanguageSwitcher } from "./language-switcher";
 
 const navigation = [
-  { name: "Dashboard", href: "/", icon: LayoutDashboard },
-  { name: "Products", href: "/products", icon: Package },
-  { name: "Stock", href: "/stock", icon: Database },
-  { name: "Orders", href: "/orders", icon: History },
-  { name: "Customers", href: "/customers", icon: Users },
-  { name: "Analytics", href: "/analytics", icon: BarChart3 },
-  { name: "Settings", href: "/settings/general", match: "/settings", icon: Settings },
+  { name: "Dashboard", href: "/", icon: LayoutDashboard, key: "dashboard" },
+  { name: "Products", href: "/products", icon: Package, key: "products" },
+  { name: "Stock", href: "/stock", icon: Database, key: "stock" },
+  { name: "Orders", href: "/orders", icon: History, key: "orders" },
+  { name: "Customers", href: "/customers", icon: Users, key: "customers" },
+  { name: "Analytics", href: "/analytics", icon: BarChart3, key: "analytics" },
+  { name: "Settings", href: "/settings/general", match: "/settings", icon: Settings, key: "settings" },
 ];
 
 // Shown only when sidebar is collapsed to icon-only width
@@ -45,12 +47,14 @@ function CollapsedMark() {
 
 export function AdminShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const tNav = useTranslations("Navigation");
+  const tUser = useTranslations("User");
   const [sidebarWidth, setSidebarWidth] = useState(256);
   const [isResizing, setIsResizing] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
-  const isCollapsed = !isMobile && sidebarWidth < 180;
+  const isCollapsed = !isMobile && sidebarWidth < 200;
 
   // Drag-to-resize (desktop)
   useEffect(() => {
@@ -87,7 +91,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="bg-white h-screen overflow-hidden">
-      <div className="max-w-7xl mx-auto flex h-screen relative overflow-hidden bg-white shadow-2xl shadow-black/5 ring-1 ring-gray-200/50">
+      <div className="max-w-[1440px] mx-auto flex h-screen relative overflow-hidden bg-white shadow-2xl shadow-black/5 ring-1 ring-gray-200/50">
 
         {/* Mobile backdrop */}
         {isMobileOpen && isMobile && (
@@ -110,23 +114,34 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
           {/* ── Logo ── */}
           <div
             className={cn(
-              "flex items-center justify-between flex-shrink-0 transition-all duration-300",
+              "flex items-center justify-between flex-shrink-0 transition-all duration-300 relative",
               isCollapsed ? "px-[18px] py-6" : "px-6 py-7"
             )}
           >
-            {isCollapsed
-              ? <CollapsedMark />
-              : (
-                <Image
-                  src="/logo.svg"
-                  alt="Ekene Sport"
-                  width={110}
-                  height={34}
-                  priority
-                  className="animate-in fade-in duration-200"
-                />
-              )
-            }
+
+            <div className={cn(
+              "flex items-center gap-3 flex-1 transition-all duration-300 min-w-0",
+              isCollapsed ? "opacity-0 invisible w-0 overflow-hidden" : "opacity-100 visible w-full"
+            )}>
+              <Image
+                src="/logo.svg"
+                alt="Ekene Sport"
+                width={110}
+                height={34}
+                priority
+                className="shrink-0"
+              />
+              <div className="ml-auto shrink-0">
+                <LanguageSwitcher compact={sidebarWidth < 260} />
+              </div>
+            </div>
+
+            <div className={cn(
+              "absolute left-6 flex items-center transition-all duration-300 pointer-events-none",
+              isCollapsed ? "opacity-100 visible scale-100" : "opacity-0 invisible scale-75"
+            )}>
+              <CollapsedMark />
+            </div>
 
             {isMobile && (
               <button
@@ -141,17 +156,17 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
           {/* ── Nav ── */}
           <nav
             className={cn(
-              "flex-1 overflow-y-auto custom-scrollbar",
+              "flex-1 overflow-y-auto hide-scrollbar",
               isCollapsed ? "px-[14px] space-y-1" : "px-3 space-y-0.5"
             )}
           >
             {navigation.map((item) => {
-            const isActive = item.match
-              ? pathname.startsWith(item.match)
-              : item.href === "/"
-                ? pathname === "/"
-                : pathname.startsWith(item.href);
-            return (
+              const isActive = item.match
+                ? pathname.startsWith(item.match)
+                : item.href === "/"
+                  ? pathname === "/"
+                  : pathname.startsWith(item.href);
+              return (
                 <Link
                   key={item.name}
                   href={item.href}
@@ -182,7 +197,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
                           isActive ? "font-semibold" : "font-medium"
                         )}
                       >
-                        {item.name}
+                        {tNav(item.key)}
                       </span>
                       {isActive && (
                         <span className="w-[5px] h-[5px] rounded-full bg-primary shrink-0" />
@@ -221,7 +236,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
                 <>
                   <div className="flex-1 min-w-0">
                     <p className="font-body text-[13px] font-semibold text-neutral-dark truncate leading-snug">
-                      Admin Staff
+                      {tUser("role")}
                     </p>
                     <p className="font-body text-[11px] text-gray-400 font-normal truncate">
                       admin@ekenesport.com
@@ -262,7 +277,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
             </header>
           )}
 
-          <main className="flex-1 p-6 lg:p-10 overflow-y-auto custom-scrollbar overflow-x-hidden pt-8">
+          <main className="flex-1 p-6 lg:p-10 overflow-y-auto hide-scrollbar overflow-x-hidden pt-8">
             <div className="w-full pb-16">
               {children}
             </div>

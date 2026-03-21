@@ -1,13 +1,14 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { 
-  Trash2, 
-  Plus, 
+import {
+  Trash2,
+  Plus,
   Settings2,
   Euro,
   Database
 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 
 interface MatrixRow {
@@ -35,6 +36,8 @@ const COMMON_COLORS = [
 ];
 
 export function MatrixEditor({ onUpdate, basePrice }: MatrixEditorProps) {
+  const t = useTranslations("Products.matrix");
+  const tColors = useTranslations("Products.colors");
   const [selectedColors, setSelectedColors] = useState<string[]>([]);
   const [selectedSizes, setSelectedSizes] = useState<string[]>([]);
   const [rows, setRows] = useState<MatrixRow[]>([]);
@@ -88,12 +91,12 @@ export function MatrixEditor({ onUpdate, basePrice }: MatrixEditorProps) {
           <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm">
             <h3 className="text-sm font-extrabold text-neutral-dark mb-4 uppercase tracking-wider flex items-center gap-2">
               <span className="w-6 h-6 rounded-lg bg-primary/10 text-primary flex items-center justify-center text-[10px]">1</span>
-              Configure Options
+              {t("configure")}
             </h3>
-            
+
             <div className="space-y-6">
               <div>
-                <label className="text-xs font-bold text-gray-400 mb-3 block">Colors</label>
+                <label className="text-xs font-bold text-gray-400 mb-3 block">{t("colors")}</label>
                 <div className="flex flex-wrap gap-2">
                   {COMMON_COLORS.map(c => (
                     <button
@@ -101,20 +104,20 @@ export function MatrixEditor({ onUpdate, basePrice }: MatrixEditorProps) {
                       onClick={() => toggleColor(c.name)}
                       className={cn(
                         "px-3 py-1.5 rounded-xl border text-xs font-bold transition-all flex items-center gap-2",
-                        selectedColors.includes(c.name) 
-                          ? "bg-primary border-primary text-white shadow-md" 
+                        selectedColors.includes(c.name)
+                          ? "bg-primary border-primary text-white shadow-md"
                           : "bg-white border-gray-200 text-gray-600 hover:border-primary"
                       )}
                     >
                       <div className="w-3 h-3 rounded-full border border-white/20" style={{ backgroundColor: c.hex }} />
-                      {c.name}
+                      {tColors(c.name)}
                     </button>
                   ))}
                 </div>
               </div>
 
               <div>
-                <label className="text-xs font-bold text-gray-400 mb-3 block">Sizes</label>
+                <label className="text-xs font-bold text-gray-400 mb-3 block">{t("sizes")}</label>
                 <div className="flex flex-wrap gap-2">
                   {COMMON_SIZES.map(s => (
                     <button
@@ -122,9 +125,9 @@ export function MatrixEditor({ onUpdate, basePrice }: MatrixEditorProps) {
                       onClick={() => toggleSize(s)}
                       className={cn(
                         "px-3 py-1.5 rounded-xl border text-xs font-bold transition-all",
-                        selectedSizes.includes(s) 
-                        ? "bg-primary border-primary text-white shadow-md" 
-                        : "bg-white border-gray-200 text-gray-600 hover:border-primary"
+                        selectedSizes.includes(s)
+                          ? "bg-primary border-primary text-white shadow-md"
+                          : "bg-white border-gray-200 text-gray-600 hover:border-primary"
                       )}
                     >
                       {s}
@@ -140,18 +143,18 @@ export function MatrixEditor({ onUpdate, basePrice }: MatrixEditorProps) {
         <div className="bg-primary/5 p-6 rounded-3xl border border-primary/10 self-start">
           <h3 className="text-sm font-extrabold text-primary mb-4 uppercase tracking-wider flex items-center gap-2">
             <Settings2 size={18} />
-            Bulk Actions
+            {t("bulk_actions")}
           </h3>
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="text-[10px] font-bold text-primary/60 mb-2 block uppercase">All Price</label>
+                <label className="text-[10px] font-bold text-primary/60 mb-2 block uppercase">{t("all_price")}</label>
                 <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-primary/40"><Euro size={12}/></span>
-                  <input 
-                    type="number" 
-                    placeholder="Set all..." 
-                    className="w-full pl-8 pr-3 py-2 bg-white border border-primary/10 rounded-xl text-xs font-bold focus:outline-none focus:ring-2 focus:ring-primary/20" 
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-primary/40"><Euro size={12} /></span>
+                  <input
+                    type="number"
+                    placeholder={t("set_all")}
+                    className="w-full pl-8 pr-3 py-2 bg-white border border-primary/10 rounded-xl text-xs font-bold focus:outline-none focus:ring-2 focus:ring-primary/20"
                     onChange={(e) => {
                       const val = parseFloat(e.target.value);
                       if (!isNaN(val)) setRows(prev => prev.map(r => ({ ...r, price: val })));
@@ -160,12 +163,12 @@ export function MatrixEditor({ onUpdate, basePrice }: MatrixEditorProps) {
                 </div>
               </div>
               <div>
-                <label className="text-[10px] font-bold text-primary/60 mb-2 block uppercase">All Stock</label>
+                <label className="text-[10px] font-bold text-primary/60 mb-2 block uppercase">{t("all_stock")}</label>
                 <div className="relative">
-                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-primary/40"><Database size={12}/></span>
-                  <input 
-                    type="number" 
-                    placeholder="Set all..." 
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-primary/40"><Database size={12} /></span>
+                  <input
+                    type="number"
+                    placeholder={t("set_all")}
                     className="w-full pl-8 pr-3 py-2 bg-white border border-primary/10 rounded-xl text-xs font-bold focus:outline-none focus:ring-2 focus:ring-primary/20"
                     onChange={(e) => {
                       const val = parseInt(e.target.value);
@@ -185,10 +188,10 @@ export function MatrixEditor({ onUpdate, basePrice }: MatrixEditorProps) {
           <table className="w-full text-left">
             <thead>
               <tr className="bg-gray-50 border-b border-gray-100 italic">
-                <th className="px-6 py-4 text-xs font-bold text-gray-400 uppercase">Variant</th>
-                <th className="px-6 py-4 text-xs font-bold text-gray-400 uppercase">SKU</th>
-                <th className="px-6 py-4 text-xs font-bold text-gray-400 uppercase w-32">Price (€)</th>
-                <th className="px-6 py-4 text-xs font-bold text-gray-400 uppercase w-32">Stock</th>
+                <th className="px-6 py-4 text-xs font-bold text-gray-400 uppercase">{t("variant")}</th>
+                <th className="px-6 py-4 text-xs font-bold text-gray-400 uppercase">{t("sku")}</th>
+                <th className="px-6 py-4 text-xs font-bold text-gray-400 uppercase w-32">{t("price")}</th>
+                <th className="px-6 py-4 text-xs font-bold text-gray-400 uppercase w-32">{t("stock")}</th>
                 <th className="px-6 py-4"></th>
               </tr>
             </thead>
@@ -197,38 +200,38 @@ export function MatrixEditor({ onUpdate, basePrice }: MatrixEditorProps) {
                 <tr key={row.id} className="hover:bg-gray-50/50 transition-colors">
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-2">
-                       <span className="text-xs font-bold text-neutral-dark">{row.color}</span>
-                       <span className="text-[10px] text-gray-400 font-bold uppercase">/</span>
-                       <span className="text-xs font-bold text-neutral-dark">{row.size}</span>
+                      <span className="text-xs font-bold text-neutral-dark">{tColors(row.color)}</span>
+                      <span className="text-[10px] text-gray-400 font-bold uppercase">/</span>
+                      <span className="text-xs font-bold text-neutral-dark">{row.size}</span>
                     </div>
                   </td>
                   <td className="px-6 py-4">
-                    <input 
-                      type="text" 
-                      value={row.sku} 
+                    <input
+                      type="text"
+                      value={row.sku}
                       onChange={(e) => updateRow(row.id, 'sku', e.target.value)}
-                      placeholder="ES-PRO-..." 
-                      className="w-full px-3 py-1.5 bg-gray-50/50 border border-transparent rounded-lg text-xs font-mono focus:bg-white focus:border-primary/30 outline-none" 
+                      placeholder={t("sku_placeholder")}
+                      className="w-full px-3 py-1.5 bg-gray-50/50 border border-transparent rounded-lg text-xs font-mono focus:bg-white focus:border-primary/30 outline-none"
                     />
                   </td>
                   <td className="px-6 py-4">
-                    <input 
-                      type="number" 
-                      value={row.price} 
+                    <input
+                      type="number"
+                      value={row.price}
                       onChange={(e) => updateRow(row.id, 'price', parseFloat(e.target.value))}
-                      className="w-full px-3 py-1.5 bg-gray-50/50 border border-transparent rounded-lg text-xs font-bold focus:bg-white focus:border-primary/30 outline-none" 
+                      className="w-full px-3 py-1.5 bg-gray-50/50 border border-transparent rounded-lg text-xs font-bold focus:bg-white focus:border-primary/30 outline-none"
                     />
                   </td>
                   <td className="px-6 py-4">
-                    <input 
-                      type="number" 
-                      value={row.stock} 
+                    <input
+                      type="number"
+                      value={row.stock}
                       onChange={(e) => updateRow(row.id, 'stock', parseInt(e.target.value))}
-                      className="w-full px-3 py-1.5 bg-gray-50/50 border border-transparent rounded-lg text-xs font-bold focus:bg-white focus:border-primary/30 outline-none" 
+                      className="w-full px-3 py-1.5 bg-gray-50/50 border border-transparent rounded-lg text-xs font-bold focus:bg-white focus:border-primary/30 outline-none"
                     />
                   </td>
                   <td className="px-6 py-4 text-right">
-                    <button 
+                    <button
                       onClick={() => {
                         const updated = rows.filter(r => r.id !== row.id);
                         setRows(updated);
@@ -251,7 +254,7 @@ export function MatrixEditor({ onUpdate, basePrice }: MatrixEditorProps) {
           <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center text-gray-300 mb-4">
             <Plus size={32} />
           </div>
-          <p className="text-sm font-bold text-gray-400">Select at least one color and one size to generate variants matrix.</p>
+          <p className="text-sm font-semibold text-gray-400">{t("empty_state")}</p>
         </div>
       )}
     </div>

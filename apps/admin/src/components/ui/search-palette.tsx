@@ -1,14 +1,16 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { Search, X } from "lucide-react";
 import { useHotkeys } from "@/hooks/use-hotkeys";
 
 export function SearchPalette() {
   const [open, setOpen] = useState(false);
+  const t = useTranslations("Common");
 
   // Toggle on Cmd+K or Ctrl+K
-  useHotkeys("k", (e) => setOpen((prev) => !prev), { ctrlOrCmd: true, preventDefault: true });
+  useHotkeys("k", () => setOpen((prev) => !prev), { ctrlOrCmd: true, preventDefault: true });
   // Close on Escape
   useHotkeys("escape", () => setOpen(false));
 
@@ -22,7 +24,7 @@ export function SearchPalette() {
           <input 
             type="text" 
             autoFocus 
-            placeholder="Search products, orders, customers..." 
+            placeholder={t("search.placeholder")} 
             className="flex-1 bg-transparent border-none outline-none text-sm font-medium"
           />
           <button onClick={() => setOpen(false)} className="p-1 text-gray-400 hover:text-gray-600 bg-gray-50 rounded-md">
@@ -30,7 +32,7 @@ export function SearchPalette() {
           </button>
         </div>
         <div className="p-4 bg-gray-50/50 min-h-[200px] flex items-center justify-center text-sm font-medium text-gray-500">
-          Start typing to search globally...
+          {t("search.start")}
         </div>
       </div>
     </div>

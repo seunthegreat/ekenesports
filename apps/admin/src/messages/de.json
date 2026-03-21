@@ -1,0 +1,646 @@
+{
+  "Common": {
+    "saving": "Speichern...",
+    "save": "Speichern",
+    "cancel": "Abbrechen",
+    "delete": "Löschen",
+    "edit": "Bearbeiten",
+    "view": "Ansehen",
+    "export": "Exportieren",
+    "search": {
+      "placeholder": "Produkte, Bestellungen, Kunden suchen...",
+      "start": "Beginnen Sie zu tippen, um global zu suchen...",
+      "generic": "Suchen..."
+    },
+    "table": {
+      "no_records": "Keine Datensätze verfügbar.",
+      "pagination": "Zeige {start} bis {end} von {total} Einträgen"
+    },
+    "confirm": {
+      "confirm": "Bestätigen",
+      "cancel": "Abbrechen"
+    }
+  },
+  "Navigation": {
+    "dashboard": "Dashboard",
+    "products": "Produkte",
+    "stock": "Lagerbestand",
+    "orders": "Bestellungen",
+    "customers": "Kunden",
+    "analytics": "Analysen",
+    "settings": "Einstellungen"
+  },
+  "Settings": {
+    "title_part1": "Administrative",
+    "title_part2": "Einstellungen",
+    "description": "Verfeinern Sie Ihre globale Storefront-Logik, regionale Logistik und Mitarbeiter-Autorisierungsprotokolle.",
+    "nav": {
+      "general": {
+        "title": "Allgemeine Konfiguration",
+        "desc": "Store-Identität, Branding und Kern-Metadaten."
+      },
+      "shipping": {
+        "title": "Logistik & Versand",
+        "desc": "Lieferzonen, Tarife und DHL-Regeln verwalten."
+      },
+      "staff": {
+        "title": "Personal & Intelligenz",
+        "desc": "RBAC-Berechtigungen und Administratorkonten."
+      }
+    }
+  },
+  "Dashboard": {
+    "welcome": "Willkommen bei",
+    "description": "Die ultimative Engine zur Verwaltung von Storefront, Inventar und globalem Versand.",
+    "revenue": "Gesamtumsatz",
+    "orders": "Gesamtbestellungen",
+    "customers": "Aktive Kunden",
+    "stock": "Lagerwarnungen",
+    "hero": {
+      "title": "Umsatzgeschwindigkeit"
+    },
+    "overview": "Übersicht & Metriken",
+    "alerts": "Warnungen",
+    "top_products": "Meistverkaufte Produkte",
+    "recent_orders": "Aktuelle Bestellungen",
+    "view_all": "Alle ansehen",
+    "timeframes": {
+      "30_days": "Letzte 30 Tage",
+      "7_days": "Letzte 7 Tage",
+      "24_hours": "Letzte 24 Stunden",
+      "ytd": "Seit Jahresbeginn"
+    },
+    "table": {
+      "product": "Produkt",
+      "sport": "Sport",
+      "sold": "Verkauft",
+      "revenue": "Umsatz",
+      "order_id": "Bestell-ID",
+      "customer": "Kunde",
+      "total": "Gesamt",
+      "status": "Status"
+    }
+  },
+  "Products": {
+    "title_part1": "Inventar &",
+    "title_part2": "Kollektionen",
+    "description": "Steuern Sie Ihren SKU-Lebenszyklus, Ihre Preisstrategie und Ihre digitalen Assets.",
+    "search": "Produkte suchen...",
+    "add": "Produkt hinzufügen",
+    "table": {
+      "name": "Produkt-SKU",
+      "category": "Klassifizierung",
+      "status": "Marktstatus",
+      "price": "Einzelpreis",
+      "stock": "Inventar",
+      "actions": "Aktionen"
+    },
+    "status": {
+      "active": "Aktiv",
+      "draft": "Entwurf",
+      "archived": "Archiviert"
+    },
+    "filters": {
+      "title": "Filter",
+      "active_filters": "Aktive Filter",
+      "status": "Status",
+      "sport": "Sportart",
+      "brand": "Marke",
+      "all_statuses": "Alle Stati",
+      "all_sports": "Alle Sportarten",
+      "all_brands": "Alle Marken",
+      "clear": "Alle Filter löschen"
+    },
+    "actions": {
+      "view": "Schnellansicht",
+      "edit": "Produkt bearbeiten",
+      "archive": "Archivieren"
+    },
+    "modal": {
+      "view_title": "Produkt-Schnellansicht",
+      "archive_title": "Produkt archivieren",
+      "archive_desc": "Sind Sie sicher, dass Sie {name} archivieren möchten? Dies wird es sofort aus dem globalen Storefront entfernen.",
+      "close": "Schließen",
+      "edit_details": "Details bearbeiten",
+      "confirm_archive": "Archivierung bestätigen",
+      "cancel": "Abbrechen",
+      "units": "Einheiten",
+      "skus": "{count} SKU(s)",
+      "retail": "Einzelhandel",
+      "base_price": "Basispreis",
+      "total_stock": "Gesamtbestand",
+      "sku_count": "SKUs"
+    },
+    "sports": {
+      "football": "Fußball",
+      "basketball": "Basketball",
+      "running": "Laufen",
+      "tennis": "Tennis",
+      "training": "Training"
+    },
+    "colors": {
+      "Black": "Schwarz",
+      "White": "Weiß",
+      "Red": "Rot",
+      "Blue": "Blau",
+      "Green": "Grün",
+      "Yellow": "Gelb"
+    },
+    "form": {
+      "title_create": "Produkt erstellen",
+      "title_edit": "Produkt bearbeiten",
+      "catalog": "Katalog",
+      "modify": "Eintrag ändern",
+      "new": "Neuer Eintrag",
+      "save_draft": "Als Entwurf speichern",
+      "update": "Produkt aktualisieren",
+      "publish": "Produkt veröffentlichen",
+      "general_info": "Allgemeine Informationen",
+      "product_name": "Produktname",
+      "product_name_placeholder": "z.B. Pro Court Basketballschuhe",
+      "description_label": "Detaillierte Beschreibung",
+      "description_placeholder": "Geben Sie detaillierte Produktspezifikationen und Marketingtexte ein...",
+      "pricing": "Preisgestaltung",
+      "retail_price": "Einzelhandelspreis (€)",
+      "retail_price_placeholder": "0.00",
+      "vat_info": "MwSt. & regionale Anpassungen werden an der Kasse angewendet.",
+      "organization": "Organisation",
+      "sport_context": "Sport-Kontext",
+      "select_sport": "Sportart wählen...",
+      "store_category": "Shop-Kategorie",
+      "select_category": "Kategorie wählen...",
+      "media": "Medien-Assets",
+      "drop_images": "Bilder hier ablegen",
+      "select_files": "Oder klicken, um Dateien auszuwählen (Max 2MB)"
+    },
+    "matrix": {
+      "title": "Varianten-Konfiguration",
+      "info": "Instanziieren Sie Kombinationen durch Auswahl von Farben und Größen. Jede SKU wird als separater atomarer Datensatz in unserem globalen Inventar-System behandelt.",
+      "configure": "Optionen konfigurieren",
+      "colors": "Farben",
+      "sizes": "Größen",
+      "bulk_actions": "Massenaktionen",
+      "all_price": "Alle Preise",
+      "all_stock": "Alle Bestände",
+      "set_all": "Alle setzen...",
+      "variant": "Variante",
+      "sku": "SKU",
+      "price": "Preis (€)",
+      "stock": "Bestand",
+      "sku_placeholder": "ES-PRO-...",
+      "empty_state": "Wählen Sie mindestens eine Farbe und eine Größe aus, um die Varianten-Matrix zu generieren."
+    }
+  },
+  "User": {
+    "role": "Administratives Personal",
+    "logout": "Abmelden"
+  },
+  "Stock": {
+    "title_part1": "Lagerbestand &",
+    "title_part2": "Inventar",
+    "description": "Überwachen Sie die Lagerbestände in Echtzeit, verwalten Sie eingehende Lieferungen und kümmern Sie sich um den Nachschub.",
+    "search": "Artikel suchen...",
+    "history": "Verlauf",
+    "priority": "Priorität",
+    "stats": {
+      "total": "Gesamtbestand",
+      "alerts": "Lagerwarnungen",
+      "healthy": "Gesunde SKUs"
+    },
+    "filter": {
+      "title": "Inventar filtern",
+      "level": "Lagerbestand",
+      "sport": "Sportkategorie",
+      "all_levels": "Alle Bestände",
+      "low_stock": "Niedriger Bestand (<10)",
+      "out_of_stock": "Nicht vorrätig",
+      "healthy_stock": "Gesunder Bestand",
+      "all_sports": "Alle Sportarten",
+      "football": "Fußball",
+      "basketball": "Basketball",
+      "running": "Laufen",
+      "training": "Training",
+      "clear": "Alle Filter löschen"
+    },
+    "table": {
+      "sku": "SKU",
+      "stock": "Bestand",
+      "status": "Status",
+      "actions": "Aktionen",
+      "export": "Bericht exportieren"
+    },
+    "status": {
+      "critical": "Kritisch",
+      "healthy": "Gesund"
+    },
+    "actions": {
+      "adjust": "Bestand anpassen",
+      "view": "Produkt anzeigen",
+      "audit": "Audit-Protokolle"
+    },
+    "modal": {
+      "adjust_title": "Inventar anpassen",
+      "current": "Aktueller Bestand",
+      "new": "Neue Menge",
+      "confirm": "Anpassung bestätigen",
+      "alert": "Die Anpassung wird mit Ihrer aktuellen Sitzungs-ID im Inventarverlauf protokolliert.",
+      "history_title": "Inventar-Audit-Protokoll",
+      "history_placeholder": "Das Transaktionsverlaufsprotokoll wird für Ihr Gebiet vorbereitet."
+    },
+    "form": {
+      "cancel": "Abbrechen"
+    }
+  },
+  "Orders": {
+    "title_part1": "Logistik &",
+    "title_part2": "Fulfillment",
+    "description": "Orchestrieren Sie den globalen Versand, die Sendungsverfolgung und die Kundenabstimmung.",
+    "search": "Suche ID, Kunde...",
+    "table": {
+      "id": "Bestell-ID",
+      "customer": "Kundenprofil",
+      "items": "Artikel",
+      "status": "Logistikstatus",
+      "total": "Gesamtwert",
+      "date": "Zeitplan",
+      "actions": "Aktionen",
+      "item": "{count} Artikel",
+      "items_plural": "{count} Artikel"
+    },
+    "status": {
+      "confirmed": "Bestätigt",
+      "processing": "In Bearbeitung",
+      "shipped": "Versandt",
+      "in_transit": "Unterwegs",
+      "out_for_delivery": "In Zustellung",
+      "delivered": "Zugestellt",
+      "cancelled": "Storniert",
+      "refunded": "Erstattet"
+    },
+    "actions": {
+      "view": "Details anzeigen",
+      "delete": "Löschen"
+    },
+    "filters": {
+      "button": "Filter",
+      "title": "Bestellungen filtern",
+      "status": "Bestellstatus",
+      "all_statuses": "Alle Stati",
+      "clear": "Alle Filter löschen"
+    },
+    "stats": {
+      "revenue": "Heutiger Umsatz",
+      "pending": "Ausstehend",
+      "shipped": "Versandt",
+      "completed": "Abgeschlossen",
+      "orders_count": "{count} Bestellungen"
+    },
+    "modal": {
+      "delete_title": "Bestell-Datensatz löschen",
+      "delete_desc": "Sind Sie sicher, dass Sie {orderNumber} löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden und wird diesen Datensatz dauerhaft aus der Fulfillment-Historie entfernen.",
+      "delete_confirm": "Löschen bestätigen",
+      "delete_success": "Bestellung {orderNumber} erfolgreich gelöscht"
+    },
+    "detail": {
+      "back": "Zurück zu Bestellungen",
+      "order_title": "Bestellung {orderNumber}",
+      "placed_at": "Aufgegeben am {date} um {time}",
+      "items_total": "Gesamt {count} Artikel",
+      "invoicing": "Rechnungsstellung",
+      "fulfill_order": "Bestellung ausführen",
+      "items_title": "Bestellartikel",
+      "sku_fulfillment": "SKU-basiertes Fulfillment",
+      "qty": "Menge: {count}",
+      "subtotal": "Zwischensumme",
+      "shipping_cost": "Versand ({method})",
+      "total_amount": "Gesamtbetrag",
+      "payment_details": "Zahlungsdetails",
+      "transaction_id": "Transaktions-ID",
+      "payment_status": "Status",
+      "paid_full": "Vollständig bezahlt",
+      "shipping_method": "Versandart",
+      "customer_log": "Kundenprotokoll",
+      "customer_id": "Kunden-ID: {id}",
+      "delivery_address": "Lieferadresse",
+      "activity_title": "Bestellaktivität",
+      "activity": {
+        "delivered": "Zugestellt",
+        "delivered_desc": "Paket an der Rezeption hinterlassen.",
+        "in_transit": "Unterwegs",
+        "in_transit_desc": "Im Depot London angekommen.",
+        "shipped": "Versandt",
+        "shipped_desc": "Von DHL Express abgeholt.",
+        "confirmed": "Bestätigt",
+        "confirmed_desc": "Zahlung via Stripe erhalten.",
+        "time_ago": "vor {time}"
+      }
+    },
+    "fulfill_modal": {
+      "title": "Fulfillment & Frachtbrief generieren",
+      "dhl_integrated": "DHL API integriert",
+      "cancel": "Abbrechen",
+      "confirm": "Versand bestätigen",
+      "weight": "Gewichtsschätzung",
+      "courier": "Kurierdienst",
+      "note_label": "Interne Notiz (Optional)",
+      "note_placeholder": "Kostenlose Kappe als Treuebonus hinzugefügt...",
+      "info": "Die Generierung des Frachtbriefs benachrichtigt den Kunden automatisch per E-Mail und registriert das Paket in unserem lokalen DHL-Büro."
+    }
+  },
+  "Customers": {
+    "title_part1": "Marktdaten &",
+    "title_part2": "Leistung",
+    "description": "Tauchen Sie tief in Ihren Kundenstamm ein. Verfolgen Sie Akquise, Kundenbindung und den Customer Lifetime Value.",
+    "search": "Kunden suchen...",
+    "add": "Kunde hinzufügen",
+    "export": "Exportieren",
+    "table": {
+      "name": "Kundenprofil",
+      "email": "Kontaktinfo",
+      "status": "Lebenszyklus",
+      "spent": "Lifetime Value",
+      "orders": "Bestellungen",
+      "actions": "Aktionen",
+      "order": "Bestellung",
+      "status_label": "Status",
+      "amount": "Betrag",
+      "date": "Datum",
+      "view_profile": "Profil anzeigen",
+      "edit_info": "Info bearbeiten",
+      "delete": "Löschen"
+    },
+    "stats": {
+      "title": "Kunden-Intelligenz",
+      "total": "Kunden gesamt",
+      "active": "Aktiv diese Woche",
+      "retention": "Kundenbindungsrate",
+      "avg_ltv": "Durchschnittlicher LTV",
+      "growth": "Wachstum im Vergleich zum Vormonat"
+    },
+    "form": {
+      "title_add": "Neuen Kunden onboarden",
+      "title_edit": "Kundenprofil verfeinern",
+      "personal": "Persönliche Identität",
+      "first_name": "Vorname",
+      "last_name": "Nachname",
+      "email": "E-Mail-Adresse",
+      "phone": "Kontakttelefonnummer",
+      "address": "Primäre Logistikadresse",
+      "street": "Straße",
+      "city": "Stadt",
+      "state": "Bundesland / Provinz",
+      "zip": "Postleitzahl",
+      "status_label": "Lebenszyklus-Status",
+      "cancel": "Abbrechen",
+      "save": "Profil speichern",
+      "saving": "Profil wird gespeichert...",
+      "personal_desc": "Geben Sie die Basisdaten für dieses Kundenprofil ein. Felder, die als persistent markiert sind, werden für die Auftragsprüfung verwendet.",
+      "onboard_success": "Kunde erfolgreich onboarded",
+      "refine_success": "Profil erfolgreich verfeinert",
+      "placeholders": {
+        "first_name": "z.B. Max",
+        "last_name": "z.B. Mustermann",
+        "email": "primary@ekenesports.com",
+        "phone": "+49 (0) 1...",
+        "street": "z.B. Hauptstraße 1"
+      }
+    },
+    "delete": {
+      "title": "Eliminierung des Kontos",
+      "desc": "Sie sind dabei, {name} dauerhaft zu löschen. Alle Transaktionsdaten und gespeicherten Zugangsdaten werden gelöscht. Diese Aktion kann nicht rückgängig gemacht werden.",
+      "confirm": "Ausschluss bestätigen",
+      "abort": "Abbrechen"
+    },
+    "block": {
+      "title": "Sicherheitsbeschränkung",
+      "title_unblock": "Konto-Wiederherstellung",
+      "desc": "Sie sind dabei, {name} zu sperren. Dies wird sofort alle aktiven Sitzungen beenden und weitere Transaktionsversuche blockieren.",
+      "desc_unblock": "Sie sind dabei, den vollen Zugriff für {name} wiederherzustellen. Die Person kann ab sofort wieder Bestellungen aufgeben und auf Zahlungsgateways zugreifen.",
+      "confirm": "Sitzung einschränken",
+      "confirm_unblock": "Zugriff autorisieren",
+      "abort": "Abbrechen"
+    },
+    "filters": {
+      "title": "Kunden filtern",
+      "status": "Status",
+      "all": "Alle Stati",
+      "active": "Aktiv",
+      "inactive": "Inaktiv",
+      "blocked": "Gesperrt",
+      "clear": "Alle Filter löschen"
+    },
+    "detail": {
+      "back": "Zurück zum Verzeichnis",
+      "since": "Kunde seit {date}",
+      "edit": "Profil bearbeiten",
+      "send_email": "E-Mail senden",
+      "ledger": "Transaktionsrechnung",
+      "full_history": "Vollständiger Verlauf",
+      "intel_tracking": "Kundenintelligenz-Tracking",
+      "intel_desc": "Automatisierte Ereignisprotokolle und Kommunikationseigenschaften werden hier mit wachsendem Store gefüllt.",
+      "setup_auto": "Automatisierungen einrichten",
+      "relationship": "Beziehungsinformationen",
+      "primary_email": "Primäre E-Mail",
+      "mobile": "Mobile Verbindung",
+      "identity_check": "Identitätsprüfung",
+      "id_protected": "ID GESCHÜTZT & VERIFIZIERT",
+      "saved_addresses": "Gespeicherte Adressen",
+      "quick_copy": "Schnellkopie",
+      "manage_locations": "Alle Standorte verwalten",
+      "risk_mgmt": "Risikomanagement",
+      "risk_desc": "Das Sperren eines Kontos schränkt den Zugriff auf das Storefront und die Zahlungsgateways ein. Mit Vorsicht genießen.",
+      "basket_size": "Durchschnittliche Warenkorbgröße"
+    }
+  },
+  "Analytics": {
+    "title_part1": "Intelligenz",
+    "title_part2": "Dashboard",
+    "description": "Querschnitts-Datenanalyse und Leistungsprüfung für den aktuellen Geschäftszyklus.",
+    "export": "Daten exportieren",
+    "timeframes": {
+      "30_days": "Letzte 30 Tage",
+      "7_days": "Letzte 7 Tage",
+      "ytd": "Seit Jahresbeginn"
+    },
+    "kpis": {
+      "revenue": "Gesamtumsatz",
+      "aov": "Durchschnittliche Bestellung",
+      "customers": "Neue Profile",
+      "conversion": "Konversionsrate"
+    },
+    "charts": {
+      "revenue": {
+        "title": "Umsatzentwicklung",
+        "subtitle": "Wachstumsanalyse Fiskaljahr",
+        "target": "Ziel",
+        "revenue_label": "Umsatz"
+      },
+      "orders": {
+        "title": "Bestelldichte",
+        "subtitle": "Volumetrischer Durchsatz",
+        "volume_label": "Volumen",
+        "orders_label": "{count} Bestellungen"
+      }
+    },
+    "table": {
+      "name": "Produkt-SKU",
+      "category": "Kategorie",
+      "units": "Einheiten",
+      "revenue": "Umsatz",
+      "rating": "Bewertung",
+      "top_skus_title": "Einheiten-Geschwindigkeit - Top SKUs"
+    },
+    "sports": {
+      "title": "Sportarten-Anteil",
+      "football": "Fußball",
+      "basketball": "Basketball",
+      "running": "Laufen",
+      "training": "Training",
+      "orders": "Bestellungen"
+    },
+    "geo": {
+      "title": "Geografisches Routing",
+      "desc": "Umsatzkonzentration über internationale Versandzonen. {main_market} behält die primäre Marktbeherrschung mit dem höchsten Volumen an DHL Express Sendungen.",
+      "expand": "Kartenansicht erweitern",
+      "regions": {
+        "germany": "Deutschland",
+        "uk": "Vereinigtes Königreich",
+        "france": "Frankreich",
+        "other_eu": "Restliche EU"
+      }
+    }
+  },
+  "General": {
+    "identity": "Store-Identität",
+    "name": "Name des Shops",
+    "email": "Support-E-Mail",
+    "domain": "Rechtliche Domain",
+    "finance": "Finanzlogik",
+    "currency": "Globale Währung",
+    "vat": "Standard-MwSt.-Satz (%)",
+    "marketing": "Marketing-Broadcast",
+    "promo": "Promo-Bar Nachricht",
+    "marketing_desc": "Dieser Text wird ganz oben in Ihrem globalen Storefront über alle Regionen hinweg angezeigt.",
+    "save": "Änderungen speichern",
+    "saving": "Speichere...",
+    "success": "Logik erfolgreich dauerhaft gespeichert",
+    "unsaved": "Nicht gespeicherte Konfiguration erkannt",
+    "toast": {
+      "save_success": "Einstellungen erfolgreich gespeichert",
+      "save_desc": "Globale Konfiguration angewendet"
+    },
+    "defaults": {
+      "store_name": "Ekene Sport HQ",
+      "email": "concierge@ekenesport.com",
+      "domain": "ekenesport.com",
+      "promo": "Globaler Versandterminal Online — Kostenlose Standardlieferung ab 150,00 €"
+    }
+  },
+  "Shipping": {
+    "title": "Regionale Logistikzonen",
+    "create": "Zone erstellen",
+    "active": "Aktiv",
+    "standby": "Standby",
+    "territories": "Registrierte Gebiete",
+    "methods": "Zustellmethoden",
+    "active_rules": "Aktive Regeln für {zone}",
+    "add": "Methode hinzufügen",
+    "free_over": "Kostenlos ab {amount}",
+    "rate": "Basistarif",
+    "mapping": "Gebietszuordnung",
+    "search": "Gebiete nach Code oder Name suchen...",
+    "update": "Zuordnung aktualisieren",
+    "toast": {
+      "update_success": "Versandzuordnung aktualisiert",
+      "update_desc": "Gebietslogik weltweit synchronisiert",
+      "remove_success": "{name} aus dem aktiven Routing entfernt"
+    },
+    "zones": {
+      "domestic": "Inland (Deutschland)",
+      "eu": "Europäische Union",
+      "international": "International"
+    },
+    "methods_list": {
+      "dhl": "DHL Express",
+      "standard": "Standardpaket",
+      "priority": "EU Priority",
+      "days": "{count} Tage",
+      "free": "KOSTENLOS"
+    },
+    "delete_modal": {
+      "title": "Zustellmethode entfernen",
+      "desc": "Sind Sie sicher, dass Sie die Zustellmethode \"{name}\" dauerhaft aus dieser Zone löschen möchten? Diese Änderung wird sofort im Storefront wirksam.",
+      "confirm": "Methode entfernen"
+    },
+    "more_territories": "+ {count} Weitere",
+    "countries": {
+      "germany": "Deutschland",
+      "france": "Frankreich",
+      "spain": "Spanien",
+      "italy": "Italien",
+      "belgium": "Belgien",
+      "denmark": "Dänemark",
+      "sweden": "Schweden",
+      "poland": "Polen",
+      "austria": "Österreich",
+      "portugal": "Portugal",
+      "greece": "Griechenland",
+      "ireland": "Irland"
+    }
+  },
+  "Staff": {
+    "title": "Personal & Intelligenz",
+    "invite": "Neues Personal einladen",
+    "desc": "Provisionieren und verwalten Sie Administratorkonten mit strengen rollenbasierten Zugriffsprotokollen. Alle Aktionen werden protokolliert und authentifiziert.",
+    "search": "Personal nach Name, E-Mail oder Rolle suchen...",
+    "table": {
+      "identity": "Administrative Identität",
+      "tier": "Berechtigungsstufe",
+      "telemetry": "System-Telemetrie",
+      "status": "Logikstatus",
+      "actions": "Aktionen",
+      "action_refine": "Berechtigungen verfeineren",
+      "action_deactivate": "Identität deaktivieren",
+      "last_access": "Letzter Zugriff: {time}"
+    },
+    "modal": {
+      "title": "Management-Konto provisionieren",
+      "desc": "Personalmitglieder erhalten einen sicheren Onboarding-Vektor über ihren verifizierten E-Mail-Kanal. Konten sind bis zur Validierung auf Ansicht beschränkt.",
+      "name": "Name des Personalkandidaten",
+      "name_placeholder": "z.B. Jonathan Müller",
+      "email": "Verifizierte E-Mail",
+      "email_placeholder": "personal@ekenesport.com",
+      "protocol": "Autorisierungsprotokoll",
+      "role_super_admin": "Super-Admin (Vollzugriff)",
+      "role_logistics_manager": "Logistik-Manager (Tarife & Zonen)",
+      "role_catalog_editor": "Katalog-Editor (Produkte & Kategorien)",
+      "role_staff_member": "Personalmitarbeiter (Nur Ansicht)",
+      "cancel": "Abbrechen",
+      "send": "Einladung senden"
+    },
+    "roles": {
+      "super_admin": "Super-Admin",
+      "logistics_manager": "Logistik-Manager",
+      "catalog_editor": "Katalog-Editor",
+      "support_lead": "Support-Leiter"
+    },
+    "status": {
+      "active": "Aktiv",
+      "invited": "Eingeladen"
+    },
+    "toast": {
+      "invite_success": "Einladung erfolgreich versandt",
+      "deactivate_success": "{name} wurde deaktiviert"
+    },
+    "delete_modal": {
+      "title": "Personalidentität deaktivieren",
+      "desc": "Sind Sie sicher, dass Sie den Systemzugriff für {name} widerrufen möchten? Die Person wird sofort abgemeldet und kann nicht mehr auf das Control-Panel zugreifen.",
+      "confirm": "Deaktivieren"
+    }
+  },
+  "Layout": {
+    "title": "Ekene Sport Admin",
+    "description": "Fortschrittliche E-Commerce-Verwaltungs-Engine",
+    "logo_alt": "Ekene Sport"
+  }
+}

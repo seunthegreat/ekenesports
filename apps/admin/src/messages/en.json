@@ -1,0 +1,647 @@
+{
+  "Common": {
+    "saving": "Saving...",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "view": "View",
+    "export": "Export",
+    "search": {
+      "placeholder": "Search products, orders, customers...",
+      "start": "Start typing to search globally...",
+      "generic": "Search..."
+    },
+    "table": {
+      "no_records": "No records available.",
+      "pagination": "Showing {start} to {end} of {total} entries"
+    },
+    "confirm": {
+      "confirm": "Confirm",
+      "cancel": "Cancel"
+    }
+  },
+  "Navigation": {
+    "dashboard": "Dashboard",
+    "products": "Products",
+    "stock": "Stock",
+    "orders": "Orders",
+    "customers": "Customers",
+    "analytics": "Analytics",
+    "settings": "Settings"
+  },
+  "Settings": {
+    "title_part1": "Administrative",
+    "title_part2": "Settings",
+    "description": "Fine-tune your global storefront logic, regional logistics, and staff authorization protocols.",
+    "nav": {
+      "general": {
+        "title": "General Configuration",
+        "desc": "Store identity, branding, and core metadata."
+      },
+      "shipping": {
+        "title": "Logistics & Shipping",
+        "desc": "Manage delivery zones, rates, and DHL rules."
+      },
+      "staff": {
+        "title": "Staff & Intelligence",
+        "desc": "RBAC permissions and administrative accounts."
+      }
+    }
+  },
+  "Dashboard": {
+    "welcome": "Welcome to",
+    "description": "The ultimate engine for managing your storefront, inventory, and global shipping.",
+    "revenue": "Total Revenue",
+    "orders": "Total Orders",
+    "customers": "Active Customers",
+    "stock": "Stock Alerts",
+    "hero": {
+      "title": "Revenue Velocity"
+    },
+    "overview": "Overview & Metrics",
+    "alerts": "Alerts",
+    "top_products": "Top Selling Products",
+    "recent_orders": "Recent Orders",
+    "view_all": "View All",
+    "timeframes": {
+      "30_days": "Last 30 Days",
+      "7_days": "Last 7 Days",
+      "24_hours": "Last 24 Hours",
+      "ytd": "Year to Date"
+    },
+    "table": {
+      "product": "Product",
+      "sport": "Sport",
+      "sold": "Sold",
+      "revenue": "Revenue",
+      "order_id": "Order ID",
+      "customer": "Customer",
+      "total": "Total",
+      "status": "Status"
+    }
+  },
+  "Products": {
+    "title_part1": "Inventory &",
+    "title_part2": "Collections",
+    "description": "Control your SKU lifecycle, pricing strategy, and digital assets.",
+    "search": "Search products...",
+    "add": "Add Product",
+    "table": {
+      "name": "Product SKU",
+      "category": "Classification",
+      "status": "Market Status",
+      "price": "Unit Price",
+      "stock": "Inventory",
+      "actions": "Actions"
+    },
+    "status": {
+      "active": "Active",
+      "draft": "Draft",
+      "archived": "Archived"
+    },
+    "filters": {
+      "title": "Filters",
+      "active_filters": "Active Filters",
+      "status": "Status",
+      "sport": "Sport",
+      "brand": "Brand",
+      "all_statuses": "All Statuses",
+      "all_sports": "All Sports",
+      "all_brands": "All Brands",
+      "clear": "Clear All Filters"
+    },
+    "actions": {
+      "view": "Quick View",
+      "edit": "Edit Product",
+      "archive": "Archive"
+    },
+    "modal": {
+      "view_title": "Product Quick View",
+      "archive_title": "Archive Product",
+      "archive_desc": "Are you sure you want to archive {name}? This will remove it from the global storefront immediately.",
+      "close": "Close",
+      "edit_details": "Edit Details",
+      "confirm_archive": "Confirm Archive",
+      "cancel": "Cancel",
+      "units": "units",
+      "skus": "{count} SKU(s)",
+      "retail": "Retail",
+      "base_price": "Base Price",
+      "total_stock": "Total Stock",
+      "sku_count": "SKUs"
+    },
+    "sports": {
+      "football": "Football",
+      "basketball": "Basketball",
+      "running": "Running",
+      "tennis": "Tennis",
+      "training": "Training"
+    },
+    "colors": {
+      "Black": "Black",
+      "White": "White",
+      "Red": "Red",
+      "Blue": "Blue",
+      "Green": "Green",
+      "Yellow": "Yellow"
+    },
+    "form": {
+      "back": "Back to Catalog",
+      "title_create": "Create Product",
+      "title_edit": "Edit Product",
+      "catalog": "Catalog",
+      "modify": "Modify Entry",
+      "new": "New Entry",
+      "save_draft": "Save as Draft",
+      "update": "Update Product",
+      "publish": "Publish Product",
+      "general_info": "General Information",
+      "product_name": "Product Name",
+      "product_name_placeholder": "e.g. Pro Court Basketball Shoes",
+      "description_label": "Detailed Description",
+      "description_placeholder": "Enter detailed product specifications and marketing copy...",
+      "pricing": "Pricing",
+      "retail_price": "Retail Price (€)",
+      "retail_price_placeholder": "0.00",
+      "vat_info": "VAT & Regional adjustments applied at checkout.",
+      "organization": "Organization",
+      "sport_context": "Sport Context",
+      "select_sport": "Select Sport...",
+      "store_category": "Store Category",
+      "select_category": "Select Category...",
+      "media": "Media Assets",
+      "drop_images": "Drop images here",
+      "select_files": "Or click to select files (Max 2MB)"
+    },
+    "matrix": {
+      "title": "Variant Configuration",
+      "info": "Instantiate combinations by selecting colors and sizes. Each SKU is treated as a distinct atomic record in our global inventory engine.",
+      "configure": "Configure Options",
+      "colors": "Colors",
+      "sizes": "Sizes",
+      "bulk_actions": "Bulk Actions",
+      "all_price": "All Price",
+      "all_stock": "All Stock",
+      "set_all": "Set all...",
+      "variant": "Variant",
+      "sku": "SKU",
+      "price": "Price (€)",
+      "stock": "Stock",
+      "sku_placeholder": "ES-PRO-...",
+      "empty_state": "Select at least one color and one size to generate variants matrix."
+    }
+  },
+  "User": {
+    "role": "Administrative Staff",
+    "logout": "Sign Out"
+  },
+  "Stock": {
+    "title_part1": "Stock &",
+    "title_part2": "Inventory",
+    "description": "Monitor real-time stock levels, manage incoming shipments, and handle replenishment.",
+    "search": "Search items...",
+    "history": "History",
+    "priority": "Priority",
+    "stats": {
+      "total": "Total On Hand",
+      "alerts": "Stock Alerts",
+      "healthy": "Healthy SKUs"
+    },
+    "filter": {
+      "title": "Filter Inventory",
+      "level": "Stock Level",
+      "sport": "Sport Category",
+      "all_levels": "All Levels",
+      "low_stock": "Low Stock (<10)",
+      "out_of_stock": "Out of Stock",
+      "healthy_stock": "Healthy Stock",
+      "all_sports": "All Sports",
+      "football": "Football",
+      "basketball": "Basketball",
+      "running": "Running",
+      "training": "Training",
+      "clear": "Clear All Filters"
+    },
+    "table": {
+      "sku": "SKU",
+      "stock": "Stock",
+      "status": "Status",
+      "actions": "Actions",
+      "export": "Export Report"
+    },
+    "status": {
+      "critical": "Critical",
+      "healthy": "Healthy"
+    },
+    "actions": {
+      "adjust": "Adjust Stock",
+      "view": "View Product",
+      "audit": "Audit Logs"
+    },
+    "modal": {
+      "adjust_title": "Adjust Inventory",
+      "current": "Current Stock",
+      "new": "New Quantity",
+      "confirm": "Confirm Adjustment",
+      "alert": "Adjustment will be logged to inventory history with your current session ID.",
+      "history_title": "Inventory Audit Log",
+      "history_placeholder": "Transaction history log is being prepared for your locale."
+    },
+    "form": {
+      "cancel": "Cancel"
+    }
+  },
+  "Orders": {
+    "title_part1": "Logistics &",
+    "title_part2": "Fulfillment",
+    "description": "Orchestrate global shipping, tracking, and customer reconciliation.",
+    "search": "Search ID, customer...",
+    "table": {
+      "id": "Order ID",
+      "customer": "Customer Profile",
+      "items": "Items",
+      "status": "Logistics Status",
+      "total": "Total Value",
+      "date": "Schedule",
+      "actions": "Actions",
+      "item": "{count} item",
+      "items_plural": "{count} items"
+    },
+    "status": {
+      "confirmed": "Confirmed",
+      "processing": "Processing",
+      "shipped": "Shipped",
+      "in_transit": "In Transit",
+      "out_for_delivery": "Out for Delivery",
+      "delivered": "Delivered",
+      "cancelled": "Cancelled",
+      "refunded": "Refunded"
+    },
+    "actions": {
+      "view": "View Details",
+      "delete": "Delete"
+    },
+    "filters": {
+      "button": "Filters",
+      "title": "Filter Orders",
+      "status": "Order Status",
+      "all_statuses": "All Statuses",
+      "clear": "Clear All Filters"
+    },
+    "stats": {
+      "revenue": "Today's Revenue",
+      "pending": "Pending",
+      "shipped": "Shipped",
+      "completed": "Completed",
+      "orders_count": "{count} orders"
+    },
+    "modal": {
+      "delete_title": "Delete Order Record",
+      "delete_desc": "Are you sure you want to delete {orderNumber}? This action cannot be undone and will permanently remove this record from the fulfillment history.",
+      "delete_confirm": "Confirm Delete",
+      "delete_success": "Order {orderNumber} deleted successfully"
+    },
+    "detail": {
+      "back": "Back to Orders",
+      "order_title": "Order {orderNumber}",
+      "placed_at": "Placed on {date} at {time}",
+      "items_total": "{count} Items Total",
+      "invoicing": "Invoicing",
+      "fulfill_order": "Fulfill Order",
+      "items_title": "Order Items",
+      "sku_fulfillment": "SKU Based Fulfillment",
+      "qty": "Qty: {count}",
+      "subtotal": "Subtotal",
+      "shipping_cost": "Shipping ({method})",
+      "total_amount": "Total Amount",
+      "payment_details": "Payment Details",
+      "transaction_id": "Transaction ID",
+      "payment_status": "Status",
+      "paid_full": "Paid In Full",
+      "shipping_method": "Shipping Method",
+      "customer_log": "Customer Log",
+      "customer_id": "Customer ID: {id}",
+      "delivery_address": "Delivery Address",
+      "activity_title": "Order Activity",
+      "activity": {
+        "delivered": "Delivered",
+        "delivered_desc": "Package left at reception.",
+        "in_transit": "In Transit",
+        "in_transit_desc": "Arrived at London Depot.",
+        "shipped": "Shipped",
+        "shipped_desc": "Picked up by DHL Express.",
+        "confirmed": "Confirmed",
+        "confirmed_desc": "Payment received via Stripe.",
+        "time_ago": "{time} ago"
+      }
+    },
+    "fulfill_modal": {
+      "title": "Fulfill & Generate Waybill",
+      "dhl_integrated": "DHL API Integrated",
+      "cancel": "Cancel",
+      "confirm": "Confirm Shipment",
+      "weight": "Weight Est.",
+      "courier": "Courier Service",
+      "note_label": "Internal Note (Optional)",
+      "note_placeholder": "Added a free cap as loyalty bonus...",
+      "info": "Generating waybill will automatically notify the customer via email and register the parcel with our local DHL office."
+    }
+  },
+  "Customers": {
+    "title_part1": "Market Data &",
+    "title_part2": "Performance",
+    "description": "Deep dive into your user base. Track acquisition, retention, and lifetime value.",
+    "search": "Search customers...",
+    "add": "Add Customer",
+    "export": "Export",
+    "table": {
+      "name": "Customer Profile",
+      "email": "Contact Info",
+      "status": "Lifecycle",
+      "spent": "Lifetime Value",
+      "orders": "Orders",
+      "actions": "Actions",
+      "order": "Order",
+      "status_label": "Status",
+      "amount": "Amount",
+      "date": "Date",
+      "view_profile": "View Profile",
+      "edit_info": "Edit Info",
+      "delete": "Delete"
+    },
+    "stats": {
+      "title": "Customer Intelligence",
+      "total": "Total Customers",
+      "active": "Active This Week",
+      "retention": "Retention Rate",
+      "avg_ltv": "Average LTV",
+      "growth": "MoM Growth"
+    },
+    "form": {
+      "title_add": "Onboard New Customer",
+      "title_edit": "Refine Customer Profile",
+      "personal": "Personal Identity",
+      "first_name": "First Name",
+      "last_name": "Last Name",
+      "email": "Email Address",
+      "phone": "Contact Number",
+      "address": "Primary Logistics Address",
+      "street": "Street Address",
+      "city": "City",
+      "state": "State / Province",
+      "zip": "Postal Code",
+      "status_label": "Lifecycle Status",
+      "cancel": "Cancel",
+      "save": "Persist Profile",
+      "saving": "Saving Profile...",
+      "personal_desc": "Provide the core credentials for this customer profile. Fields marked as persistent will be used for order vetting.",
+      "onboard_success": "Customer onboarded successfully",
+      "refine_success": "Profile refined successfully",
+      "placeholders": {
+        "first_name": "e.g. John",
+        "last_name": "e.g. Doe",
+        "email": "primary@ekenesports.com",
+        "phone": "+44 (0) 7...",
+        "street": "e.g. 10 Downing Street"
+      }
+    },
+    "delete": {
+      "title": "Account Elimination",
+      "desc": "You are about to permanently purge {name}. All transaction history and saved credentials will be wiped. This action is non-reversible.",
+      "confirm": "Confirm Exclusion",
+      "abort": "Abort"
+    },
+    "block": {
+      "title": "Security Restriction",
+      "title_unblock": "Account Reinstatement",
+      "desc": "You are about to suspend {name}. This will immediately terminate all active sessions and block further transaction attempts.",
+      "desc_unblock": "You are about to restore full access for {name}. They will be able to place orders and access payment gateways immediately.",
+      "confirm": "Restrict Session",
+      "confirm_unblock": "Authorize Access",
+      "abort": "Abort"
+    },
+    "filters": {
+      "title": "Filter Customers",
+      "status": "Status",
+      "all": "All Statuses",
+      "active": "Active",
+      "inactive": "Inactive",
+      "blocked": "Blocked",
+      "clear": "Clear All Filters"
+    },
+    "detail": {
+      "back": "Back to Directory",
+      "since": "Customer since {date}",
+      "edit": "Edit Profile",
+      "send_email": "Send Email",
+      "ledger": "Transaction Ledger",
+      "full_history": "Full History",
+      "intel_tracking": "Customer Intelligence Tracking",
+      "intel_desc": "Automated event logs and communication history will populate here as the store scales.",
+      "setup_auto": "Setup Automations",
+      "relationship": "Relationship Info",
+      "primary_email": "Primary Email",
+      "mobile": "Mobile Connection",
+      "identity_check": "Identity Check",
+      "id_protected": "ID PROTECTED & VERIFIED",
+      "saved_addresses": "Saved Addresses",
+      "quick_copy": "Quick Copy",
+      "manage_locations": "Manage All Locations",
+      "risk_mgmt": "Risk Management",
+      "risk_desc": "Blocking an account restricted access to storefront and payment gateways. Use with caution.",
+      "basket_size": "Average Basket Size"
+    }
+  },
+  "Analytics": {
+    "title_part1": "Intelligence",
+    "title_part2": "Dashboard",
+    "description": "Cross-sectional data analysis and performance auditing for the current business cycle.",
+    "export": "Export Data",
+    "timeframes": {
+      "30_days": "Last 30 Days",
+      "7_days": "Last 7 Days",
+      "ytd": "Year to Date"
+    },
+    "kpis": {
+      "revenue": "Total Revenue",
+      "aov": "Average Order",
+      "customers": "New Profiles",
+      "conversion": "Conversion Rate"
+    },
+    "charts": {
+      "revenue": {
+        "title": "Revenue Trajectory",
+        "subtitle": "Fiscal Year Growth Analysis",
+        "target": "Target",
+        "revenue_label": "Revenue"
+      },
+      "orders": {
+        "title": "Order Density",
+        "subtitle": "Volumetric Throughput",
+        "volume_label": "Volume",
+        "orders_label": "{count} Orders"
+      }
+    },
+    "table": {
+      "name": "Product SKU",
+      "category": "Category",
+      "units": "Units",
+      "revenue": "Revenue",
+      "rating": "Rating",
+      "top_skus_title": "Unit Velocity - Top SKUs"
+    },
+    "sports": {
+      "title": "Sport Logic Share",
+      "football": "Football",
+      "basketball": "Basketball",
+      "running": "Running",
+      "training": "Training",
+      "orders": "Orders"
+    },
+    "geo": {
+      "title": "Geographic Routing",
+      "desc": "Revenue concentration across international shipping zones. {main_market} maintains primary market dominance with the highest volume of DHL Express shipments.",
+      "expand": "Expand Map View",
+      "regions": {
+        "germany": "Germany",
+        "uk": "United Kingdom",
+        "france": "France",
+        "other_eu": "Other EU"
+      }
+    }
+  },
+  "General": {
+    "identity": "Store Identity",
+    "name": "Store Name",
+    "email": "Support Email",
+    "domain": "Legal Operating Domain",
+    "finance": "Financial Logic",
+    "currency": "Global Currency",
+    "vat": "Standard VAT Rate (%)",
+    "marketing": "Marketing Broadcast",
+    "promo": "Promo Bar Message",
+    "marketing_desc": "This text will appear at the very top of your global storefront across all locales.",
+    "save": "Save Changes",
+    "saving": "Saving...",
+    "success": "Logic Persisted Successfully",
+    "unsaved": "Unsaved Configuration Detected",
+    "toast": {
+      "save_success": "Settings saved successfully",
+      "save_desc": "Global configuration applied"
+    },
+    "defaults": {
+      "store_name": "Ekene Sport HQ",
+      "email": "concierge@ekenesport.com",
+      "domain": "ekenesport.com",
+      "promo": "Global Shipping Terminal Online — Free standard delivery on orders over €150.00"
+    }
+  },
+  "Shipping": {
+    "title": "Regional Logistics Zones",
+    "create": "Create Zone",
+    "active": "Active",
+    "standby": "Standby",
+    "territories": "Territories Registered",
+    "methods": "Delivery Methods",
+    "active_rules": "Active rules for {zone}",
+    "add": "Add Method",
+    "free_over": "Free over {amount}",
+    "rate": "Base Rate",
+    "mapping": "Territory Mapping",
+    "search": "Search territories by code or name...",
+    "update": "Update Mapping",
+    "toast": {
+      "update_success": "Shipping mapping updated",
+      "update_desc": "Territory logic synchronized globally",
+      "remove_success": "{name} removed from active routing"
+    },
+    "zones": {
+      "domestic": "Domestic (Germany)",
+      "eu": "European Union",
+      "international": "International"
+    },
+    "methods_list": {
+      "dhl": "DHL Express",
+      "standard": "Standard Parcel",
+      "priority": "EU Priority",
+      "days": "{count} Days",
+      "free": "FREE"
+    },
+    "delete_modal": {
+      "title": "Remove Delivery Method",
+      "desc": "Are you sure you want to permanently delete the \"{name}\" delivery method from this zone? This change will reflect instantly on the storefront.",
+      "confirm": "Remove Method"
+    },
+    "more_territories": "+ {count} More",
+    "countries": {
+      "germany": "Germany",
+      "france": "France",
+      "spain": "Spain",
+      "italy": "Italy",
+      "belgium": "Belgium",
+      "denmark": "Denmark",
+      "sweden": "Sweden",
+      "poland": "Poland",
+      "austria": "Austria",
+      "portugal": "Portugal",
+      "greece": "Greece",
+      "ireland": "Ireland"
+    }
+  },
+  "Staff": {
+    "title": "Staff & Intelligence",
+    "invite": "Invite New Staff",
+    "desc": "Provision and manage administrative accounts with strict role-based access protocols. All actions are logged and authenticated.",
+    "search": "Search staff by name, email or role...",
+    "table": {
+      "identity": "Administrative Identity",
+      "tier": "Authorization Tier",
+      "telemetry": "System Telemetry",
+      "status": "Logic Status",
+      "actions": "Actions",
+      "action_refine": "Refine Permissions",
+      "action_deactivate": "Deactivate Identity",
+      "last_access": "Last Access: {time}"
+    },
+    "modal": {
+      "title": "Provision Management Account",
+      "desc": "Staff members will receive a secure onboarding vector via their verified email channel. Accounts are restricted to view-only until validated.",
+      "name": "Staff Candidate Name",
+      "name_placeholder": "e.g. Johnathan Miller",
+      "email": "Verified Email",
+      "email_placeholder": "staff@ekenesport.com",
+      "protocol": "Authorization Protocol",
+      "role_super_admin": "Super Admin (Full Access)",
+      "role_logistics_manager": "Logistics Manager (Rates & Zones)",
+      "role_catalog_editor": "Catalog Editor (Products & Categories)",
+      "role_staff_member": "Staff Member (View Only)",
+      "cancel": "Cancel",
+      "send": "Send Invitation"
+    },
+    "roles": {
+      "super_admin": "Super Admin",
+      "logistics_manager": "Logistics Manager",
+      "catalog_editor": "Catalog Editor",
+      "support_lead": "Support Lead"
+    },
+    "status": {
+      "active": "Active",
+      "invited": "Invited"
+    },
+    "toast": {
+      "invite_success": "Invitation dispatched successfully",
+      "deactivate_success": "{name} has been deactivated"
+    },
+    "delete_modal": {
+      "title": "Deactivate Staff Identity",
+      "desc": "Are you sure you want to revoke system access for {name}? They will be immediately logged out and unable to access the control pane.",
+      "confirm": "Deactivate"
+    }
+  },
+  "Layout": {
+    "title": "Ekene Sport Admin",
+    "description": "Advanced e-commerce administrative engine",
+    "logo_alt": "Ekene Sport"
+  }
+}

@@ -53,17 +53,17 @@ export function Dropdown({
           "flex items-center gap-2.5 outline-none transition-all shadow-sm",
           variant === "pill"
             ? "px-4 py-2 bg-white border border-gray-100 rounded-full text-[11px] font-heading font-extrabold text-[#1A1A2E]/60 uppercase tracking-widest hover:border-primary/20 hover:text-primary"
-            : "w-full px-5 py-4 bg-neutral-light/40 border border-gray-100 rounded-2xl text-sm font-bold text-neutral-dark hover:border-gray-200",
+            : "h-10 px-3 bg-white border border-gray-200 rounded-lg text-sm font-bold text-neutral-dark hover:border-gray-300",
           isOpen && (variant === "pill"
             ? "border-primary/30 ring-4 ring-primary/5 text-primary"
-            : "border-primary/30 bg-white ring-4 ring-primary/5")
+            : "border-primary/30 ring-4 ring-primary/5")
         )}
       >
         <span className="flex-1 text-left">
           {selectedOption ? selectedOption.label : placeholder}
         </span>
         <ChevronDown
-          size={variant === "pill" ? 14 : 18}
+          size={variant === "pill" ? 14 : 16}
           className={cn(
             "text-gray-300 transition-transform duration-300 shrink-0",
             isOpen && "rotate-180 text-primary"

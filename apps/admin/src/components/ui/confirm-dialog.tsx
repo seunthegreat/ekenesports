@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { Modal } from "@/components/ui/modal";
 import { Button } from "@/components/ui/button";
 import { AlertCircle } from "lucide-react";
@@ -21,10 +22,11 @@ export function ConfirmDialog({
   onConfirm,
   title,
   description,
-  confirmLabel = "Confirm",
-  cancelLabel = "Cancel",
+  confirmLabel,
+  cancelLabel,
   variant = "danger",
 }: ConfirmDialogProps) {
+  const t = useTranslations("Common");
   
   const handleConfirm = () => {
     onConfirm();
@@ -44,7 +46,7 @@ export function ConfirmDialog({
             onClick={onClose}
             className="px-6 py-2 text-xs font-bold text-gray-500 hover:text-neutral-dark hover:bg-transparent"
           >
-            {cancelLabel}
+            {cancelLabel || t("confirm.cancel")}
           </Button>
           <Button
             onClick={handleConfirm}
@@ -56,7 +58,7 @@ export function ConfirmDialog({
                 : "bg-primary hover:bg-primary/90 shadow-primary/20"
             }`}
           >
-            {confirmLabel}
+            {confirmLabel || t("confirm.confirm")}
           </Button>
         </div>
       )}

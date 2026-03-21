@@ -22,24 +22,10 @@ export function ActionMenu({ items, className }: ActionMenuProps) {
   const buttonRef = useRef<HTMLButtonElement>(null);
   const [pos, setPos] = useState({ top: 0, left: 0 });
 
-  const updatePosition = useCallback(() => {
-    if (buttonRef.current) {
-      const rect = buttonRef.current.getBoundingClientRect();
-      const menuWidth = 192;
-      let left = rect.right - menuWidth;
-      if (left < 8) left = rect.left + 8;
-      
-      setPos({
-        top: rect.bottom + 8,
-        left,
-      });
-    }
-  }, []);
+
 
   useEffect(() => {
     if (isOpen) {
-      updatePosition();
-      // Handle scroll/resize to keep it positioned or just close it
       const handleClose = () => setIsOpen(false);
       window.addEventListener('scroll', handleClose, true);
       window.addEventListener('resize', handleClose);
@@ -48,7 +34,7 @@ export function ActionMenu({ items, className }: ActionMenuProps) {
         window.removeEventListener('resize', handleClose);
       };
     }
-  }, [isOpen, updatePosition]);
+  }, [isOpen]);
 
   return (
     <div className={cn("inline-block relative", className)}>
@@ -57,6 +43,16 @@ export function ActionMenu({ items, className }: ActionMenuProps) {
         onClick={(e) => {
           e.stopPropagation();
           e.preventDefault();
+          if (!isOpen && buttonRef.current) {
+            const rect = buttonRef.current.getBoundingClientRect();
+            const menuWidth = 192;
+            let left = rect.right - menuWidth;
+            if (left < 8) left = rect.left + 8;
+            setPos({
+              top: rect.bottom + 8 + window.scrollY,
+              left: left + window.scrollX,
+            });
+          }
           setIsOpen(!isOpen);
         }}
         className={cn(
@@ -70,8 +66,8 @@ export function ActionMenu({ items, className }: ActionMenuProps) {
       {isOpen && typeof document !== "undefined" && createPortal(
         <>
           {/* Transparent backdrop to catch all clicks */}
-          <div 
-            className="fixed inset-0 z-[9998] bg-transparent cursor-default"
+          <div
+            className="absolute inset-0 z-[9998] bg-transparent cursor-default"
             onClick={(e) => {
               e.stopPropagation();
               setIsOpen(false);
@@ -79,7 +75,7 @@ export function ActionMenu({ items, className }: ActionMenuProps) {
           />
           
           <div
-            className="fixed w-48 bg-white border border-gray-100 rounded-2xl shadow-2xl shadow-black/10 z-[9999] overflow-hidden animate-in fade-in zoom-in-95 duration-150 py-1.5 pointer-events-auto"
+            className="absolute w-48 bg-white border border-gray-100 rounded-2xl shadow-2xl shadow-black/10 z-[9999] overflow-hidden animate-in fade-in zoom-in-95 duration-200 py-1.5 pointer-events-auto origin-top-right"
             style={{ 
               top: pos.top, 
               left: pos.left,
@@ -101,18 +97,13 @@ export function ActionMenu({ items, className }: ActionMenuProps) {
                     "w-full flex items-center gap-3 px-4 py-2.5 text-[13px] font-bold transition-all duration-150 group text-left",
                     item.variant === "danger"
                       ? "text-error hover:bg-error/[0.03]"
-                      : "text-gray-500 hover:bg-gray-50 hover:text-neutral-dark"
+                      : "text-neutral-dark hover:bg-primary/5 hover:text-primary"
                   )}
                 >
                   {Icon && (
                     <Icon
                       size={16}
-                      className={cn(
-                        "transition-colors",
-                        item.variant === "danger"
-                          ? "text-error/60 group-hover:text-error"
-                          : "text-gray-300 group-hover:text-primary"
-                      )}
+                      className="transition-colors shrink-0"
                     />
                   )}
                   {item.label}
