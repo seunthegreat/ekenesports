@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 60" fill="none">
+  <text x="10" y="35" font-family="Plus Jakarta Sans, sans-serif" font-weight="800" font-size="32" fill="#0A6847" letter-spacing="4">E</text>
+  <text x="38" y="35" font-family="Plus Jakarta Sans, sans-serif" font-weight="800" font-size="32" fill="#0A6847" letter-spacing="4">K</text>
+  <line x1="46" y1="12" x2="58" y2="42" stroke="#F5A623" stroke-width="2.5" stroke-linecap="round"/>
+  <text x="66" y="35" font-family="Plus Jakarta Sans, sans-serif" font-weight="800" font-size="32" fill="#0A6847" letter-spacing="4">ENE</text>
+  <text x="10" y="52" font-family="Plus Jakarta Sans, sans-serif" font-weight="400" font-size="13" fill="#0A6847" letter-spacing="8">SPORT</text>
+</svg>
