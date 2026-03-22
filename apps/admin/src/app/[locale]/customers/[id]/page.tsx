@@ -34,7 +34,9 @@ import {
 import { mockCustomers, mockOrders } from "@/lib/mock-data";
 import { Customer, Order, Address } from "@/lib/types";
 import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/ui/data-table";
+import { StatusBadge } from "@/components/ui/badge";
 import { CustomerFormModal } from "../components/customer-form-modal";
 import { BlockCustomerModal } from "../components/block-customer-modal";
 import { useTranslations } from "next-intl";
@@ -83,12 +85,12 @@ export default function CustomerDetailPage({ params }: { params: Promise<{ id: s
     {
       header: t("table.status_label"),
       accessor: (order: Order) => (
-        <span className={cn(
-          "inline-flex px-2 py-0.5 text-[9px] font-bold rounded-full uppercase tracking-widest",
-          order.status === "delivered" ? "bg-emerald-50 text-emerald-600" : "bg-blue-50 text-blue-600"
-        )}>
-          {tOrders(`status.${order.status}`, { defaultValue: order.status })}
-        </span>
+        <StatusBadge
+          label={tOrders(`status.${order.status}`, { defaultValue: order.status })}
+          bg={order.status === "delivered" ? "bg-primary/10" : "bg-primary/5"}
+          text={order.status === "delivered" ? "text-primary-light" : "text-primary"}
+          dot={order.status === "delivered" ? "bg-primary-light" : "bg-primary"}
+        />
       ),
       className: "w-0 whitespace-nowrap"
     },
@@ -102,7 +104,7 @@ export default function CustomerDetailPage({ params }: { params: Promise<{ id: s
     {
       header: t("table.date"),
       accessor: (order: Order) => (
-        <span className="text-[11px] text-gray-400 font-medium">
+        <span className="text-xs text-gray-400 font-medium">
           {new Date(order.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
         </span>
       ),
@@ -152,17 +154,14 @@ export default function CustomerDetailPage({ params }: { params: Promise<{ id: s
           </div>
 
           <div className="flex gap-3">
-            <button
-              onClick={() => setIsEditModalOpen(true)}
-              className="flex items-center gap-2.5 px-6 py-3.5 border border-gray-100 bg-white text-gray-500 text-[11px] font-heading font-bold uppercase tracking-widest rounded-2xl hover:bg-neutral-light transition-all shadow-sm active:scale-95 transition-all text-neutral-dark"
-            >
-              <Edit2 size={16} />
+            <Button variant="outline" size="sm" className="gap-2.5" onClick={() => setIsEditModalOpen(true)}>
+              <Edit2 size={15} />
               {t("detail.edit")}
-            </button>
-            <button className="flex items-center gap-2.5 px-6 py-3.5 bg-neutral-dark text-white text-[11px] font-heading font-bold uppercase tracking-widest rounded-2xl hover:bg-black transition-all shadow-lg shadow-black/10 active:scale-95 transition-all">
-              <Mail size={16} />
+            </Button>
+            <Button variant="default" size="sm" className="gap-2.5">
+              <Mail size={15} />
               {t("detail.send_email")}
-            </button>
+            </Button>
           </div>
         </div>
       </div>
@@ -187,7 +186,7 @@ export default function CustomerDetailPage({ params }: { params: Promise<{ id: s
                 </span>
               </div>
               <h4 className="text-3xl font-heading font-bold text-neutral-dark leading-none">{customer.totalOrders}</h4>
-              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-2 ml-0.5">{t("table.orders")}</p>
+              <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mt-2 ml-0.5">{t("table.orders")}</p>
             </Card>
 
             <Card padding="md" rounded="2xl">
@@ -197,7 +196,7 @@ export default function CustomerDetailPage({ params }: { params: Promise<{ id: s
                 </div>
               </div>
               <h4 className="text-3xl font-heading font-bold text-neutral-dark leading-none">€{customer.totalSpend.toFixed(2)}</h4>
-              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-2 ml-0.5">{t("table.spent")}</p>
+              <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mt-2 ml-0.5">{t("table.spent")}</p>
             </Card>
 
             <Card padding="md" rounded="2xl">
@@ -207,7 +206,7 @@ export default function CustomerDetailPage({ params }: { params: Promise<{ id: s
                 </div>
               </div>
               <h4 className="text-3xl font-heading font-bold text-neutral-dark leading-none">€{(customer.totalSpend / customer.totalOrders || 0).toFixed(2)}</h4>
-              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-2 ml-0.5">{t("detail.basket_size")}</p>
+              <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mt-2 ml-0.5">{t("detail.basket_size")}</p>
             </Card>
           </div>
 
@@ -234,7 +233,7 @@ export default function CustomerDetailPage({ params }: { params: Promise<{ id: s
                 <History size={24} />
               </div>
               <div className="max-w-[320px] space-y-1.5">
-                <h4 className="text-[15px] font-bold text-neutral-dark">{t("detail.intel_tracking")}</h4>
+              <h4 className="text-sm font-bold text-neutral-dark">{t("detail.intel_tracking")}</h4>
                 <p className="text-xs text-gray-400 leading-relaxed px-4">
                   {t("detail.intel_desc")}
                 </p>
@@ -251,7 +250,7 @@ export default function CustomerDetailPage({ params }: { params: Promise<{ id: s
 
           {/* Contact Card */}
           <Card padding="md" rounded="2xl" className="space-y-8">
-            <h3 className="text-[11px] font-heading font-bold text-neutral-dark/40 uppercase tracking-[0.2em] border-b border-gray-50 pb-5">{t("detail.relationship")}</h3>
+            <h3 className="text-xs font-heading font-bold text-neutral-dark/40 uppercase tracking-widest border-b border-gray-50 pb-5">{t("detail.relationship")}</h3>
 
             <div className="space-y-7">
               <div className="flex items-center gap-5">
@@ -259,7 +258,7 @@ export default function CustomerDetailPage({ params }: { params: Promise<{ id: s
                   <Mail size={18} />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">{t("detail.primary_email")}</p>
+                  <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">{t("detail.primary_email")}</p>
                   <button
                     onClick={() => copyToClipboard(customer.email)}
                     className="text-sm font-bold text-neutral-dark hover:text-primary transition-colors flex items-center gap-2 group truncate w-full"
@@ -275,7 +274,7 @@ export default function CustomerDetailPage({ params }: { params: Promise<{ id: s
                   <Phone size={18} />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">{t("detail.mobile")}</p>
+                  <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">{t("detail.mobile")}</p>
                   <p className="text-sm font-bold text-neutral-dark">{customer.phone}</p>
                 </div>
               </div>
@@ -285,7 +284,7 @@ export default function CustomerDetailPage({ params }: { params: Promise<{ id: s
                   <BadgeCheck size={18} />
                 </div>
                 <div className="flex-1">
-                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">{t("detail.identity_check")}</p>
+                  <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">{t("detail.identity_check")}</p>
                   <p className="text-xs font-bold text-emerald-600 flex items-center gap-1.5">
                     <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full" />
                     {t("detail.id_protected")}
@@ -298,7 +297,7 @@ export default function CustomerDetailPage({ params }: { params: Promise<{ id: s
           {/* Address Book Card */}
           <Card padding="md" rounded="2xl" className="space-y-8 overflow-hidden">
             <div className="flex items-center justify-between border-b border-gray-50 pb-5 px-1">
-              <h3 className="text-[11px] font-heading font-bold text-neutral-dark/40 uppercase tracking-[0.2em]">{t("detail.saved_addresses")}</h3>
+              <h3 className="text-xs font-heading font-bold text-neutral-dark/40 uppercase tracking-widest">{t("detail.saved_addresses")}</h3>
               <span className="px-2.5 py-1 bg-gray-50 text-[10px] font-bold rounded-lg text-gray-400 border border-gray-100/50">{customer.addresses?.length || 0}</span>
             </div>
 
@@ -345,7 +344,7 @@ export default function CustomerDetailPage({ params }: { params: Promise<{ id: s
               </div>
               <h4 className="text-[11px] font-heading font-bold uppercase tracking-[0.2em]">{t("detail.risk_mgmt")}</h4>
             </div>
-            <p className="text-[12px] text-gray-500 font-medium leading-[1.6]">
+            <p className="text-xs text-gray-500 font-medium leading-[1.6]">
               {t("detail.risk_desc")}
             </p>
             <button

@@ -24,7 +24,9 @@ import { mockOrders } from "@/lib/mock-data";
 import { Order, OrderStatus } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { Modal } from "@/components/ui/modal";
+import { StatusBadge } from "@/components/ui/badge";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
 
@@ -36,12 +38,12 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
    const [copied, setCopied] = useState(false);
 
    const statusStyles: Record<string, { label: string; bg: string; text: string; dot: string }> = {
-      confirmed: { label: t("status.confirmed"), bg: "bg-blue-50", text: "text-blue-600", dot: "bg-blue-500" },
-      processing: { label: t("status.processing"), bg: "bg-amber-50", text: "text-amber-600", dot: "bg-amber-500" },
-      shipped: { label: t("status.shipped"), bg: "bg-indigo-50", text: "text-indigo-600", dot: "bg-indigo-500" },
-      delivered: { label: t("status.delivered"), bg: "bg-emerald-50", text: "text-emerald-600", dot: "bg-emerald-500" },
-      cancelled: { label: t("status.cancelled"), bg: "bg-red-50", text: "text-red-600", dot: "bg-red-500" },
-      refunded: { label: t("status.refunded"), bg: "bg-gray-50", text: "text-gray-600", dot: "bg-gray-400" },
+      confirmed:        { label: t("status.confirmed"),  bg: "bg-primary/5",    text: "text-primary",       dot: "bg-primary"       },
+      processing:       { label: t("status.processing"), bg: "bg-secondary/10",  text: "text-secondary",     dot: "bg-secondary"     },
+      shipped:          { label: t("status.shipped"),    bg: "bg-primary/5",    text: "text-primary",       dot: "bg-primary"       },
+      delivered:        { label: t("status.delivered"),  bg: "bg-primary/10",   text: "text-primary-light", dot: "bg-primary-light"  },
+      cancelled:        { label: t("status.cancelled"),  bg: "bg-error/5",      text: "text-error",         dot: "bg-error"         },
+      refunded:         { label: t("status.refunded"),   bg: "bg-gray-50",      text: "text-gray-500",      dot: "bg-gray-300"      },
    };
 
    // Use the mock data find logic
@@ -92,18 +94,15 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
             </div>
 
             <div className="flex items-center gap-3">
-               <button className="flex items-center gap-2 px-5 py-2.5 bg-white border border-gray-100 text-gray-500 font-bold rounded-xl text-xs hover:border-gray-200 transition-all shadow-sm">
-                  <Printer size={16} />
-                  {t("detail.invoicing")}
-               </button>
-               <button
-                  onClick={() => setIsFulfilling(true)}
-                  className="flex items-center gap-2 px-6 py-2.5 bg-primary text-white font-bold rounded-xl text-xs hover:shadow-lg hover:shadow-primary/20 transition-all"
-               >
-                  <Truck size={16} />
-                  {t("detail.fulfill_order")}
-               </button>
-            </div>
+            <Button variant="outline" size="sm" className="gap-2">
+              <Printer size={16} />
+              {t("detail.invoicing")}
+            </Button>
+            <Button variant="default" size="sm" className="gap-2" onClick={() => setIsFulfilling(true)}>
+              <Truck size={16} />
+              {t("detail.fulfill_order")}
+            </Button>
+          </div>
          </div>
 
          {/* Main Layout Grid */}
@@ -165,7 +164,7 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
                {/* Payment & Fulfillment Status */}
                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <Card className="space-y-4" padding="md" shadow="sm">
-                     <h3 className="text-[11px] font-heading font-bold text-[#1A1A2E]/60 uppercase tracking-widest flex items-center gap-2">
+                   <h3 className="text-xs font-heading font-bold text-neutral-dark/60 uppercase tracking-widest flex items-center gap-2">
                         <CreditCard size={14} className="text-primary" />
                         {t("detail.payment_details")}
                      </h3>
@@ -181,7 +180,7 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
                      </div>
                   </Card>
                   <Card className="space-y-4" padding="md" shadow="sm">
-                     <h3 className="text-[11px] font-heading font-bold text-[#1A1A2E]/60 uppercase tracking-widest flex items-center gap-2">
+                   <h3 className="text-xs font-heading font-bold text-neutral-dark/60 uppercase tracking-widest flex items-center gap-2">
                         <Truck size={14} className="text-primary" />
                         {t("detail.shipping_method")}
                      </h3>
@@ -206,7 +205,7 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
                {/* Customer Overview */}
                <Card className="space-y-6" padding="md" shadow="sm">
                   <div className="flex items-center justify-between border-b border-gray-50 pb-4">
-                     <h3 className="text-[11px] font-heading font-bold text-[#1A1A2E]/60 uppercase tracking-widest flex items-center gap-2">
+                   <h3 className="text-xs font-heading font-bold text-neutral-dark/60 uppercase tracking-widest flex items-center gap-2">
                         <User size={14} className="text-primary" />
                         {t("detail.customer_log")}
                      </h3>
@@ -237,7 +236,7 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
                   <div className="h-px bg-gray-50" />
 
                   <div className="space-y-4">
-                     <h4 className="text-[10px] font-heading font-bold text-gray-400 uppercase tracking-widest">{t("detail.delivery_address")}</h4>
+                  <h4 className="text-xs font-heading font-bold text-gray-400 uppercase tracking-widest">{t("detail.delivery_address")}</h4>
                      <div className="relative p-4 bg-neutral-light rounded-2xl border border-gray-100 group">
                         <button
                            onClick={() => handleCopy(`${order.shippingAddress.street}, ${order.shippingAddress.city}, ${order.shippingAddress.postalCode}`)}
@@ -298,20 +297,18 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
             onClose={() => setIsFulfilling(false)}
             title={t("fulfill_modal.title")}
             maxWidth="md"
-            footer={(
-               <div className="flex justify-between items-center w-full">
-                  <div className="flex items-center gap-2 text-primary">
-                     <AlertCircle size={14} />
-                     <span className="text-[11px] font-bold">{t("fulfill_modal.dhl_integrated")}</span>
-                  </div>
-                  <div className="flex gap-2">
-                     <button onClick={() => setIsFulfilling(false)} className="px-5 py-2 text-xs font-bold text-gray-400">{t("fulfill_modal.cancel")}</button>
-                     <button className="px-6 py-2.5 bg-neutral-dark text-white text-xs font-bold rounded-xl shadow-lg shadow-neutral-dark/10">
-                        {t("fulfill_modal.confirm")}
-                     </button>
-                  </div>
-               </div>
-            )}
+            footer={
+            <div className="flex justify-between items-center w-full">
+              <div className="flex items-center gap-2 text-primary">
+                <AlertCircle size={14} />
+                <span className="text-xs font-bold">{t("fulfill_modal.dhl_integrated")}</span>
+              </div>
+              <div className="flex gap-2">
+                <Button variant="ghost" size="sm" onClick={() => setIsFulfilling(false)}>{t("fulfill_modal.cancel")}</Button>
+                <Button variant="default" size="sm">{t("fulfill_modal.confirm")}</Button>
+              </div>
+            </div>
+          }
          >
             <div className="space-y-6 pt-2">
                <div className="p-4 bg-neutral-light/50 rounded-2xl border border-gray-100 space-y-4">

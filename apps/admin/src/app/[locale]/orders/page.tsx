@@ -33,6 +33,8 @@ import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { ActionMenu } from "@/components/ui/action-menu";
+import { Reveal } from "@/components/ui/reveal";
+import { StatusBadge } from "@/components/ui/badge";
 import { toast } from "sonner";
 
 export default function OrdersPage() {
@@ -42,14 +44,14 @@ export default function OrdersPage() {
   const pathname = usePathname();
 
   const statusStyles: Record<OrderStatus, { label: string; bg: string; text: string; dot: string }> = {
-    confirmed: { label: t("status.confirmed"), bg: "bg-blue-50", text: "text-blue-600", dot: "bg-blue-500" },
-    processing: { label: t("status.processing"), bg: "bg-amber-50", text: "text-amber-600", dot: "bg-amber-500" },
-    shipped: { label: t("status.shipped"), bg: "bg-indigo-50", text: "text-indigo-600", dot: "bg-indigo-500" },
-    in_transit: { label: t("status.in_transit"), bg: "bg-indigo-50", text: "text-indigo-600", dot: "bg-indigo-500" },
-    out_for_delivery: { label: t("status.out_for_delivery"), bg: "bg-sky-50", text: "text-sky-600", dot: "bg-sky-500" },
-    delivered: { label: t("status.delivered"), bg: "bg-emerald-50", text: "text-emerald-600", dot: "bg-emerald-500" },
-    cancelled: { label: t("status.cancelled"), bg: "bg-red-50", text: "text-red-600", dot: "bg-red-500" },
-    refunded: { label: t("status.refunded"), bg: "bg-gray-50", text: "text-gray-600", dot: "bg-gray-400" },
+    confirmed:        { label: t("status.confirmed"),        bg: "bg-primary/5",   text: "text-primary",       dot: "bg-primary"       },
+    processing:       { label: t("status.processing"),       bg: "bg-secondary/10", text: "text-secondary",     dot: "bg-secondary"     },
+    shipped:          { label: t("status.shipped"),          bg: "bg-primary/5",   text: "text-primary",       dot: "bg-primary"       },
+    in_transit:       { label: t("status.in_transit"),       bg: "bg-primary/5",   text: "text-primary",       dot: "bg-primary-light"  },
+    out_for_delivery: { label: t("status.out_for_delivery"), bg: "bg-primary/10",  text: "text-primary-light", dot: "bg-primary-light"  },
+    delivered:        { label: t("status.delivered"),        bg: "bg-primary/10",  text: "text-primary-light", dot: "bg-primary-light"  },
+    cancelled:        { label: t("status.cancelled"),        bg: "bg-error/5",     text: "text-error",         dot: "bg-error"         },
+    refunded:         { label: t("status.refunded"),         bg: "bg-gray-50",     text: "text-gray-500",      dot: "bg-gray-300"      },
   };
 
   const [search, setSearch] = useState("");
@@ -107,7 +109,7 @@ export default function OrdersPage() {
         <div className="flex flex-col gap-0.5 py-1">
           <span className="text-[11px] font-heading font-bold text-primary uppercase tracking-wider mb-0.5">{order.orderNumber}</span>
           <h4 className="text-sm font-bold text-neutral-dark">{order.shippingAddress.firstName} {order.shippingAddress.lastName}</h4>
-          <span className="text-[10px] text-gray-400 font-medium uppercase truncate max-w-[150px]">{order.shippingAddress.email}</span>
+          <span className="text-xs text-gray-400 font-medium uppercase truncate max-w-[150px]">{order.shippingAddress.email}</span>
         </div>
       ),
       className: "w-full"
@@ -123,7 +125,7 @@ export default function OrdersPage() {
             <span className="text-sm font-bold text-neutral-dark">
               {totalItems === 1 ? t("table.item", { count: 1 }) : t("table.items_plural", { count: totalItems })}
             </span>
-            <span className="text-[10px] text-gray-400 font-medium uppercase">{order.items[0]?.name}</span>
+            <span className="text-xs text-gray-400 font-medium uppercase">{order.items[0]?.name}</span>
           </div>
         );
       },
@@ -136,13 +138,12 @@ export default function OrdersPage() {
       accessor: (order: Order) => {
         const style = statusStyles[order.status] || statusStyles.confirmed;
         return (
-          <span className={cn(
-            "inline-flex items-center gap-1.5 px-3 py-1 text-[10px] font-bold rounded-full uppercase tracking-widest border transition-all",
-            style.bg, style.text, "border-transparent"
-          )}>
-            <span className={cn("w-1.5 h-1.5 rounded-full", style.dot)} />
-            {style.label}
-          </span>
+          <StatusBadge
+            label={style.label}
+            bg={style.bg}
+            text={style.text}
+            dot={style.dot}
+          />
         );
       },
       className: "w-0 whitespace-nowrap"
@@ -154,7 +155,7 @@ export default function OrdersPage() {
       accessor: (order: Order) => (
         <div className="flex flex-col">
           <span className="text-sm font-bold text-neutral-dark font-mono">€{order.total.toFixed(2)}</span>
-          <span className="text-[10px] text-gray-400 font-medium uppercase">{order.payment.method}</span>
+          <span className="text-xs text-gray-400 font-medium uppercase">{order.payment.method}</span>
         </div>
       ),
       className: "w-0 whitespace-nowrap"
@@ -202,7 +203,7 @@ export default function OrdersPage() {
           <h1 className="text-3xl lg:text-[40px] font-heading font-bold text-neutral-dark tracking-tight leading-none">
             {t("title_part1")} <span className="text-primary">{t("title_part2")}</span>
           </h1>
-          <p className="text-[15px] text-gray-500 font-medium leading-relaxed mt-2">
+          <p className="text-sm text-gray-500 font-medium leading-relaxed mt-2">
             {t("description")}
           </p>
         </div>
@@ -263,34 +264,34 @@ export default function OrdersPage() {
             <CircleDollarSign size={20} />
           </div>
           <div>
-            <p className="text-[10px] font-heading font-bold text-gray-400 uppercase tracking-widest mb-0.5">{t("stats.revenue")}</p>
+            <p className="text-xs font-heading font-bold text-gray-400 uppercase tracking-widest mb-0.5">{t("stats.revenue")}</p>
             <h3 className="text-xl font-heading font-bold text-neutral-dark">€2,480.00</h3>
           </div>
         </Card>
         <Card className="flex items-center gap-5" padding="sm" rounded="2xl">
-          <div className="w-12 h-12 bg-amber-50 rounded-xl flex items-center justify-center text-amber-500">
+          <div className="w-12 h-12 bg-secondary/10 rounded-xl flex items-center justify-center text-secondary">
             <Clock size={20} />
           </div>
           <div>
-            <p className="text-[10px] font-heading font-bold text-gray-400 uppercase tracking-widest mb-0.5">{t("stats.pending")}</p>
+            <p className="text-xs font-heading font-bold text-gray-400 uppercase tracking-widest mb-0.5">{t("stats.pending")}</p>
             <h3 className="text-xl font-heading font-bold text-neutral-dark">{t("stats.orders_count", { count: 12 })}</h3>
           </div>
         </Card>
         <Card className="flex items-center gap-5" padding="sm" rounded="2xl">
-          <div className="w-12 h-12 bg-indigo-50 rounded-xl flex items-center justify-center text-indigo-500">
+          <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center text-primary">
             <Truck size={20} />
           </div>
           <div>
-            <p className="text-[10px] font-heading font-bold text-gray-400 uppercase tracking-widest mb-0.5">{t("stats.shipped")}</p>
+            <p className="text-xs font-heading font-bold text-gray-400 uppercase tracking-widest mb-0.5">{t("stats.shipped")}</p>
             <h3 className="text-xl font-heading font-bold text-neutral-dark">{t("stats.orders_count", { count: 84 })}</h3>
           </div>
         </Card>
         <Card className="flex items-center gap-5" padding="sm" rounded="2xl">
-          <div className="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center text-emerald-500">
+          <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center text-primary-light">
             <CheckCircle2 size={20} />
           </div>
           <div>
-            <p className="text-[10px] font-heading font-bold text-gray-400 uppercase tracking-widest mb-0.5">{t("stats.completed")}</p>
+            <p className="text-xs font-heading font-bold text-gray-400 uppercase tracking-widest mb-0.5">{t("stats.completed")}</p>
             <h3 className="text-xl font-heading font-bold text-neutral-dark">{t("stats.orders_count", { count: 412 })}</h3>
           </div>
         </Card>

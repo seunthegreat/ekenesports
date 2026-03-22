@@ -86,9 +86,11 @@ export function CustomerFormModal({
             {t("form.cancel")}
           </Button>
           <Button
+            variant="default"
+            size="sm"
             onClick={handleSave}
             disabled={isSaving}
-            className="flex items-center gap-2 px-8 py-3.5 bg-neutral-dark text-white text-[11px] font-bold uppercase tracking-[0.2em] rounded-2xl hover:bg-black transition-all shadow-lg shadow-black/10 disabled:opacity-70 h-[44px]"
+            className="gap-2 min-w-[140px]"
           >
             {isSaving ? (
               <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />

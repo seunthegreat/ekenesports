@@ -11,7 +11,6 @@ import {
   Eye,
   Trash2,
   X,
-  Check,
   Download
 } from "lucide-react";
 import { useSearchParams } from "next/navigation";
@@ -25,6 +24,8 @@ import { ActionMenu } from "@/components/ui/action-menu";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
+import { StatusBadge } from "@/components/ui/badge";
+import { Reveal } from "@/components/ui/reveal";
 
 // Local Components
 import { CustomerFormModal } from "./components/customer-form-modal";
@@ -41,19 +42,15 @@ function CustomerHeader({ onAdd }: { onAdd: () => void }) {
         <h1 className="text-3xl lg:text-[40px] font-heading font-bold text-neutral-dark tracking-tight leading-none">
           {t("title_part1")} <span className="text-primary">{t("title_part2")}</span>
         </h1>
-        <p className="text-[15px] text-gray-500 font-medium leading-relaxed mt-2">
+        <p className="text-sm text-gray-500 font-medium leading-relaxed mt-2">
           {t("description")}
         </p>
       </div>
       <div className="flex gap-3">
-        <Link
-          href="/customers/new"
-          onClick={(e) => { e.preventDefault(); onAdd(); }}
-          className="flex items-center gap-2 px-6 py-2 bg-neutral-dark text-white font-bold rounded-lg text-xs hover:bg-neutral-dark/90 transition-all shadow-lg shadow-neutral-dark/10"
-        >
-          <UserPlus size={18} />
+        <Button variant="default" size="sm" onClick={onAdd}>
+          <UserPlus size={16} />
           {t("add")}
-        </Link>
+        </Button>
       </div>
     </div>
   );
@@ -70,9 +67,9 @@ export default function CustomersPage() {
   const filterRef = useRef<HTMLDivElement>(null);
 
   const statusStyles = {
-    active: { label: t("filters.active"), bg: "bg-emerald-50", text: "text-emerald-600", dot: "bg-emerald-500" },
-    inactive: { label: t("filters.inactive"), bg: "bg-gray-50", text: "text-gray-400", dot: "bg-gray-300" },
-    blocked: { label: t("filters.blocked"), bg: "bg-error/5", text: "text-error", dot: "bg-error" },
+    active:   { label: t("filters.active"),   bg: "bg-emerald-50", text: "text-emerald-600", dot: "bg-emerald-500" },
+    inactive: { label: t("filters.inactive"), bg: "bg-gray-50",    text: "text-gray-400",    dot: "bg-gray-300"   },
+    blocked:  { label: t("filters.blocked"),  bg: "bg-error/5",    text: "text-error",       dot: "bg-error"      },
   };
 
   const currentStatus = searchParams.get("status") || "all";
@@ -155,7 +152,7 @@ export default function CustomersPage() {
           </div>
           <div className="flex flex-col">
             <span className="text-sm font-bold text-neutral-dark">{customer.firstName} {customer.lastName}</span>
-            <span className="text-[10px] text-gray-400 font-medium uppercase">{customer.email}</span>
+          <span className="text-xs text-gray-400 font-medium uppercase">{customer.email}</span>
           </div>
         </div>
       ),
@@ -166,13 +163,12 @@ export default function CustomersPage() {
       accessor: (customer: Customer) => {
         const style = statusStyles[customer.status];
         return (
-          <span className={cn(
-            "inline-flex items-center gap-1.5 px-3 py-1 text-[10px] font-bold rounded-full uppercase tracking-widest border border-transparent transition-all",
-            style.bg, style.text
-          )}>
-            <span className={cn("w-1.5 h-1.5 rounded-full", style.dot)} />
-            {style.label}
-          </span>
+          <StatusBadge
+            label={style.label}
+            bg={style.bg}
+            text={style.text}
+            dot={style.dot}
+          />
         );
       },
       className: "w-0 whitespace-nowrap"
@@ -182,7 +178,7 @@ export default function CustomersPage() {
       accessor: (customer: Customer) => (
         <div className="flex flex-col">
           <span className="text-sm font-bold text-neutral-dark">{customer.totalOrders}</span>
-          <span className="text-[10px] text-gray-400 font-medium uppercase">{t("table.orders")}</span>
+          <span className="text-xs text-gray-400 font-medium uppercase">{t("table.orders")}</span>
         </div>
       ),
       className: "w-0 whitespace-nowrap"
@@ -192,7 +188,7 @@ export default function CustomersPage() {
       accessor: (customer: Customer) => (
         <div className="flex flex-col">
           <span className="text-sm font-bold text-neutral-dark font-mono">€{customer.totalSpend.toFixed(2)}</span>
-          <span className="text-[10px] text-gray-400 font-medium uppercase">{t("table.spent")}</span>
+          <span className="text-xs text-gray-400 font-medium uppercase">{t("table.spent")}</span>
         </div>
       ),
       className: "w-0 whitespace-nowrap"

@@ -30,6 +30,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { StatusBadge } from "@/components/ui/badge";
 
 export default function StockManagementPage() {
   const t = useTranslations("Stock");
@@ -113,7 +114,7 @@ export default function StockManagementPage() {
           </div>
           <div className="min-w-0">
             <h4 className="text-xs font-bold text-neutral-dark truncate">{variant.productName}</h4>
-            <span className="text-[10px] font-medium text-gray-400 uppercase tracking-tight">
+            <span className="text-xs font-medium text-gray-400 uppercase tracking-tight">
               {variant.color} / {variant.size}
             </span>
           </div>
@@ -141,15 +142,12 @@ export default function StockManagementPage() {
     {
       header: t("table.status"),
       accessor: (variant: any) => (
-        <span className={cn(
-          "inline-flex items-center gap-1.5 px-3 py-1 text-[10px] font-bold rounded-full uppercase tracking-widest leading-none border",
-          variant.stock < 10
-            ? "bg-error/5 text-error border-error/10"
-            : "bg-emerald-50 text-emerald-600 border-emerald-100"
-        )}>
-          <span className={cn("w-1.5 h-1.5 rounded-full", variant.stock < 10 ? "bg-error" : "bg-emerald-500")} />
-          {variant.stock < 10 ? t("status.critical") : t("status.healthy")}
-        </span>
+        <StatusBadge
+          label={variant.stock < 10 ? t("status.critical") : t("status.healthy")}
+          bg={variant.stock < 10 ? "bg-error/5" : "bg-primary/5"}
+          text={variant.stock < 10 ? "text-error" : "text-primary"}
+          dot={variant.stock < 10 ? "bg-error" : "bg-primary"}
+        />
       ),
       className: "w-0 whitespace-nowrap"
     },
@@ -188,7 +186,7 @@ export default function StockManagementPage() {
           <h1 className="text-3xl lg:text-[40px] font-heading font-bold text-neutral-dark tracking-tight leading-none">
             {t("title_part1")} <span className="text-primary">{t("title_part2")}</span>
           </h1>
-          <p className="text-[15px] text-gray-500 font-medium leading-relaxed mt-2">
+          <p className="text-sm text-gray-500 font-medium leading-relaxed mt-2">
             {t("description")}
           </p>
         </div>
@@ -269,7 +267,7 @@ export default function StockManagementPage() {
             <Database size={24} />
           </div>
           <div>
-            <p className="text-[10px] font-heading font-bold text-gray-400 uppercase tracking-widest mb-1">{t("stats.total")}</p>
+            <p className="text-xs font-heading font-bold text-gray-400 uppercase tracking-widest mb-1">{t("stats.total")}</p>
             <h3 className="text-2xl font-heading font-bold text-neutral-dark leading-none">{totalInventory}</h3>
           </div>
         </Card>
@@ -278,17 +276,17 @@ export default function StockManagementPage() {
             <AlertTriangle size={24} />
           </div>
           <div>
-            <p className="text-[10px] font-heading font-bold text-gray-400 uppercase tracking-widest mb-1">{t("stats.alerts")}</p>
+            <p className="text-xs font-heading font-bold text-gray-400 uppercase tracking-widest mb-1">{t("stats.alerts")}</p>
             <h3 className="text-2xl font-heading font-bold text-error leading-none">{lowStockCount}</h3>
           </div>
         </Card>
         <Card className="flex items-center gap-6" padding="md" rounded="2xl">
-          <div className="w-14 h-14 bg-emerald-50 rounded-2xl flex items-center justify-center text-emerald-500">
+          <div className="w-14 h-14 bg-primary/10 rounded-2xl flex items-center justify-center text-primary">
             <PackageCheck size={24} />
           </div>
           <div>
-            <p className="text-[10px] font-heading font-bold text-gray-400 uppercase tracking-widest mb-1">{t("stats.healthy")}</p>
-            <h3 className="text-2xl font-heading font-bold text-emerald-600 leading-none">{allVariants.length - lowStockCount}</h3>
+            <p className="text-xs font-heading font-bold text-gray-400 uppercase tracking-widest mb-1">{t("stats.healthy")}</p>
+            <h3 className="text-2xl font-heading font-bold text-primary leading-none">{allVariants.length - lowStockCount}</h3>
           </div>
         </Card>
       </div>

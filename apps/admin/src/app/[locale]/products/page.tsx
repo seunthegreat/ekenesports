@@ -206,7 +206,7 @@ export default function ProductsPage() {
           <h1 className="text-3xl lg:text-[40px] font-heading font-bold text-neutral-dark tracking-tight leading-none">
             {t("title_part1")} <span className="text-primary">{t("title_part2")}</span>
           </h1>
-          <p className="text-[15px] text-gray-500 font-medium leading-relaxed mt-2">
+          <p className="text-sm text-gray-500 font-medium leading-relaxed mt-2">
             {t("description")}
           </p>
         </div>
@@ -284,12 +284,11 @@ export default function ProductsPage() {
             )}
           </div>
 
-          <Link
-            href="/products/new"
-            className="flex items-center gap-2 px-6 py-1.5 bg-neutral-dark text-white font-bold rounded-lg text-xs hover:bg-neutral-dark/90 transition-all shadow-lg shadow-neutral-dark/10"
-          >
-            <Plus size={18} />
-            {t("add")}
+          <Link href="/products/new">
+            <Button variant="default" size="sm" className="gap-2">
+              <Plus size={16} />
+              {t("add")}
+            </Button>
           </Link>
         </div>
       </div>
@@ -325,14 +324,13 @@ export default function ProductsPage() {
         maxWidth="lg"
         footer={(
           <>
-            <button className="px-5 py-2 text-xs font-bold text-gray-400 hover:text-neutral-dark" onClick={() => setSelectedProduct(null)}>
+            <Button variant="ghost" size="sm" onClick={() => setSelectedProduct(null)}>
               {t("modal.close")}
-            </button>
-            <Link
-              href={`/products/new?id=${selectedProduct?.id}`}
-              className="px-6 py-2.5 bg-neutral-dark text-white text-xs font-bold rounded-xl"
-            >
-              {t("modal.edit_details")}
+            </Button>
+            <Link href={`/products/new?id=${selectedProduct?.id}`}>
+              <Button variant="default" size="sm">
+                {t("modal.edit_details")}
+              </Button>
             </Link>
           </>
         )}
@@ -389,12 +387,12 @@ export default function ProductsPage() {
         maxWidth="sm"
         footer={(
           <>
-            <button className="px-5 py-2 text-xs font-bold text-gray-400 hover:text-neutral-dark" onClick={() => setDeleteProduct(null)}>
+            <Button variant="ghost" size="sm" onClick={() => setDeleteProduct(null)}>
               {t("modal.cancel")}
-            </button>
-            <button className="px-6 py-2.5 bg-error text-white text-xs font-bold rounded-xl">
+            </Button>
+            <Button variant="outline" size="sm" className="border-error text-error hover:bg-error hover:text-white">
               {t("modal.confirm_archive")}
-            </button>
+            </Button>
           </>
         )}
       >

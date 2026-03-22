@@ -144,7 +144,9 @@
       "Red": "Rot",
       "Blue": "Blau",
       "Green": "Grün",
-      "Yellow": "Gelb"
+      "Yellow": "Gelb",
+      "Navy": "Marineblau",
+      "Grey": "Grau"
     },
     "form": {
       "title_create": "Produkt erstellen",
@@ -171,7 +173,11 @@
       "select_category": "Kategorie wählen...",
       "media": "Medien-Assets",
       "drop_images": "Bilder hier ablegen",
-      "select_files": "Oder klicken, um Dateien auszuwählen (Max 2MB)"
+      "select_files": "Oder klicken, um Dateien auszuwählen (Max 2MB)",
+      "media_photo": "{count} Foto",
+      "media_photos": "{count} Fotos",
+      "media_primary": "Haupt",
+      "media_add": "Hinzufügen"
     },
     "matrix": {
       "title": "Varianten-Konfiguration",
@@ -571,6 +577,49 @@
       "title": "Zustellmethode entfernen",
       "desc": "Sind Sie sicher, dass Sie die Zustellmethode \"{name}\" dauerhaft aus dieser Zone löschen möchten? Diese Änderung wird sofort im Storefront wirksam.",
       "confirm": "Methode entfernen"
+    },
+    "create_zone_modal": {
+      "title": "Versandzone erstellen",
+      "presets_label": "Schnellvorlagen",
+      "name_label": "Zonenname",
+      "name_placeholder": "z.B. Mitteleuropa",
+      "activate_label": "Sofort aktivieren",
+      "activate_desc": "Die Zone wird bei der Erstellung im Storefront live gehen",
+      "cancel": "Abbrechen",
+      "submit": "Zone erstellen",
+      "presets": {
+        "Domestic": "Inland",
+        "Domestic_hint": "Ihr Heimatland",
+        "European Union": "Europäische Union",
+        "European Union_hint": "Alle 27 EU-Mitgliedstaaten",
+        "International": "International",
+        "International_hint": "Rest der Welt",
+        "Custom Region": "Benutzerdefinierte Region",
+        "Custom Region_hint": "Eigene Zone definieren"
+      }
+    },
+    "add_method_modal": {
+      "title": "Zustellmethode hinzufügen",
+      "presets_label": "Anbietervorlagen",
+      "name_label": "Methodenname",
+      "name_placeholder": "z.B. Expresslieferung",
+      "price_label": "Basistarif (€)",
+      "price_note": "0 = immer kostenlos",
+      "threshold_label": "Kostenlos ab (€)",
+      "threshold_note": "Bestellwert für kostenlosen Versand",
+      "window_label": "Lieferzeitraum (Tage)",
+      "min_label": "Minimum",
+      "max_label": "Maximum",
+      "activate_label": "Sofort aktivieren",
+      "activate_desc": "Methode erscheint beim Checkout nach der Erstellung",
+      "cancel": "Abbrechen",
+      "submit": "Methode hinzufügen",
+      "carrier_presets": {
+        "DHL Express": "DHL Express",
+        "Standard Post": "Standardversand",
+        "EU Priority": "EU Priorität",
+        "Custom Carrier": "Benutzerdefinierter Anbieter"
+      }
     },
     "more_territories": "+ {count} Weitere",
     "countries": {

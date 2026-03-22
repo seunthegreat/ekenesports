@@ -169,7 +169,7 @@ export function DataTable<T>({ data, columns, onRowClick, className, pageSize = 
                   className={cn(
                     "w-7 h-7 rounded-lg text-xs font-bold flex items-center justify-center transition-all",
                     currentPage === i + 1
-                      ? "bg-neutral-dark text-white shadow-md shadow-neutral-dark/10"
+                      ? "bg-primary text-white shadow-md shadow-primary/10"
                       : "text-gray-500 hover:bg-gray-200"
                   )}
                 >

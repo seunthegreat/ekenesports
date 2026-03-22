@@ -6,6 +6,8 @@ import { ArrowUpRight, TrendingUp, ShoppingBag, Users, AlertTriangle, CreditCard
 import { Card } from "@/components/ui/card";
 import { DataTable } from "@/components/ui/data-table";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Reveal } from "@/components/ui/reveal";
 import { Link } from "@/i18n/routing";
 import { useTranslations } from "next-intl";
 import { useRef, useEffect } from "react";
@@ -68,15 +70,16 @@ export default function DashboardPage() {
     { header: t("table.total"), accessor: (o: any) => o.total, className: "font-bold text-neutral-dark whitespace-nowrap" },
     {
       header: t("table.status"), accessor: (o: any) => (
-        <span className={cn(
-          "px-2 py-0.5 rounded-md text-[9px] font-medium uppercase tracking-widest",
-          o.status === "Delivered" ? "bg-emerald-50 text-emerald-600" :
-            o.status === "Shipped" ? "bg-indigo-50 text-indigo-600" :
-              o.status === "Processing" ? "bg-amber-50 text-amber-600" :
-                "bg-gray-100 text-gray-500"
-        )}>
+        <Badge
+          variant={
+            o.status === "Delivered"   ? "default"   :
+            o.status === "Shipped"     ? "secondary" :
+            o.status === "Processing"  ? "secondary" :
+                                         "outline"
+          }
+        >
           {o.status}
-        </span>
+        </Badge>
       )
     },
   ];
@@ -98,7 +101,7 @@ export default function DashboardPage() {
         <h1 className="text-3xl lg:text-[40px] font-heading font-bold text-neutral-dark tracking-tight leading-none">
           {t("welcome")} <span className="text-primary">Ekene Sport</span> Admin
         </h1>
-        <p className="text-[15px] text-gray-500 font-medium leading-relaxed mt-2">
+        <p className="text-sm text-gray-500 font-medium leading-relaxed mt-2">
           {t("description")}
         </p>
       </div>
@@ -107,7 +110,8 @@ export default function DashboardPage() {
 
       {/* Stats Grid */}
       <section className="space-y-6">
-        <div className="flex items-center justify-between">
+        <Reveal>
+          <div className="flex items-center justify-between">
           <h2 className="text-xl font-heading font-bold text-neutral-dark">{t("overview")}</h2>
 
           <div className="relative" ref={timeframeRef}>
@@ -145,8 +149,10 @@ export default function DashboardPage() {
             )}
           </div>
         </div>
+        </Reveal>
 
-        <div className="grid grid-cols-1 xl:grid-cols-12 gap-5">
+        <Reveal delay={100}>
+          <div className="grid grid-cols-1 xl:grid-cols-12 gap-5">
           {/* Revenue Hero Card */}
           <Card className="xl:col-span-5 bg-neutral-dark relative overflow-hidden flex flex-col justify-between group min-h-[220px]" padding="lg" rounded="3xl" shadow="md">
             <div className="absolute -top-6 -right-6 p-8 opacity-[0.03] transform scale-150 rotate-12 group-hover:scale-[1.6] group-hover:rotate-[15deg] transition-all duration-1000 pointer-events-none">
@@ -158,17 +164,17 @@ export default function DashboardPage() {
                 <div className="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center backdrop-blur-sm shadow-inner overflow-hidden border border-white/5">
                   <TrendingUp className="text-white" size={24} />
                 </div>
-                <span className="text-white/60 font-bold text-[10px] tracking-widest uppercase">{t("hero.title")}</span>
+              <span className="text-white/60 font-bold text-xs tracking-widest uppercase">{t("hero.title")}</span>
               </div>
             </div>
 
             <div className="relative z-10 space-y-4">
               <h2 className="text-4xl lg:text-[44px] font-heading font-bold text-white tracking-tight leading-none">{statsConfig[0].value}</h2>
               <div className="flex items-center gap-3">
-                <span className="flex items-center gap-1.5 px-2.5 py-1 bg-emerald-500/20 text-emerald-400 font-bold text-[10px] rounded-lg uppercase tracking-widest backdrop-blur-md">
+                <span className="flex items-center gap-1.5 px-2.5 py-1 bg-white/15 text-white font-bold text-xs rounded-lg uppercase tracking-widest backdrop-blur-md">
                   <ArrowUpRight size={14} /> {statsConfig[0].trend}
                 </span>
-                <span className="text-white/40 text-[10px] font-bold uppercase tracking-widest">vs Last 30 Days</span>
+                <span className="text-white/40 text-xs font-bold uppercase tracking-widest">vs Last 30 Days</span>
               </div>
             </div>
           </Card>
@@ -178,25 +184,31 @@ export default function DashboardPage() {
             {statsConfig.slice(1).map((stat, i) => (
               <Card
                 key={i}
-                className="group hover:border-gray-200 transition-all duration-300 h-full flex flex-col"
+                className="group hover:border-primary/20 hover:shadow-md transition-all duration-300 h-full flex flex-col"
                 padding="sm"
                 rounded="2xl"
                 shadow="none"
               >
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4 sm:mb-6">
-                  <div className="w-10 h-10 md:w-11 md:h-11 bg-neutral-light rounded-xl flex items-center justify-center group-hover:bg-primary/5 group-hover:scale-105 transition-all duration-300 border border-transparent group-hover:border-primary/10 transition-transform">
+                  <div className={cn(
+                    "w-10 h-10 md:w-11 md:h-11 rounded-xl flex items-center justify-center transition-all duration-300 border border-transparent",
+                    i === 0 ? "bg-primary/10 text-primary group-hover:bg-primary/15 group-hover:border-primary/20" :
+                    i === 1 ? "bg-secondary/10 text-secondary group-hover:bg-secondary/15 group-hover:border-secondary/20" :
+                    i === 2 ? "bg-error/10 text-error group-hover:bg-error/15 group-hover:border-error/20" :
+                              "bg-primary/5 text-primary-light group-hover:bg-primary/10 group-hover:border-primary/10"
+                  )}>
                     <stat.icon />
                   </div>
                   <div className={cn(
-                    "flex items-center gap-1.5 text-[9px] md:text-[10px] font-bold px-2 py-1 rounded-md uppercase tracking-tighter whitespace-nowrap",
-                    stat.trend.startsWith("-") ? "text-error bg-error/10" : "text-emerald-600 bg-emerald-50"
+                    "flex items-center gap-1.5 text-xs font-bold px-2 py-1 rounded-md uppercase tracking-tight whitespace-nowrap",
+                    stat.trend.startsWith("-") ? "text-error bg-error/10" : "text-primary bg-primary/10"
                   )}>
-                    <ArrowUpRight size={12} className={cn(stat.trend.startsWith("-") ? "rotate-90 text-error" : "text-emerald-500")} />
+                    <ArrowUpRight size={12} className={cn(stat.trend.startsWith("-") ? "rotate-90 text-error" : "text-primary")} />
                     {stat.trend}
                   </div>
                 </div>
                 <div className="space-y-1 mt-auto">
-                  <p className="text-[10px] font-bold text-gray-400 tracking-widest uppercase truncate">{t(stat.key)}</p>
+                  <p className="text-xs font-bold text-gray-400 tracking-widest uppercase truncate">{t(stat.key)}</p>
                   <h3 className="text-xl md:text-2xl font-heading font-bold tracking-tight text-neutral-dark truncate">
                     {stat.value}
                   </h3>
@@ -205,11 +217,13 @@ export default function DashboardPage() {
             ))}
           </div>
         </div>
+        </Reveal>
       </section>
 
 
       {/* Detail Widgets */}
-      <section className="grid grid-cols-1 xl:grid-cols-2 gap-8 pt-2">
+      <Reveal delay={150}>
+        <section className="grid grid-cols-1 xl:grid-cols-2 gap-8 pt-2">
         <div className="space-y-4">
           <h2 className="text-xl font-heading font-bold text-neutral-dark">{t("top_products")}</h2>
           <DataTable data={topProducts} columns={topProductsCols} className="bg-white" pageSize={5} />
@@ -221,10 +235,12 @@ export default function DashboardPage() {
           </div>
           <DataTable data={recentOrders} columns={recentOrdersCols} className="bg-white" pageSize={5} />
         </div>
-      </section>
+        </section>
+      </Reveal>
 
       {/* Alerts & Critical Info */}
-      <section className="space-y-6">
+      <Reveal delay={200}>
+        <section className="space-y-6">
         <h2 className="text-xl font-heading font-bold text-neutral-dark flex items-center gap-2">
           {t("alerts")}
           <span className="flex h-2 w-2 rounded-full bg-error animate-pulse" />
@@ -239,21 +255,21 @@ export default function DashboardPage() {
             </div>
             <div className="space-y-1.5">
               <h3 className="text-lg font-heading font-bold text-neutral-dark">12 Low Stock Variants</h3>
-              <p className="text-[14px] text-gray-500 font-medium max-w-2xl leading-relaxed">
+              <p className="text-sm text-gray-500 font-medium max-w-2xl leading-relaxed">
                 Critical items from your collection are falling below reorder thresholds. Immediate replenishment is recommended.
               </p>
               <div className="pt-4">
-                <Link
-                  href="/products/stock"
-                  className="inline-flex items-center gap-2 px-5 py-2.5 bg-neutral-dark text-white font-bold rounded-xl text-xs hover:bg-neutral-dark/90 transition-all shadow-lg shadow-neutral-dark/10 group"
-                >
-                  Stock Manager <span className="inline-block transition-transform group-hover:translate-x-1">→</span>
+                <Link href="/stock">
+                  <Button variant="default" size="sm">
+                    Stock Manager →
+                  </Button>
                 </Link>
               </div>
             </div>
           </div>
         </Card>
-      </section>
+        </section>
+      </Reveal>
     </div>
   );
 }

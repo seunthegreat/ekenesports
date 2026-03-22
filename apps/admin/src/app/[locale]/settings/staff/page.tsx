@@ -149,12 +149,9 @@ export default function StaffSettings() {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2 text-primary">
             <ShieldCheck size={18} />
-            <h2 className="text-sm font-bold text-neutral-dark tracking-tight uppercase tracking-widest">{t("title")}</h2>
+           <h2 className="text-sm font-heading font-bold text-neutral-dark tracking-tight uppercase tracking-widest">{t("title")}</h2>
           </div>
-          <Button
-            onClick={() => setIsInviteOpen(true)}
-            className="flex items-center gap-2 px-6 py-2.5 bg-neutral-dark text-white font-bold rounded-xl text-xs hover:bg-neutral-dark/90 transition-all shadow-lg shadow-neutral-dark/10 h-[36px]"
-          >
+          <Button variant="default" size="sm" className="gap-2" onClick={() => setIsInviteOpen(true)}>
             <UserPlus size={16} />
             {t("invite")}
           </Button>
@@ -162,7 +159,7 @@ export default function StaffSettings() {
 
         <div className="p-4 bg-primary/5 rounded-2xl border border-primary/10 flex gap-4 text-primary">
           <ShieldCheck className="mt-0.5 flex-shrink-0" size={16} />
-          <p className="text-[11px] font-bold leading-relaxed tracking-tight">
+          <p className="text-xs font-bold leading-relaxed tracking-tight">
             {t("desc")}
           </p>
         </div>
@@ -200,7 +197,7 @@ export default function StaffSettings() {
             <Button variant="ghost" onClick={() => setIsInviteOpen(false)} className="px-5 py-2 text-xs font-bold text-gray-400 hover:text-neutral-dark hover:bg-transparent transition-colors h-[36px]">
               {t("modal.cancel")}
             </Button>
-            <Button onClick={handleInvite} className="flex items-center gap-2 px-6 py-2.5 bg-neutral-dark text-white text-xs font-bold rounded-xl hover:bg-neutral-dark/90 transition-all shadow-lg shadow-neutral-dark/10 h-[36px]">
+            <Button variant="default" size="sm" className="gap-2" onClick={handleInvite}>
               <Save size={16} />
               {t("modal.send")}
             </Button>

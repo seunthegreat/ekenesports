@@ -144,7 +144,9 @@
       "Red": "Red",
       "Blue": "Blue",
       "Green": "Green",
-      "Yellow": "Yellow"
+      "Yellow": "Yellow",
+      "Navy": "Navy",
+      "Grey": "Grey"
     },
     "form": {
       "back": "Back to Catalog",
@@ -172,7 +174,11 @@
       "select_category": "Select Category...",
       "media": "Media Assets",
       "drop_images": "Drop images here",
-      "select_files": "Or click to select files (Max 2MB)"
+      "select_files": "Or click to select files (Max 2MB)",
+      "media_photo": "{count} photo",
+      "media_photos": "{count} photos",
+      "media_primary": "Primary",
+      "media_add": "Add"
     },
     "matrix": {
       "title": "Variant Configuration",
@@ -572,6 +578,49 @@
       "title": "Remove Delivery Method",
       "desc": "Are you sure you want to permanently delete the \"{name}\" delivery method from this zone? This change will reflect instantly on the storefront.",
       "confirm": "Remove Method"
+    },
+    "create_zone_modal": {
+      "title": "Create Shipping Zone",
+      "presets_label": "Quick Presets",
+      "name_label": "Zone Name",
+      "name_placeholder": "e.g. Central Europe",
+      "activate_label": "Activate immediately",
+      "activate_desc": "Zone will be live on the storefront upon creation",
+      "cancel": "Cancel",
+      "submit": "Create Zone",
+      "presets": {
+        "Domestic": "Domestic",
+        "Domestic_hint": "Your home country",
+        "European Union": "European Union",
+        "European Union_hint": "All 27 EU member states",
+        "International": "International",
+        "International_hint": "Rest of the world",
+        "Custom Region": "Custom Region",
+        "Custom Region_hint": "Define your own zone"
+      }
+    },
+    "add_method_modal": {
+      "title": "Add Delivery Method",
+      "presets_label": "Carrier Presets",
+      "name_label": "Method Name",
+      "name_placeholder": "e.g. Express Delivery",
+      "price_label": "Base Rate (€)",
+      "price_note": "0 = always free",
+      "threshold_label": "Free Over (€)",
+      "threshold_note": "Order total to unlock free shipping",
+      "window_label": "Delivery Window (days)",
+      "min_label": "Minimum",
+      "max_label": "Maximum",
+      "activate_label": "Activate immediately",
+      "activate_desc": "Method will appear during checkout upon creation",
+      "cancel": "Cancel",
+      "submit": "Add Method",
+      "carrier_presets": {
+        "DHL Express": "DHL Express",
+        "Standard Post": "Standard Post",
+        "EU Priority": "EU Priority",
+        "Custom Carrier": "Custom Carrier"
+      }
     },
     "more_territories": "+ {count} More",
     "countries": {

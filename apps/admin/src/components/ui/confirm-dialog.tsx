@@ -63,13 +63,13 @@ export function ConfirmDialog({
         </div>
       )}
     >
-      <div className="pt-2 pb-6 space-y-4">
+      <div className="pt-2 pb-6 space-y-4 text-center">
         {variant === "danger" && (
-           <div className="w-12 h-12 rounded-full bg-error/10 flex items-center justify-center text-error mb-4">
-             <AlertCircle size={24} />
-           </div>
+          <div className="w-14 h-14 rounded-full bg-error/10 flex items-center justify-center text-error mx-auto mb-2">
+            <AlertCircle size={26} />
+          </div>
         )}
-        <p className="text-[13px] text-gray-500 font-medium leading-relaxed">
+        <p className="text-sm text-gray-500 font-medium leading-relaxed">
           {description}
         </p>
       </div>

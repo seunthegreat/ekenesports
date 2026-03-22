@@ -158,15 +158,19 @@ export default function GeneralSettings() {
             )}
           </div>
           <Button
+            variant="default"
+            size="sm"
             onClick={handleSave}
             disabled={isSaving}
             className={cn(
-              "flex items-center gap-2 px-6 py-2.5 font-bold text-xs rounded-xl shadow-lg transition-all active:scale-95 disabled:opacity-50 h-[38px]",
-              showSuccess ? "bg-emerald-500 shadow-emerald-500/20 text-white" : "bg-neutral-dark text-white hover:bg-neutral-dark/90 shadow-neutral-dark/10"
+              "gap-2 min-w-[130px] transition-all",
+              showSuccess && "bg-primary/80 pointer-events-none"
             )}
           >
             {isSaving ? (
               <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+            ) : showSuccess ? (
+              <CheckCircle2 size={16} />
             ) : (
               <Save size={16} />
             )}

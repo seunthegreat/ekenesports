@@ -10,6 +10,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/ui/data-table";
 import { cn } from "@/lib/utils";
+import { Reveal } from "@/components/ui/reveal";
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   BarChart, Bar
@@ -115,7 +116,7 @@ export default function AnalyticsPage() {
           <h1 className="text-3xl lg:text-[40px] font-heading font-bold text-neutral-dark tracking-tight leading-none">
             {t("title_part1")} <span className="text-primary">{t("title_part2")}</span>
           </h1>
-          <p className="text-[15px] text-gray-500 font-medium leading-relaxed mt-2">
+          <p className="text-sm text-gray-500 font-medium leading-relaxed mt-2">
             {t("description")}
           </p>
         </div>
@@ -190,7 +191,7 @@ export default function AnalyticsPage() {
               </div>
             </div>
             <div>
-              <p className="text-[10px] font-heading font-bold text-gray-400 tracking-widest uppercase">{kpi.label}</p>
+              <p className="text-xs font-heading font-bold text-gray-400 tracking-widest uppercase">{kpi.label}</p>
               <h3 className="text-2xl font-heading font-bold text-neutral-dark mt-1">{kpi.value}</h3>
             </div>
           </Card>
@@ -205,7 +206,7 @@ export default function AnalyticsPage() {
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
             <div className="space-y-1">
               <h3 className="text-lg font-heading font-bold text-neutral-dark">{t("charts.revenue.title")}</h3>
-              <p className="text-xs text-gray-400 font-semibold uppercase tracking-widest">{t("charts.revenue.subtitle")}</p>
+              <p className="text-xs font-heading font-semibold text-gray-400 uppercase tracking-widest">{t("charts.revenue.subtitle")}</p>
             </div>
             <div className="flex items-center gap-4 text-[11px] font-medium">
               <div className="flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-primary" /> 2026</div>
@@ -250,7 +251,7 @@ export default function AnalyticsPage() {
         <Card className="lg:col-span-5" padding="lg" rounded="2xl">
           <div className="space-y-1 mb-6">
             <h3 className="text-lg font-heading font-bold text-neutral-dark">{t("charts.orders.title")}</h3>
-            <p className="text-xs text-gray-400 font-semibold uppercase tracking-widest">{t("charts.orders.subtitle")}</p>
+            <p className="text-xs font-heading font-semibold text-gray-400 uppercase tracking-widest">{t("charts.orders.subtitle")}</p>
           </div>
           <div className="h-[280px] w-full">
             <ResponsiveContainer width="100%" height="100%">
@@ -288,7 +289,7 @@ export default function AnalyticsPage() {
         <Card className="lg:col-span-4" padding="lg" rounded="2xl" shadow="sm">
           <div className="flex items-center gap-2 text-primary mb-8 border-b border-gray-50 pb-5">
             <PieChartIcon size={18} />
-            <h3 className="text-[11px] font-bold uppercase tracking-[0.2em]">{t("sports.title")}</h3>
+            <h3 className="text-sm font-heading font-bold uppercase tracking-widest">{t("sports.title")}</h3>
           </div>
           <div className="space-y-6">
             {[
@@ -322,7 +323,7 @@ export default function AnalyticsPage() {
           <div className="mb-4 pt-1">
             <div className="flex items-center gap-2 text-primary">
               <ShoppingBag size={14} />
-              <h3 className="text-[11px] font-bold uppercase tracking-[0.2em]">{t("table.top_skus_title")}</h3>
+              <h3 className="text-sm font-heading font-bold uppercase tracking-widest">{t("table.top_skus_title")}</h3>
             </div>
           </div>
 
@@ -350,9 +351,9 @@ export default function AnalyticsPage() {
               {t("geo.desc", { main_market: t("geo.regions.germany") })}
             </p>
             <div className="pt-4">
-              <button className="px-8 py-3 bg-white text-neutral-dark text-[11px] font-bold uppercase tracking-widest rounded-2xl hover:bg-primary-light hover:text-white transition-all">
+              <Button variant="outline" size="sm" className="border-white/20 text-white hover:bg-white/10 hover:text-white">
                 {t("geo.expand")}
-              </button>
+              </Button>
             </div>
           </div>
           <div className="md:col-span-7 grid grid-cols-2 sm:grid-cols-2 gap-x-8 gap-y-6">
