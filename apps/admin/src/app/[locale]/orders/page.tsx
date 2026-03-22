@@ -214,14 +214,14 @@ export default function OrdersPage() {
             size="sm"
           >
             <Filter size={16} />
-            {t("filters.button")}
+            {t("filters.title")}
           </Button>
 
           {/* Quick Filter Panel */}
           {isFilterOpen && (
             <div className="absolute top-full right-0 mt-3 w-72 bg-white border border-gray-100 rounded-2xl shadow-2xl z-[60] p-6 animate-in fade-in zoom-in-95 duration-200">
               <div className="flex items-center justify-between mb-5">
-                <h3 className="text-[11px] font-heading font-bold text-[#1A1A2E]/60 uppercase tracking-widest">{t("filters.title")}</h3>
+                <h3 className="text-[11px] font-heading font-bold text-[#1A1A2E]/60 uppercase tracking-widest">{t("filters.panel_title")}</h3>
                 <button onClick={() => setIsFilterOpen(false)}><X size={14} className="text-gray-300" /></button>
               </div>
               <div className="space-y-4">

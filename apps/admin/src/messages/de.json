@@ -31,7 +31,7 @@
     "settings": "Einstellungen"
   },
   "Settings": {
-    "title_part1": "Administrative",
+    "title_part1": "System-",
     "title_part2": "Einstellungen",
     "description": "Verfeinern Sie Ihre globale Storefront-Logik, regionale Logistik und Mitarbeiter-Autorisierungsprotokolle.",
     "nav": {
@@ -40,12 +40,12 @@
         "desc": "Store-Identität, Branding und Kern-Metadaten."
       },
       "shipping": {
-        "title": "Logistik & Versand",
-        "desc": "Lieferzonen, Tarife und DHL-Regeln verwalten."
+        "title": "Regionale Versandregeln",
+        "desc": "Lieferzonen, Tarife und Versanddienstleister verwalten."
       },
       "staff": {
-        "title": "Personal & Intelligenz",
-        "desc": "RBAC-Berechtigungen und Administratorkonten."
+        "title": "Benutzerzugriff & Rollen",
+        "desc": "Mitarbeiterrollen, Berechtigungen und Sicherheit verwalten."
       }
     }
   },
@@ -82,8 +82,8 @@
     }
   },
   "Products": {
-    "title_part1": "Inventar &",
-    "title_part2": "Kollektionen",
+    "title_part1": "Produkt-",
+    "title_part2": "Inventar",
     "description": "Steuern Sie Ihren SKU-Lebenszyklus, Ihre Preisstrategie und Ihre digitalen Assets.",
     "search": "Produkte suchen...",
     "add": "Produkt hinzufügen",
@@ -102,11 +102,12 @@
     },
     "filters": {
       "title": "Filter",
+      "panel_title": "Produkte filtern",
       "active_filters": "Aktive Filter",
       "status": "Status",
       "sport": "Sportart",
       "brand": "Marke",
-      "all_statuses": "Alle Stati",
+      "all_statuses": "Alle Status",
       "all_sports": "Alle Sportarten",
       "all_brands": "Alle Marken",
       "clear": "Alle Filter löschen"
@@ -202,8 +203,8 @@
     "logout": "Abmelden"
   },
   "Stock": {
-    "title_part1": "Lagerbestand &",
-    "title_part2": "Inventar",
+    "title_part1": "Bestands-",
+    "title_part2": "Management",
     "description": "Überwachen Sie die Lagerbestände in Echtzeit, verwalten Sie eingehende Lieferungen und kümmern Sie sich um den Nachschub.",
     "search": "Artikel suchen...",
     "history": "Verlauf",
@@ -214,10 +215,11 @@
       "healthy": "Gesunde SKUs"
     },
     "filter": {
-      "title": "Inventar filtern",
+      "title": "Filter",
+      "panel_title": "Inventar filtern",
       "level": "Lagerbestand",
       "sport": "Sportkategorie",
-      "all_levels": "Alle Bestände",
+      "all_levels": "Alle Status",
       "low_stock": "Niedriger Bestand (<10)",
       "out_of_stock": "Nicht vorrätig",
       "healthy_stock": "Gesunder Bestand",
@@ -258,8 +260,8 @@
     }
   },
   "Orders": {
-    "title_part1": "Logistik &",
-    "title_part2": "Fulfillment",
+    "title_part1": "Bestell-",
+    "title_part2": "Abwicklung",
     "description": "Orchestrieren Sie den globalen Versand, die Sendungsverfolgung und die Kundenabstimmung.",
     "search": "Suche ID, Kunde...",
     "table": {
@@ -288,10 +290,10 @@
       "delete": "Löschen"
     },
     "filters": {
-      "button": "Filter",
-      "title": "Bestellungen filtern",
+      "title": "Filter",
+      "panel_title": "Bestellungen filtern",
       "status": "Bestellstatus",
-      "all_statuses": "Alle Stati",
+      "all_statuses": "Alle Status",
       "clear": "Alle Filter löschen"
     },
     "stats": {
@@ -354,8 +356,8 @@
     }
   },
   "Customers": {
-    "title_part1": "Marktdaten &",
-    "title_part2": "Leistung",
+    "title_part1": "Kunden-",
+    "title_part2": "Verzeichnis",
     "description": "Tauchen Sie tief in Ihren Kundenstamm ein. Verfolgen Sie Akquise, Kundenbindung und den Customer Lifetime Value.",
     "search": "Kunden suchen...",
     "add": "Kunde hinzufügen",
@@ -427,9 +429,10 @@
       "abort": "Abbrechen"
     },
     "filters": {
-      "title": "Kunden filtern",
+      "title": "Filter",
+      "panel_title": "Kunden filtern",
       "status": "Status",
-      "all": "Alle Stati",
+      "all": "Alle Status",
       "active": "Aktiv",
       "inactive": "Inaktiv",
       "blocked": "Gesperrt",
@@ -459,8 +462,8 @@
     }
   },
   "Analytics": {
-    "title_part1": "Intelligenz",
-    "title_part2": "Dashboard",
+    "title_part1": "Analyse-",
+    "title_part2": "Übersicht",
     "description": "Querschnitts-Datenanalyse und Leistungsprüfung für den aktuellen Geschäftszyklus.",
     "export": "Daten exportieren",
     "timeframes": {

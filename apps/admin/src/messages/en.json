@@ -31,7 +31,7 @@
     "settings": "Settings"
   },
   "Settings": {
-    "title_part1": "Administrative",
+    "title_part1": "System",
     "title_part2": "Settings",
     "description": "Fine-tune your global storefront logic, regional logistics, and staff authorization protocols.",
     "nav": {
@@ -40,12 +40,12 @@
         "desc": "Store identity, branding, and core metadata."
       },
       "shipping": {
-        "title": "Logistics & Shipping",
-        "desc": "Manage delivery zones, rates, and DHL rules."
+        "title": "Regional Delivery Rules",
+        "desc": "Manage delivery zones, rates, and carrier integration."
       },
       "staff": {
-        "title": "Staff & Intelligence",
-        "desc": "RBAC permissions and administrative accounts."
+        "title": "User Access Controls",
+        "desc": "Manage staff roles, permissions, and security."
       }
     }
   },
@@ -82,8 +82,8 @@
     }
   },
   "Products": {
-    "title_part1": "Inventory &",
-    "title_part2": "Collections",
+    "title_part1": "Product",
+    "title_part2": "Inventory",
     "description": "Control your SKU lifecycle, pricing strategy, and digital assets.",
     "search": "Search products...",
     "add": "Add Product",
@@ -102,6 +102,7 @@
     },
     "filters": {
       "title": "Filters",
+      "panel_title": "Filter Products",
       "active_filters": "Active Filters",
       "status": "Status",
       "sport": "Sport",
@@ -203,8 +204,8 @@
     "logout": "Sign Out"
   },
   "Stock": {
-    "title_part1": "Stock &",
-    "title_part2": "Inventory",
+    "title_part1": "Inventory",
+    "title_part2": "Management",
     "description": "Monitor real-time stock levels, manage incoming shipments, and handle replenishment.",
     "search": "Search items...",
     "history": "History",
@@ -215,7 +216,8 @@
       "healthy": "Healthy SKUs"
     },
     "filter": {
-      "title": "Filter Inventory",
+      "title": "Filters",
+      "panel_title": "Filter Inventory",
       "level": "Stock Level",
       "sport": "Sport Category",
       "all_levels": "All Levels",
@@ -259,7 +261,7 @@
     }
   },
   "Orders": {
-    "title_part1": "Logistics &",
+    "title_part1": "Order",
     "title_part2": "Fulfillment",
     "description": "Orchestrate global shipping, tracking, and customer reconciliation.",
     "search": "Search ID, customer...",
@@ -289,8 +291,8 @@
       "delete": "Delete"
     },
     "filters": {
-      "button": "Filters",
-      "title": "Filter Orders",
+      "title": "Filters",
+      "panel_title": "Filter Orders",
       "status": "Order Status",
       "all_statuses": "All Statuses",
       "clear": "Clear All Filters"
@@ -355,8 +357,8 @@
     }
   },
   "Customers": {
-    "title_part1": "Market Data &",
-    "title_part2": "Performance",
+    "title_part1": "Customer",
+    "title_part2": "Directory",
     "description": "Deep dive into your user base. Track acquisition, retention, and lifetime value.",
     "search": "Search customers...",
     "add": "Add Customer",
@@ -428,7 +430,8 @@
       "abort": "Abort"
     },
     "filters": {
-      "title": "Filter Customers",
+      "title": "Filters",
+      "panel_title": "Filter Customers",
       "status": "Status",
       "all": "All Statuses",
       "active": "Active",
@@ -460,8 +463,8 @@
     }
   },
   "Analytics": {
-    "title_part1": "Intelligence",
-    "title_part2": "Dashboard",
+    "title_part1": "Analytics",
+    "title_part2": "Overview",
     "description": "Cross-sectional data analysis and performance auditing for the current business cycle.",
     "export": "Export Data",
     "timeframes": {
