@@ -8,10 +8,12 @@ interface CheckoutStore {
   address: ShippingAddress | null;
   shippingRate: ShippingRate | null;
   payment: PaymentInfo | null;
+  clientSecret: string | null;
   setStep: (step: 1 | 2 | 3 | 4) => void;
   setAddress: (address: ShippingAddress) => void;
   setShippingRate: (rate: ShippingRate) => void;
   setPayment: (payment: PaymentInfo) => void;
+  setClientSecret: (secret: string | null) => void;
   reset: () => void;
 }
 
@@ -20,6 +22,7 @@ export const useCheckoutStore = create<CheckoutStore>()((set) => ({
   address: null,
   shippingRate: null,
   payment: null,
+  clientSecret: null,
 
   setStep: (step) => set({ step }),
 
@@ -29,5 +32,7 @@ export const useCheckoutStore = create<CheckoutStore>()((set) => ({
 
   setPayment: (payment) => set({ payment, step: 4 }),
 
-  reset: () => set({ step: 1, address: null, shippingRate: null, payment: null }),
+  setClientSecret: (clientSecret) => set({ clientSecret }),
+
+  reset: () => set({ step: 1, address: null, shippingRate: null, payment: null, clientSecret: null }),
 }));

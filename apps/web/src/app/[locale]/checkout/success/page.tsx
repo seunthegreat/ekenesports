@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect, Suspense } from "react";
 import { useTranslations } from "next-intl";
 import { useSearchParams } from "next/navigation";
 import { Link } from "@/i18n/routing";
@@ -8,14 +9,68 @@ import { COUNTRIES } from "@/lib/dhl-shipping";
 import { formatPrice } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { CheckCircle, Package } from "lucide-react";
+import api from "@/utils/api";
 
-export default function CheckoutSuccessPage() {
+function CheckoutSuccessContent() {
   const t = useTranslations("checkout");
   const searchParams = useSearchParams();
+  const sessionId = searchParams.get("session_id");
+  const orderIdParam = searchParams.get("order_id");
+  const paymentIntent = searchParams.get("payment_intent");
   const orderNumber = searchParams.get("order");
-  const order = useOrderStore((s) => (orderNumber ? s.getOrder(orderNumber) : undefined));
 
-  if (!order) {
+  const [order, setOrder] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+
+  const localOrder = useOrderStore((s) => (orderNumber ? s.getOrder(orderNumber) : undefined));
+
+  useEffect(() => {
+    // Prioritize Stripe IDs (pi_... or session_id) over mock IDs
+    const effectiveSessionId = paymentIntent || sessionId || (orderIdParam ? `mock_session_${orderIdParam}` : null);
+    
+    if (effectiveSessionId) {
+      const fetchOrder = async () => {
+        try {
+          const response = await api.post(`/stripe/session/${effectiveSessionId}`, {}, { skipAuth: true } as any);
+          setOrder(response.data);
+        } catch (err) {
+          console.warn("Primary order fetch failed, trying fallback:", err);
+          // Fallback: Try using the order_id directly if we have it
+          if (orderIdParam) {
+            try {
+              const fallbackResponse = await api.post(`/stripe/session/mock_session_${orderIdParam}`, {}, { skipAuth: true } as any);
+              setOrder(fallbackResponse.data);
+            } catch (fallbackErr) {
+              console.error("Fallback order fetch also failed:", fallbackErr);
+              setError(true);
+            }
+          } else {
+            setError(true);
+          }
+        } finally {
+          setLoading(false);
+        }
+      };
+      fetchOrder();
+    } else if (localOrder) {
+      setOrder(localOrder);
+      setLoading(false);
+    } else {
+      setLoading(false);
+    }
+  }, [sessionId, orderIdParam, paymentIntent, localOrder]);
+
+  if (loading) {
+    return (
+      <div className="max-w-7xl mx-auto px-4 py-32 text-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+        <p className="text-gray-500">{t("loadingOrder") || "Loading your order details..."}</p>
+      </div>
+    );
+  }
+
+  if (error || !order) {
     return (
       <div className="max-w-lg mx-auto px-4 py-16 text-center">
         <CheckCircle className="w-16 h-16 mx-auto text-primary mb-6" />
@@ -76,7 +131,7 @@ export default function CheckoutSuccessPage() {
       <div className="bg-neutral-light rounded-lg p-6 mb-6">
         <p className="text-xs text-gray-500 mb-3">{t("orderSummary")}</p>
         <div className="space-y-2">
-          {order.items.map((item) => (
+          {order.items.map((item: any) => (
             <div key={item.variantId} className="flex justify-between text-sm">
               <span>{item.name} <span className="text-gray-400">x{item.quantity}</span></span>
               <span className="font-mono">{formatPrice(item.price * item.quantity)}</span>
@@ -107,5 +162,18 @@ export default function CheckoutSuccessPage() {
         </Link>
       </div>
     </div>
+  );
+}
+
+export default function CheckoutSuccessPage() {
+  return (
+    <Suspense fallback={
+      <div className="max-w-7xl mx-auto px-4 py-32 text-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+        <p className="text-gray-500">Loading your order details...</p>
+      </div>
+    }>
+      <CheckoutSuccessContent />
+    </Suspense>
   );
 }

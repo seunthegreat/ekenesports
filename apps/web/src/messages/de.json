@@ -132,7 +132,8 @@
     "backToShop": "Weiter einkaufen",
     "redirecting": "Weiterleitung zur Zahlung...",
     "emptyCart": "Dein Warenkorb ist leer",
-    "edit": "Bearbeiten"
+    "edit": "Bearbeiten",
+    "loadingOrder": "Bestelldetails werden geladen..."
   },
   "tracking": {
     "title": "Bestellung verfolgen",

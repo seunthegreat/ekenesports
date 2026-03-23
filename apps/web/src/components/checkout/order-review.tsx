@@ -10,9 +10,14 @@ import { generateWaybill, generateOrderNumber, generateMockTimeline, COUNTRIES }
 import { formatPrice } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Order } from "@/lib/types";
+import { toast } from "sonner";
+import api from "@/utils/api";
+import { useStripe, useElements } from "@stripe/react-stripe-js";
 import Image from "next/image";
 
 export function OrderReview() {
+  const stripe = useStripe();
+  const elements = useElements();
   const t = useTranslations("checkout");
   const router = useRouter();
 
@@ -34,43 +39,46 @@ export function OrderReview() {
   const user = useAuthStore((s) => s.user);
 
   async function handlePlaceOrder() {
-    if (!user) {
-      router.push("/login?redirect=/checkout/review");
-      return;
-    }
+    if (!user || !stripe || !elements) return;
 
     try {
-      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_API_URL || 'http://localhost:3000';
-      const response = await fetch(`${backendUrl}/stripe/checkout`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          userId: user.id,
-          items: items.map((item) => ({
-            productId: item.productId,
-            name: item.product.name,
-            price: item.variant.price,
-            quantity: item.quantity,
-          })),
-          successUrl: `${window.location.origin}/checkout/success`,
-          cancelUrl: `${window.location.origin}/checkout`,
-        }),
+      // 1. Create the Order in our DB first
+      const paymentIntentId = useCheckoutStore.getState().clientSecret?.split('_secret_')[0];
+      
+      const response = await api.post("/stripe/checkout", {
+        userId: user.id,
+        items: items.map((item) => ({
+          productId: item.productId,
+          name: item.product.name,
+          price: item.variant.price,
+          quantity: item.quantity,
+        })),
+        paymentIntentId,
+        successUrl: `${window.location.origin}/checkout/success`,
+        cancelUrl: `${window.location.origin}/checkout`,
       });
 
-      const data = await response.json();
+      const { orderId } = response.data;
 
-      if (data.url) {
-        // Clear cart and reset checkout state before leaving
+      // 2. Confirm the Payment
+      const { error } = await stripe.confirmPayment({
+        elements,
+        confirmParams: {
+          return_url: `${window.location.origin}/checkout/success?order_id=${orderId}`,
+        },
+      });
+
+      if (error) {
+        console.error("Stripe confirm error:", error);
+        toast.error(error.message || "Payment failed");
+      } else {
+        // Redirection happens automatically unless there's an immediate error
         clearCart();
         resetCheckout();
-        // Redirect to Stripe (Mock or Real)
-        window.location.href = data.url;
       }
-    } catch (error) {
-      console.error("Checkout failed:", error);
-      alert("Failed to initiate checkout. Please try again.");
+    } catch (error: any) {
+      console.error("Order process error:", error);
+      toast.error(error.message || "An unexpected error occurred.");
     }
   }
 
@@ -114,7 +122,7 @@ export function OrderReview() {
           </button>
         </div>
         <p className="text-sm text-gray-600">
-          Stripe Checkout
+          Credit Card
         </p>
       </div>
 

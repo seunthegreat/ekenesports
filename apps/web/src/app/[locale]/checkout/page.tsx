@@ -10,6 +10,7 @@ import { ShippingSelector } from "@/components/checkout/shipping-selector";
 import { PaymentForm } from "@/components/checkout/payment-form";
 import { OrderReview } from "@/components/checkout/order-review";
 import { OrderSummarySidebar } from "@/components/checkout/order-summary-sidebar";
+import { StripeElementsWrapper } from "@/components/checkout/stripe-elements-wrapper";
 import { Button } from "@/components/ui/button";
 import { ShoppingBag } from "lucide-react";
 
@@ -44,8 +45,16 @@ export default function CheckoutPage() {
         <div className="lg:col-span-2">
           {step === 1 && <AddressForm />}
           {step === 2 && <ShippingSelector />}
-          {step === 3 && <PaymentForm />}
-          {step === 4 && <OrderReview />}
+          {step >= 3 && (
+            <StripeElementsWrapper>
+              <div className={step === 3 ? "block" : "hidden"}>
+                <PaymentForm />
+              </div>
+              <div className={step === 4 ? "block" : "hidden"}>
+                <OrderReview />
+              </div>
+            </StripeElementsWrapper>
+          )}
         </div>
         <div className="order-first lg:order-last">
           <div className="lg:sticky lg:top-24">

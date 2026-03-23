@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuthStore } from "@/lib/store/auth-store";
 import { storeToken } from "@/utils/cookies";
+import api from "@/utils/api";
 
 export function GoogleCallbackForm() {
   const router = useRouter();
@@ -19,14 +20,12 @@ export function GoogleCallbackForm() {
       if (accessToken && refreshToken) {
         try {
           // 2. Fetch full user profile from backend (DB) to ensure we have the real data
-          const backendUrl = process.env.NEXT_PUBLIC_BACKEND_API_URL || 'http://localhost:4000';
-          const profileRes = await fetch(`${backendUrl}/auth/me`, {
-            headers: { Authorization: `Bearer ${accessToken}` }
-          });
+          const profileRes = await api.get("/auth/me", {
+            headers: { Authorization: `Bearer ${accessToken}` },
+            skipAuth: true
+          } as any);
           
-          if (!profileRes.ok) throw new Error("Failed to fetch profile");
-          
-          const user = await profileRes.json();
+          const user = profileRes.data;
 
           // 3. Update Server-Side Cookies (HttpOnly)
           await storeToken({ token: accessToken, refreshToken });

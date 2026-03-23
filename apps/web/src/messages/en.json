@@ -132,7 +132,8 @@
     "backToShop": "Continue Shopping",
     "redirecting": "Redirecting to payment...",
     "emptyCart": "Your cart is empty",
-    "edit": "Edit"
+    "edit": "Edit",
+    "loadingOrder": "Loading your order details..."
   },
   "tracking": {
     "title": "Track Your Order",

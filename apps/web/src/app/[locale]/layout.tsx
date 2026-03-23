@@ -4,6 +4,7 @@ import { routing } from "@/i18n/routing";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { PromoBar } from "@/components/layout/promo-bar";
+import { Toaster } from "sonner";
 import "@/app/globals.css";
 
 export function generateStaticParams() {
@@ -37,6 +38,7 @@ export default async function LocaleLayout({
       <Header />
       <main className="min-h-screen">{children}</main>
       <Footer />
+      <Toaster position="bottom-right" richColors />
     </NextIntlClientProvider>
   );
 }
