@@ -5,6 +5,7 @@ import { useRouter } from "@/i18n/routing";
 import { useCheckoutStore } from "@/lib/checkout-store";
 import { useCartStore } from "@/lib/cart-store";
 import { useOrderStore } from "@/lib/order-store";
+import { useAuthStore } from "@/lib/store/auth-store";
 import { generateWaybill, generateOrderNumber, generateMockTimeline, COUNTRIES } from "@/lib/dhl-shipping";
 import { formatPrice } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -30,40 +31,47 @@ export function OrderReview() {
   const total = subtotal + shippingRate.price;
   const countryName = COUNTRIES.find((c) => c.code === address.country)?.name ?? address.country;
 
-  function handlePlaceOrder() {
-    const orderNumber = generateOrderNumber();
-    const waybill = generateWaybill();
-    const id = crypto.randomUUID();
+  const user = useAuthStore((s) => s.user);
 
-    const order: Order = {
-      id,
-      orderNumber,
-      waybill,
-      items: items.map((item) => ({
-        productId: item.productId,
-        variantId: item.variantId,
-        quantity: item.quantity,
-        name: item.product.name,
-        variant: `${item.variant.color} / ${item.variant.size}`,
-        price: item.variant.price,
-        image: item.product.images[0]?.url ?? "",
-      })),
-      shippingAddress: address,
-      shippingRate,
-      payment,
-      subtotal,
-      shippingCost: shippingRate.price,
-      total,
-      status: "confirmed",
-      timeline: [],
-      createdAt: new Date().toISOString(),
-    };
+  async function handlePlaceOrder() {
+    if (!user) {
+      router.push("/login?redirect=/checkout/review");
+      return;
+    }
 
-    order.timeline = generateMockTimeline(order);
-    addOrder(order);
-    clearCart();
-    resetCheckout();
-    router.push(`/checkout/success?order=${orderNumber}`);
+    try {
+      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_API_URL || 'http://localhost:3000';
+      const response = await fetch(`${backendUrl}/stripe/checkout`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId: user.id,
+          items: items.map((item) => ({
+            productId: item.productId,
+            name: item.product.name,
+            price: item.variant.price,
+            quantity: item.quantity,
+          })),
+          successUrl: `${window.location.origin}/checkout/success`,
+          cancelUrl: `${window.location.origin}/checkout`,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.url) {
+        // Clear cart and reset checkout state before leaving
+        clearCart();
+        resetCheckout();
+        // Redirect to Stripe (Mock or Real)
+        window.location.href = data.url;
+      }
+    } catch (error) {
+      console.error("Checkout failed:", error);
+      alert("Failed to initiate checkout. Please try again.");
+    }
   }
 
   return (
