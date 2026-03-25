@@ -21,29 +21,55 @@ export class StripeService {
     }
   }
 
-  async createCheckoutSession(userId: string, items: any[], successUrl: string, cancelUrl: string, paymentIntentId?: string) {
-    // 1. Create a Pending Order in the Database
+  async initializeOrder(userId: string, items: any[], successUrl: string, cancelUrl: string, paymentIntentId?: string) {
     const orderNumber = `ORD-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
     const total = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
 
-    const order = await this.prisma.order.create({
-        data: {
-            orderNumber,
-            userId,
+    // 1. Check if an order already exists for this payment intent
+    if (paymentIntentId) {
+      const existingOrder = await this.prisma.order.findUnique({
+        where: { stripePaymentIntentId: paymentIntentId }
+      });
+
+      if (existingOrder) {
+        // Update the existing order to match the current items/total
+        const order = await this.prisma.order.update({
+          where: { id: existingOrder.id },
+          data: {
             total,
-            status: 'PENDING',
-            stripePaymentIntentId: paymentIntentId ?? null,
             items: {
-                create: items.map(item => ({
-                    productId: item.productId,
-                    quantity: item.quantity,
-                    price: item.price
-                }))
+              deleteMany: {}, // Clear old items
+              create: items.map(item => ({
+                productId: item.productId,
+                quantity: item.quantity,
+                price: item.price
+              }))
             }
+          }
+        });
+        return { orderId: order.id, mock: false };
+      }
+    }
+
+    // 2. Create a new Pending Order if no existing one found
+    const order = await this.prisma.order.create({
+      data: {
+        orderNumber,
+        userId,
+        total,
+        status: 'PENDING',
+        stripePaymentIntentId: paymentIntentId ?? null,
+        items: {
+          create: items.map(item => ({
+            productId: item.productId,
+            quantity: item.quantity,
+            price: item.price
+          }))
         }
+      }
     });
 
-    // 2. Link PaymentIntent to Order if we are using Elements
+    // 3. Link PaymentIntent to Order if we are using Elements
     if (paymentIntentId && !this.isMock) {
       await this.stripe.paymentIntents.update(paymentIntentId, {
         metadata: { orderId: order.id }
@@ -241,6 +267,28 @@ export class StripeService {
 
     if (!order) return null;
 
+    // Proactive Check: If order is still PENDING but we have a PaymentIntent, check its real status
+    if (order.status === 'PENDING' && order.stripePaymentIntentId && !this.isMock) {
+      try {
+        const intent = await this.stripe.paymentIntents.retrieve(order.stripePaymentIntentId);
+        if (intent.status === 'succeeded') {
+          const updatedOrder = await this.prisma.order.update({
+            where: { id: order.id },
+            data: { status: 'PAID' },
+            include: { items: { include: { product: true } } }
+          });
+          console.log(`[Stripe Proactive] Order ${order.id} marked as PAID after checking PaymentIntent`);
+          return this.formatOrderResponse(updatedOrder);
+        }
+      } catch (err) {
+        console.error(`[Stripe Proactive] Failed to verify intent ${order.stripePaymentIntentId}:`, err.message);
+      }
+    }
+
+    return this.formatOrderResponse(order);
+  }
+
+  private formatOrderResponse(order: any) {
     return {
       ...order,
       waybill: `DL${Math.floor(Math.random() * 10000000).toString().padStart(8, '0')}`,

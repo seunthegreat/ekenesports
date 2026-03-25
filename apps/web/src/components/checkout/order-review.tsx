@@ -45,7 +45,7 @@ export function OrderReview() {
       // 1. Create the Order in our DB first
       const paymentIntentId = useCheckoutStore.getState().clientSecret?.split('_secret_')[0];
       
-      const response = await api.post("/stripe/checkout", {
+      const response = await api.post("/stripe/initialize-order", {
         userId: user.id,
         items: items.map((item) => ({
           productId: item.productId,

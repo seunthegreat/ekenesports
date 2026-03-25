@@ -1,10 +1,9 @@
 import { NextIntlClientProvider, hasLocale } from "next-intl";
 import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
-import { Header } from "@/components/layout/header";
-import { Footer } from "@/components/layout/footer";
-import { PromoBar } from "@/components/layout/promo-bar";
 import { Toaster } from "sonner";
+import Providers from "@/providers/Providers";
+
 import "@/app/globals.css";
 
 export function generateStaticParams() {
@@ -34,11 +33,12 @@ export default async function LocaleLayout({
 
   return (
     <NextIntlClientProvider locale={locale} messages={messages}>
-      <PromoBar />
-      <Header />
-      <main className="min-h-screen">{children}</main>
-      <Footer />
-      <Toaster position="bottom-right" richColors />
+      <Providers>
+        {children}
+        <Toaster position="bottom-right" richColors />
+      </Providers>
+
     </NextIntlClientProvider>
   );
+
 }

@@ -19,7 +19,7 @@ export function StripeElementsWrapper({ children }: StripeElementsWrapperProps) 
   const items = useCartStore((s) => s.items);
   const user = useAuthStore((s) => s.user);
   const [loading, setLoading] = useState(false);
-  
+
   const fetchingRef = useRef(false);
   const lastTotalRef = useRef<number | null>(null);
 
@@ -36,7 +36,7 @@ export function StripeElementsWrapper({ children }: StripeElementsWrapperProps) 
         setLoading(true);
         try {
           const currentPI = clientSecret?.split('_secret_')[0];
-          
+
           const res = await api.post("/stripe/create-payment-intent", {
             userId: user.id,
             items: items.map(i => ({
@@ -47,7 +47,7 @@ export function StripeElementsWrapper({ children }: StripeElementsWrapperProps) 
             shippingCost: shippingRate.price,
             paymentIntentId: currentPI
           } as any);
-          
+
           if (res.data.clientSecret !== clientSecret) {
             setClientSecret(res.data.clientSecret);
           }
@@ -75,7 +75,7 @@ export function StripeElementsWrapper({ children }: StripeElementsWrapperProps) 
   const appearance = {
     theme: 'stripe' as const,
     variables: {
-      colorPrimary: '#0F172A', // Match your dashboard/primary color
+      colorPrimary: '#0F172A',
       fontFamily: 'Plus Jakarta Sans, Inter, sans-serif',
       borderRadius: '8px',
     },

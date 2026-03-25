@@ -6,9 +6,9 @@ import { StripeService } from './stripe.service';
 export class StripeController {
   constructor(private readonly stripeService: StripeService) {}
 
-  @Post('checkout')
-  async createCheckout(@Body() body: { userId: string, items: any[], successUrl: string, cancelUrl: string, paymentIntentId?: string }) {
-    return this.stripeService.createCheckoutSession(
+  @Post('initialize-order')
+  async initializeOrder(@Body() body: { userId: string, items: any[], successUrl: string, cancelUrl: string, paymentIntentId?: string }) {
+    return this.stripeService.initializeOrder(
       body.userId,
       body.items,
       body.successUrl,
