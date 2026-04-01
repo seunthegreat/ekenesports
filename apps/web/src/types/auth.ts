@@ -34,3 +34,10 @@ export interface GoogleAuthData {
   accessToken: string;
   idToken: string;
 }
+
+export interface RegisterPayload {
+  email: string;
+  password: string;
+  lastName: string;
+  firstName: string;
+}

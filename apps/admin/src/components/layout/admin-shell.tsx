@@ -19,6 +19,8 @@ import {
 import { cn } from "@/lib/utils";
 import { useTranslations } from "next-intl";
 import { LanguageSwitcher } from "./language-switcher";
+import { useAuthStore } from "@/lib/store/auth-store";
+import { useRouter } from "next/navigation";
 
 const navigation = [
   { name: "Dashboard", href: "/", icon: LayoutDashboard, key: "dashboard" },
@@ -47,12 +49,25 @@ function CollapsedMark() {
 
 export function AdminShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const router = useRouter();
   const tNav = useTranslations("Navigation");
   const tUser = useTranslations("User");
+  
+  const { user, logout } = useAuthStore();
+  
   const [sidebarWidth, setSidebarWidth] = useState(256);
   const [isResizing, setIsResizing] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+
+  const initials = user?.firstName && user?.lastName 
+    ? `${user.firstName[0]}${user.lastName[0]}`.toUpperCase()
+    : "AS";
+
+  const handleLogout = () => {
+    logout();
+    router.push("/login");
+  };
 
   const isCollapsed = !isMobile && sidebarWidth < 200;
 
@@ -213,42 +228,63 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
           <div className={cn("flex-shrink-0", isCollapsed ? "p-[14px]" : "p-4")}>
             <div className="h-px bg-gray-100 mb-3" />
 
-            <button
-              className={cn(
-                "flex items-center gap-3 w-full rounded-xl transition-all duration-150 group text-left",
-                isCollapsed
-                  ? "justify-center p-2 hover:bg-gray-50"
-                  : "px-3 py-2.5 hover:bg-gray-50"
-              )}
-            >
-              {/* Gradient avatar using theme colors */}
-              <div
-                className="w-[34px] h-[34px] rounded-[10px] flex items-center justify-center shrink-0 font-heading font-bold text-[11px] text-white tracking-wide"
-                style={{
-                  background:
-                    "linear-gradient(135deg, var(--color-primary-light), var(--color-primary))",
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => {
+                   if (!isCollapsed) {
+                     // Potential profile link? For now just static
+                   }
                 }}
+                className={cn(
+                  "flex items-center gap-3 flex-1 rounded-xl transition-all duration-150 group text-left",
+                  isCollapsed ? "justify-center p-2 hover:bg-gray-50" : "px-3 py-2.5 hover:bg-gray-50"
+                )}
               >
-                AS
-              </div>
+                {/* Gradient avatar using theme colors */}
+                <div
+                  className="w-[34px] h-[34px] rounded-[10px] flex items-center justify-center shrink-0 font-heading font-bold text-[11px] text-white tracking-wide"
+                  style={{
+                    background:
+                      "linear-gradient(135deg, var(--color-primary-light), var(--color-primary))",
+                  }}
+                >
+                  {initials}
+                </div>
 
-              {!isCollapsed && (
-                <>
+                {!isCollapsed && (
                   <div className="flex-1 min-w-0">
                     <p className="font-body text-[13px] font-semibold text-neutral-dark truncate leading-snug">
-                      {tUser("role")}
+                      {user?.firstName && user?.lastName 
+                        ? `${user.firstName} ${user.lastName}` 
+                        : tUser("role")}
                     </p>
                     <p className="font-body text-[11px] text-gray-400 font-normal truncate">
-                      admin@ekenesport.com
+                      {user?.email || "admin@ekenesport.com"}
                     </p>
                   </div>
-                  <LogOut
-                    size={14}
-                    className="text-gray-300 group-hover:text-error transition-colors shrink-0"
-                  />
-                </>
+                )}
+              </button>
+
+              {!isCollapsed && (
+                <button
+                  onClick={handleLogout}
+                  title="Log out"
+                  className="p-2 rounded-lg text-gray-300 hover:text-error hover:bg-error/5 transition-all shrink-0"
+                >
+                  <LogOut size={16} />
+                </button>
               )}
-            </button>
+
+              {isCollapsed && (
+                 <button
+                  onClick={handleLogout}
+                  title="Log out"
+                  className="absolute bottom-4 left-1/2 -translate-x-1/2 p-2 rounded-lg text-gray-300 hover:text-error hover:bg-error/5 transition-all opacity-0 group-hover:opacity-100"
+                 >
+                   <LogOut size={16} />
+                 </button>
+              )}
+            </div>
           </div>
 
           {/* Drag handle — desktop only */}

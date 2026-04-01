@@ -8,17 +8,48 @@ import { RegisterDto } from '../dto/register.dto';
 import { LoginDto } from '../dto/login.dto';
 import { VerifyOtpDto, ResetPasswordDto } from '../dto/auth-utils.dto';
 import * as bcrypt from 'bcrypt';
+import * as argon2 from 'argon2';
 import { Role } from '@prisma/client';
 
 @Injectable()
 export class AuthService {
+  private readonly pepper: string;
+
   constructor(
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
     private readonly usersService: UsersService,
     private readonly mailService: MailService,
     private readonly otpService: OtpService,
-  ) {}
+  ) {
+    this.pepper = this.configService.get<string>('SECRET_PEPPER', 'default_pepper_change_me');
+  }
+
+  private async hashPassword(password: string): Promise<string> {
+    // Combine password with pepper before hashing
+    return argon2.hash(password + this.pepper, {
+      type: argon2.argon2id,
+      memoryCost: 65536, // 64 MB
+      timeCost: 3,
+      parallelism: 4,
+    });
+  }
+
+  private async verifyPassword(password: string, hash: string): Promise<{ isValid: boolean; needsMigration: boolean }> {
+    // Check if it's an argon2 hash
+    if (hash.startsWith('$argon2')) {
+      const isValid = await argon2.verify(hash, password + this.pepper);
+      return { isValid, needsMigration: false };
+    }
+
+    // Fallback to bcrypt for lazy migration
+    if (hash.startsWith('$2b$') || hash.startsWith('$2a$')) {
+      const isValid = await bcrypt.compare(password, hash);
+      return { isValid, needsMigration: isValid };
+    }
+
+    return { isValid: false, needsMigration: false };
+  }
 
   getGoogleAuthUrl(): string {
     const clientId = this.configService.get('GOOGLE_CLIENT_ID');
@@ -34,14 +65,6 @@ export class AuthService {
       `prompt=consent`;
   }
 
-  async generateToken(user: any) {
-    const payload = { email: user.email, sub: user.id, role: user.role };
-    return {
-      accessToken: this.jwtService.sign(payload),
-      refreshToken: this.jwtService.sign(payload, { expiresIn: '7d' }),
-    };
-  }
-
   async register(dto: RegisterDto) {
     const existingUser = await this.usersService.findByEmail(dto.email);
     if (existingUser) {
@@ -51,13 +74,13 @@ export class AuthService {
       throw new ConflictException('Email already exists');
     }
 
-    const hashedPassword = await bcrypt.hash(dto.password, 12);
+    const hashedPassword = await this.hashPassword(dto.password);
     const user = await this.usersService.create({
       email: dto.email,
       password: hashedPassword,
       firstName: dto.firstName,
       lastName: dto.lastName,
-      role: dto.role || Role.CUSTOMER,
+      role: Role.CUSTOMER, // Always force CUSTOMER for public registration
       isEmailVerified: false,
     });
 
@@ -99,13 +122,27 @@ export class AuthService {
 
   async login(dto: LoginDto) {
     const user = await this.usersService.findByEmail(dto.email);
-    if (!user || !user.password) {
+    if (!user) {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    const isPasswordValid = await bcrypt.compare(dto.password, user.password);
-    if (!isPasswordValid) {
+    if (!user.password && user.googleId) {
+      throw new UnauthorizedException('This account was created with Google. Please use "Continue with Google" to sign in, or use "Forgot Password" to create a password.');
+    }
+
+    if (!user.password) {
       throw new UnauthorizedException('Invalid credentials');
+    }
+
+    const { isValid, needsMigration } = await this.verifyPassword(dto.password, user.password);
+    if (!isValid) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+
+    // Lazy migration from Bcrypt to Argon2id
+    if (needsMigration) {
+      const newHash = await this.hashPassword(dto.password);
+      await this.usersService.update(user.id, { password: newHash });
     }
 
     if (!user.isEmailVerified) {
@@ -152,14 +189,24 @@ export class AuthService {
       throw new BadRequestException('Invalid or expired reset token');
     }
 
-    const hashedPassword = await bcrypt.hash(dto.newPassword, 12);
+    const hashedPassword = await this.hashPassword(dto.newPassword);
     await this.usersService.update(user.id, {
       password: hashedPassword,
       resetPasswordToken: null,
       resetPasswordExpires: null,
     });
 
-    return { message: 'Password has been reset successfully' };
+    return { message: 'Password reset successful. You can now login with your new password.' };
+  }
+
+  private async generateToken(user: any) {
+    const payload = { email: user.email, sub: user.id, role: user.role };
+    const [accessToken, refreshToken] = await Promise.all([
+      this.jwtService.signAsync(payload, { expiresIn: '15m' }),
+      this.jwtService.signAsync(payload, { expiresIn: '7d', secret: this.configService.get('JWT_REFRESH_SECRET') || 'refresh_secret' }),
+    ]);
+
+    return { accessToken, refreshToken };
   }
 
   async googleAuthCallback(googleUser: any) {
@@ -203,5 +250,62 @@ export class AuthService {
         picture: user.picture,
       },
     };
+  }
+
+  async resendOtp(email: string) {
+    const user = await this.usersService.findByEmail(email);
+    if (!user) {
+      // Return generic message to prevent email enumeration
+      return { message: 'If an account exists with this email, a new verification code has been sent.' };
+    }
+
+    if (user.isEmailVerified) {
+      throw new BadRequestException('This email address is already verified.');
+    }
+
+    const otp = await this.otpService.generateOtp(user.id, 'email_verification');
+    await this.mailService.sendVerificationEmail(user.email, otp);
+
+    return { message: 'If an account exists with this email, a new verification code has been sent.' };
+  }
+
+  async refreshToken(refreshTokenValue: string) {
+    try {
+      const payload = this.jwtService.verify(refreshTokenValue, { secret: this.configService.get('JWT_REFRESH_SECRET') || 'refresh_secret' });
+      const user = await this.usersService.findById(payload.sub);
+      if (!user) {
+        throw new UnauthorizedException('User not found');
+      }
+      const tokens = await this.generateToken(user);
+      return {
+        ...tokens,
+        user: {
+          id: user.id,
+          email: user.email,
+          role: user.role,
+          firstName: user.firstName,
+          lastName: user.lastName,
+        },
+      };
+    } catch {
+      throw new UnauthorizedException('Invalid or expired refresh token');
+    }
+  }
+
+  async changePassword(userId: string, oldPassword: string, newPassword: string) {
+    const user = await this.usersService.findById(userId);
+    if (!user || !user.password) {
+      throw new BadRequestException('Cannot change password for this account type.');
+    }
+
+    const { isValid } = await this.verifyPassword(oldPassword, user.password);
+    if (!isValid) {
+      throw new UnauthorizedException('Current password is incorrect.');
+    }
+
+    const hashedPassword = await this.hashPassword(newPassword);
+    await this.usersService.update(userId, { password: hashedPassword });
+
+    return { message: 'Password changed successfully.' };
   }
 }

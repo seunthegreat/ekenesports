@@ -3,20 +3,20 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { GoogleIcon } from "@/components/ui/google-icon";
-import { registerSchema, type RegisterFormValues } from "@/lib/validations/auth";
-
+import { getRegisterSchema, type RegisterFormValues } from "@/lib/validations/auth";
+import { PasswordStrength } from "./password-strength";
 import { loginWithGoogle } from "@/services/auth";
 import { useAuthStore } from "@/lib/store/auth-store";
 
-
 export function RegisterForm() {
-
+  const t = useTranslations("Auth.register");
   const router = useRouter();
   const { registerWithCredentials } = useAuthStore();
   const [showPassword, setShowPassword] = useState(false);
@@ -26,18 +26,22 @@ export function RegisterForm() {
   const {
     register,
     handleSubmit,
+    control,
     formState: { errors, isSubmitting },
   } = useForm<RegisterFormValues>({
-    resolver: zodResolver(registerSchema),
+    resolver: zodResolver(getRegisterSchema(t)),
   });
+
+  const passwordValue = useWatch({ control, name: "password" });
 
   const onSubmit = async (data: RegisterFormValues) => {
     setServerError("");
     try {
-      const { requiresVerification } = await registerWithCredentials(data);
-      router.push(requiresVerification ? "/login?registered=true" : "/");
+      const { confirmPassword, ...rest } = data;
+      const { requiresVerification } = await registerWithCredentials(rest);
+      router.push(requiresVerification ? `/verify-email?email=${encodeURIComponent(data.email)}` : "/");
     } catch (err: any) {
-      const msg = err?.response?.data?.message || "Registration failed. Please try again.";
+      const msg = err?.response?.data?.message || t("error_invalid");
       setServerError(Array.isArray(msg) ? msg.join(" ") : msg);
     }
   };
@@ -53,7 +57,7 @@ export function RegisterForm() {
         className="w-full gap-3 border-2 border-[#e5e7eb] bg-white text-neutral-dark hover:border-primary/30 hover:bg-neutral-light hover:text-neutral-dark"
       >
         <GoogleIcon />
-        Continue with Google
+        {t("google_continue")}
       </Button>
 
 
@@ -64,7 +68,7 @@ export function RegisterForm() {
         </div>
         <div className="relative flex justify-center text-xs uppercase">
           <span className="bg-white px-3 text-neutral-dark/40 tracking-widest">
-            or register with email
+            {t("divider")}
           </span>
         </div>
       </div>
@@ -80,16 +84,16 @@ export function RegisterForm() {
       <div className="grid grid-cols-2 gap-3">
         <div className="space-y-1.5">
           <label htmlFor="reg-firstName" className="block text-sm font-medium text-neutral-dark">
-            First name
+            {t("first_name_label")}
           </label>
           <Input
             id="reg-firstName"
             type="text"
             autoComplete="given-name"
-            placeholder="John"
+            placeholder={t("first_name_placeholder")}
             error={!!errors.firstName}
             disabled={isSubmitting}
-            {...register("firstName")}
+            {...register("firstName", { onChange: () => setServerError("") })}
           />
           {errors.firstName && (
             <p className="text-xs text-error mt-1">{errors.firstName.message}</p>
@@ -98,16 +102,16 @@ export function RegisterForm() {
 
         <div className="space-y-1.5">
           <label htmlFor="reg-lastName" className="block text-sm font-medium text-neutral-dark">
-            Last name
+            {t("last_name_label")}
           </label>
           <Input
             id="reg-lastName"
             type="text"
             autoComplete="family-name"
-            placeholder="Doe"
+            placeholder={t("last_name_placeholder")}
             error={!!errors.lastName}
             disabled={isSubmitting}
-            {...register("lastName")}
+            {...register("lastName", { onChange: () => setServerError("") })}
           />
           {errors.lastName && (
             <p className="text-xs text-error mt-1">{errors.lastName.message}</p>
@@ -118,16 +122,16 @@ export function RegisterForm() {
       {/* Email */}
       <div className="space-y-1.5">
         <label htmlFor="reg-email" className="block text-sm font-medium text-neutral-dark">
-          Email address
+          {t("email_label")}
         </label>
         <Input
           id="reg-email"
           type="email"
           autoComplete="email"
-          placeholder="you@example.com"
+          placeholder={t("email_placeholder")}
           error={!!errors.email}
           disabled={isSubmitting}
-          {...register("email")}
+          {...register("email", { onChange: () => setServerError("") })}
         />
         {errors.email && (
           <p className="text-xs text-error mt-1">{errors.email.message}</p>
@@ -137,18 +141,18 @@ export function RegisterForm() {
       {/* Password */}
       <div className="space-y-1.5">
         <label htmlFor="reg-password" className="block text-sm font-medium text-neutral-dark">
-          Password
+          {t("password_label")}
         </label>
         <div className="relative">
           <Input
             id="reg-password"
             type={showPassword ? "text" : "password"}
             autoComplete="new-password"
-            placeholder="Min. 8 characters"
+            placeholder={t("password_placeholder")}
             error={!!errors.password}
             disabled={isSubmitting}
             className="pr-11"
-            {...register("password")}
+            {...register("password", { onChange: () => setServerError("") })}
           />
           <button
             type="button"
@@ -160,6 +164,10 @@ export function RegisterForm() {
             {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
           </button>
         </div>
+
+        {/* Real-time strength meter */}
+        <PasswordStrength password={passwordValue} />
+
         {errors.password && (
           <p className="text-xs text-error mt-1">{errors.password.message}</p>
         )}
@@ -168,7 +176,7 @@ export function RegisterForm() {
       {/* Confirm Password */}
       <div className="space-y-1.5">
         <label htmlFor="reg-confirmPassword" className="block text-sm font-medium text-neutral-dark">
-          Confirm password
+          {t("confirm_password_label")}
         </label>
         <div className="relative">
           <Input
@@ -179,7 +187,7 @@ export function RegisterForm() {
             error={!!errors.confirmPassword}
             disabled={isSubmitting}
             className="pr-11"
-            {...register("confirmPassword")}
+            {...register("confirmPassword", { onChange: () => setServerError("") })}
           />
           <button
             type="button"
@@ -200,35 +208,30 @@ export function RegisterForm() {
       <Button type="submit" size="lg" className="w-full" disabled={isSubmitting}>
         {isSubmitting ? (
           <>
-            <Loader2 className="h-4 w-4 animate-spin" />
-            Creating account…
+            <Loader2 className="h-4 w-4 animate-spin mr-2" />
+            {t("submitting")}
           </>
         ) : (
-          "Create account"
+          t("submit")
         )}
       </Button>
 
       {/* Terms */}
       <p className="text-center text-xs text-neutral-dark/40 leading-relaxed">
-        By registering, you agree to Ekene Sport&apos;s{" "}
-        <a href="#" className="underline hover:text-primary transition-colors">
-          Terms of Service
-        </a>{" "}
-        and{" "}
-        <a href="#" className="underline hover:text-primary transition-colors">
-          Privacy Policy
-        </a>
-        .
+        {t.rich("terms", {
+          tos: (chunks) => <a href="#" className="underline hover:text-primary transition-colors">{chunks}</a>,
+          pp: (chunks) => <a href="#" className="underline hover:text-primary transition-colors">{chunks}</a>
+        })}
       </p>
 
       {/* Login link */}
       <p className="text-center text-sm text-neutral-dark/60">
-        Already have an account?{" "}
+        {t("already_have_account")}{" "}
         <Link
           href="/login"
           className="font-semibold text-primary hover:text-primary-light transition-colors underline-offset-2 hover:underline"
         >
-          Sign in
+          {t("sign_in")}
         </Link>
       </p>
     </form>

@@ -17,7 +17,6 @@ import {
   Star
 } from "lucide-react";
 import { sports, categories, mockProducts } from "@/lib/mock-data";
-import { MatrixEditor } from "@/components/product/matrix-editor";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
@@ -25,6 +24,7 @@ import { Input } from "@/components/ui/input";
 import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
+import { MatrixEditor } from "../components/matrix-editor";
 
 export default function ProductFormPage() {
   const t = useTranslations("Products");
@@ -38,12 +38,12 @@ export default function ProductFormPage() {
     return isEditing ? mockProducts.find(p => p.id === editId) : null;
   }, [isEditing, editId]);
 
-  const [basePrice,    setBasePrice]    = useState(productData?.basePrice || 0);
-  const [name,         setName]         = useState(productData?.name || "");
-  const [description,  setDescription]  = useState(productData?.description || "");
-  const [sportId,      setSportId]      = useState(productData?.sportId || "");
-  const [categoryId,   setCategoryId]   = useState(productData?.categoryId || "");
-  const [variants,     setVariants]     = useState<any[]>(productData?.variants || []);
+  const [basePrice, setBasePrice] = useState(productData?.basePrice || 0);
+  const [name, setName] = useState(productData?.name || "");
+  const [description, setDescription] = useState(productData?.description || "");
+  const [sportId, setSportId] = useState(productData?.sportId || "");
+  const [categoryId, setCategoryId] = useState(productData?.categoryId || "");
+  const [variants, setVariants] = useState<any[]>(productData?.variants || []);
 
   // Image state: array of object URLs (from file picker) OR existing src strings
   const [images, setImages] = useState<string[]>(
@@ -54,7 +54,7 @@ export default function ProductFormPage() {
 
   const handleFileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files ?? []);
-    const urls  = files.map(f => URL.createObjectURL(f));
+    const urls = files.map(f => URL.createObjectURL(f));
     setImages(prev => [...prev, ...urls]);
     // Reset so same file can be picked again
     e.target.value = "";
@@ -68,8 +68,8 @@ export default function ProductFormPage() {
     });
   };
 
-  const sportOptions    = sports.map(s  => ({ label: tSports(s.slug as any), value: s.id }));
-  const categoryOptions = categories.map(c => ({ label: c.name,              value: c.id  }));
+  const sportOptions = sports.map(s => ({ label: tSports(s.slug as any), value: s.id }));
+  const categoryOptions = categories.map(c => ({ label: c.name, value: c.id }));
 
   return (
     <div className="space-y-12 animate-in fade-in duration-700 pb-20 pt-4">
@@ -311,7 +311,7 @@ export default function ProductFormPage() {
                     className="aspect-square rounded-xl border-2 border-dashed border-gray-200 flex flex-col items-center justify-center text-gray-300 hover:border-primary/40 hover:text-primary hover:bg-primary/5 transition-all"
                   >
                     <Plus size={20} />
-                     <span className="text-[9px] font-bold mt-1 uppercase tracking-wider">{t("form.media_add")}</span>
+                    <span className="text-[9px] font-bold mt-1 uppercase tracking-wider">{t("form.media_add")}</span>
                   </button>
                 </div>
               </div>

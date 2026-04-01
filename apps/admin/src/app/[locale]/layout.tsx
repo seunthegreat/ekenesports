@@ -55,9 +55,7 @@ export default async function LocaleLayout({
       </head>
       <body className="font-body text-neutral-dark antialiased">
         <NextIntlClientProvider messages={messages} locale={locale}>
-          <AdminShell>
-            {children}
-          </AdminShell>
+          {children}
           <Toaster position="bottom-right" richColors />
           <SearchPalette />
         </NextIntlClientProvider>

@@ -1,4 +1,5 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, Role } from '@prisma/client';
+import * as argon2 from 'argon2';
 
 const prisma = new PrismaClient();
 
@@ -57,6 +58,40 @@ const productTemplates: Record<string, string[]> = {
 };
 
 async function main() {
+  console.log('--- Initializing Seed ---');
+
+  // 1. Seed Super Admin from Environment Variables
+  const adminEmail = process.env.INITIAL_SUPERADMIN_EMAIL;
+  const adminPassword = process.env.INITIAL_SUPERADMIN_PASSWORD;
+  const pepper = process.env.SECRET_PEPPER || 'default_pepper_change_me';
+
+  if (adminEmail && adminPassword) {
+    console.log(`Seeding Super Admin: ${adminEmail}...`);
+    
+    const hashedPassword = await argon2.hash(adminPassword + pepper, {
+      type: argon2.argon2id,
+      memoryCost: 65536,
+      timeCost: 3,
+      parallelism: 4,
+    });
+
+    await prisma.user.upsert({
+      where: { email: adminEmail },
+      update: {}, // Don't overwrite if exists
+      create: {
+        email: adminEmail,
+        password: hashedPassword,
+        firstName: 'Super',
+        lastName: 'Admin',
+        role: Role.SUPER_ADMIN,
+        isEmailVerified: true,
+      },
+    });
+    console.log('✅ Super Admin seeding complete (or already exists).');
+  } else {
+    console.log('⚠️ Skipping Super Admin seeding: INITIAL_SUPERADMIN_EMAIL or INITIAL_SUPERADMIN_PASSWORD not set.');
+  }
+
   console.log('Seeding products (mirroring frontend data.ts)...');
 
   const rand = seededRandom(42); // Same seed as frontend

@@ -1,6 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { NestExpressApplication } from '@nestjs/platform-express';
+import { ConfigService } from '@nestjs/config';
 import { AppModule } from './app.module';
 import { setupSwagger } from './swagger';
 import helmet from 'helmet';
@@ -25,8 +26,15 @@ async function bootstrap() {
     }),
   );
 
-  // Enable CORS for the frontend
-  app.enableCors();
+  // Enable CORS for specified origins
+  const configService = app.get(ConfigService);
+  const frontendUrl = configService.get<string>('FRONTEND_URL') || 'http://localhost:3000';
+  const adminUrl = configService.get<string>('ADMIN_URL') || 'http://localhost:3001';
+  
+  app.enableCors({
+    origin: [frontendUrl, adminUrl],
+    credentials: true,
+  });
 
   // Static Assets for uploads
   app.useStaticAssets(join(__dirname, '..', '..', 'uploads'), {

@@ -695,5 +695,66 @@
     "title": "Ekene Sport Admin",
     "description": "Advanced e-commerce administrative engine",
     "logo_alt": "Ekene Sport"
+  },
+  "Auth": {
+    "login": {
+      "title": "Admin Login | Ekene Sports",
+      "description": "Secure administrator access to the Ekene Sports dashboard.",
+      "heading": "Admin Portal",
+      "subheading": "Login to manage your store and inventory.",
+      "email_label": "Email address",
+      "email_placeholder": "admin@example.com",
+      "password_label": "Password",
+      "password_placeholder": "••••••••",
+      "forgot_password": "Forgot password?",
+      "submit": "Sign In to Dashboard",
+      "submitting": "Authenticating…",
+      "footer_copy": "© 2026 Ekene Sports. All rights reserved.",
+      "footer_internal": "Internal system for authorized personnel only.",
+      "error_invalid": "Invalid email or password. Please try again."
+    },
+    "forgotPassword": {
+      "title": "Forgot Password | Admin Portal",
+      "description": "Reset your administrator credentials for the Ekene Sports dashboard.",
+      "heading": "Password Recovery",
+      "subheading": "For administrator accounts only.",
+      "back_to_login": "Back to Login",
+      "submit": "Send Reset Link",
+      "success_title": "Check your email",
+      "success_message": "We've sent a password reset link to {email}. Please check your inbox."
+    },
+    "resetPassword": {
+      "title": "Reset Password | Admin Portal",
+      "description": "Create a new secure password for the Ekene Sports dashboard.",
+      "heading": "Create New Password",
+      "subheading": "Set your secure dashboard credentials.",
+      "new_password_label": "New Password",
+      "confirm_password_label": "Confirm New Password",
+      "submit": "Set New Password",
+      "submitting": "Resetting…",
+      "success_title": "Success",
+      "success_message": "Your password has been successfully reset. Redirecting to login…",
+      "invalid_link_title": "Invalid reset link",
+      "invalid_link_message": "This password reset link is missing required information. Please request a new one.",
+      "request_new_link": "Request a new link",
+      "error_expired": "This link has expired or is invalid. Please request a new one.",
+      "get_new_link": "Get a new link",
+      "password_placeholder": "Min. 8 characters",
+      "strength": {
+        "label": "Password Strength",
+        "weak": "Weak",
+        "fair": "Fair",
+        "strong": "Strong"
+      }
+    },
+    "validation": {
+      "email_required": "Email is required",
+      "email_invalid": "Please enter a valid email",
+      "password_required": "Password is required",
+      "password_min": "Password must be at least 8 characters",
+      "password_complexity": "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character",
+      "confirm_password_required": "Please confirm your password",
+      "passwords_match": "Passwords do not match"
+    }
   }
 }

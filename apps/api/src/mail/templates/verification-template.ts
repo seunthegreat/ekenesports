@@ -6,7 +6,7 @@ export const verificationTemplate = (otp: string) => {
     <p style="text-align: center; color: #64748B;">Use the following security code to complete your registration. This code will expire in 10 minutes.</p>
     
     <div style="text-align: center; margin: 40px 0;">
-      <div style="display: inline-block; font-size: 42px; font-weight: 800; color: #0A6847; padding: 24px 48px; background: #F1F5F9; border-radius: 16px; letter-spacing: 12px; border: 2px solid #E2E8F0; font-family: 'Courier New', monospace;">
+      <div style="display: inline-block; font-size: 32px; font-weight: 800; color: #0A6847; padding: 20px 24px; background: #F1F5F9; border-radius: 16px; letter-spacing: 8px; border: 2px solid #E2E8F0; font-family: 'Courier New', monospace; max-width: 100%; box-sizing: border-box;">
         ${otp}
       </div>
     </div>

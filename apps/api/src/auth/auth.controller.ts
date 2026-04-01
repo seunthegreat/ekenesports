@@ -1,12 +1,12 @@
-import { Controller, Post, Body, Get, Res, UseGuards, Req, Query, BadRequestException } from '@nestjs/common';
+import { Controller, Post, Body, Get, Res, UseGuards, Req, Put, HttpCode, HttpStatus, BadRequestException } from '@nestjs/common';
 import { Response, Request } from 'express';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './services/auth.service';
 import { ConfigService } from '@nestjs/config';
-import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
-import { VerifyOtpDto, ForgotPasswordDto, ResetPasswordDto } from './dto/auth-utils.dto';
+import { VerifyOtpDto, ForgotPasswordDto, ResetPasswordDto, ResendOtpDto, ChangePasswordDto, RefreshTokenDto } from './dto/auth-utils.dto';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -76,8 +76,40 @@ export class AuthController {
 
   @UseGuards(AuthGuard('jwt'))
   @Get('me')
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Get current user profile' })
   async getProfile(@Req() req: any) {
     return req.user;
+  }
+
+  @Post('resend-otp')
+  @ApiOperation({ summary: 'Resend email verification OTP' })
+  async resendOtp(@Body() dto: ResendOtpDto) {
+    return this.authService.resendOtp(dto.email);
+  }
+
+  @Post('refresh-token')
+  @ApiOperation({ summary: 'Refresh access token using refresh token' })
+  async refreshToken(@Body() dto: RefreshTokenDto) {
+    return this.authService.refreshToken(dto.refreshToken);
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Post('log-out')
+  @ApiBearerAuth()
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Log out current user' })
+  async logOut() {
+    // Stateless JWT logout — client is responsible for clearing tokens.
+    // This endpoint exists for future token blacklisting / audit logging.
+    return { message: 'Logged out successfully.' };
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Put('change-password')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Change password for authenticated user' })
+  async changePassword(@Req() req: any, @Body() dto: ChangePasswordDto) {
+    return this.authService.changePassword(req.user.id, dto.oldPassword, dto.newPassword);
   }
 }

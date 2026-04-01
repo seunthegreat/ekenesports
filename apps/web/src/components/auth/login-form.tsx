@@ -6,17 +6,16 @@ import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { GoogleIcon } from "@/components/ui/google-icon";
-import { loginSchema, type LoginFormValues } from "@/lib/validations/auth";
-
+import { getLoginSchema, type LoginFormValues } from "@/lib/validations/auth";
 import { loginWithGoogle } from "@/services/auth";
 import { useAuthStore } from "@/lib/store/auth-store";
 
-
 export function LoginForm() {
-
+  const t = useTranslations("Auth.login");
   const router = useRouter();
   const { loginWithCredentials } = useAuthStore();
   const [showPassword, setShowPassword] = useState(false);
@@ -27,7 +26,7 @@ export function LoginForm() {
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<LoginFormValues>({
-    resolver: zodResolver(loginSchema),
+    resolver: zodResolver(getLoginSchema(t)),
   });
 
   const onSubmit = async (data: LoginFormValues) => {
@@ -36,7 +35,7 @@ export function LoginForm() {
       await loginWithCredentials(data);
       router.push("/");
     } catch (err: any) {
-      const message = err?.response?.data?.message || "Invalid email or password. Please try again.";
+      const message = err?.response?.data?.message || err?.message || t("error_invalid");
       setServerError(message);
     }
   };
@@ -52,7 +51,7 @@ export function LoginForm() {
         className="w-full gap-3 border-2 border-[#e5e7eb] bg-white text-neutral-dark hover:border-primary/30 hover:bg-neutral-light hover:text-neutral-dark"
       >
         <GoogleIcon />
-        Continue with Google
+        {t("google_continue")}
       </Button>
 
 
@@ -63,7 +62,7 @@ export function LoginForm() {
         </div>
         <div className="relative flex justify-center text-xs uppercase">
           <span className="bg-white px-3 text-neutral-dark/40 tracking-widest">
-            or sign in with email
+            {t("divider")}
           </span>
         </div>
       </div>
@@ -78,16 +77,16 @@ export function LoginForm() {
       {/* Email */}
       <div className="space-y-1.5">
         <label htmlFor="login-email" className="block text-sm font-medium text-neutral-dark">
-          Email address
+          {t("email_label")}
         </label>
         <Input
           id="login-email"
           type="email"
           autoComplete="email"
-          placeholder="you@example.com"
+          placeholder={t("email_placeholder")}
           error={!!errors.email}
           disabled={isSubmitting}
-          {...register("email")}
+          {...register("email", { onChange: () => setServerError("") })}
         />
         {errors.email && (
           <p className="text-xs text-error mt-1">{errors.email.message}</p>
@@ -98,13 +97,13 @@ export function LoginForm() {
       <div className="space-y-1.5">
         <div className="flex items-center justify-between">
           <label htmlFor="login-password" className="block text-sm font-medium text-neutral-dark">
-            Password
+            {t("password_label")}
           </label>
           <Link
             href="/forgot-password"
             className="text-xs font-medium text-primary hover:text-primary-light transition-colors"
           >
-            Forgot password?
+            {t("forgot_password")}
           </Link>
         </div>
         <div className="relative">
@@ -112,11 +111,11 @@ export function LoginForm() {
             id="login-password"
             type={showPassword ? "text" : "password"}
             autoComplete="current-password"
-            placeholder="••••••••"
+            placeholder={t("password_placeholder")}
             error={!!errors.password}
             disabled={isSubmitting}
             className="pr-11"
-            {...register("password")}
+            {...register("password", { onChange: () => setServerError("") })}
           />
           <button
             type="button"
@@ -137,22 +136,22 @@ export function LoginForm() {
       <Button type="submit" size="lg" className="w-full" disabled={isSubmitting}>
         {isSubmitting ? (
           <>
-            <Loader2 className="h-4 w-4 animate-spin" />
-            Signing in…
+            <Loader2 className="h-4 w-4 animate-spin mr-2" />
+            {t("submitting")}
           </>
         ) : (
-          "Sign in"
+          t("submit")
         )}
       </Button>
 
       {/* Register link */}
       <p className="text-center text-sm text-neutral-dark/60">
-        Don&apos;t have an account?{" "}
+        {t("no_account")}{" "}
         <Link
           href="/register"
           className="font-semibold text-primary hover:text-primary-light transition-colors underline-offset-2 hover:underline"
         >
-          Create one
+          {t("create_one")}
         </Link>
       </p>
     </form>

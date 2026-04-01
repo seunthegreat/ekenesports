@@ -1,6 +1,6 @@
 import apiClient from '@/lib/axios';
 import { type LoginFormValues, type RegisterFormValues } from '@/lib/validations/auth';
-import { AuthResponse, RegisterResponse, AuthUser } from '@/types/auth';
+import { AuthResponse, RegisterResponse, AuthUser, RegisterPayload } from '@/types/auth';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_API_URL || 'http://localhost:4000';
 
@@ -39,7 +39,7 @@ export const getCurrentUser = async (): Promise<AuthUser> => {
   return response.data;
 };
 
-export const registerUser = async (data: RegisterFormValues): Promise<AuthResponse & RegisterResponse> => {
+export const registerUser = async (data: RegisterPayload): Promise<AuthResponse & RegisterResponse> => {
   const response = await apiClient.post('/auth/register', data);
   return response.data;
 };
