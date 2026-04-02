@@ -9,7 +9,7 @@ import { Loader2, Mail, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { getForgotPasswordSchema, type ForgotPasswordFormValues } from "@/lib/validations/auth";
-import { forgotPassword } from "@/services/auth";
+import { authClient } from "@ekene/auth";
 
 export function ForgotPasswordForm() {
   const t = useTranslations("Auth.forgotPassword");
@@ -28,7 +28,13 @@ export function ForgotPasswordForm() {
   const onSubmit = async (data: ForgotPasswordFormValues) => {
     setServerError("");
     try {
-      await forgotPassword({ email: data.email });
+      const { error } = await authClient.requestPasswordReset({
+        email: data.email,
+        redirectTo: "/reset-password",
+      });
+      
+      if (error) throw error;
+      
       setSubmittedEmail(data.email);
       setStep("sent");
     } catch {

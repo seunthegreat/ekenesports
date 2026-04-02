@@ -10,7 +10,7 @@ import { Eye, EyeOff, Loader2, ShieldCheck, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { getResetPasswordSchema, type ResetPasswordFormValues } from "@/lib/validations/auth";
-import { resetPassword } from "@/services/auth";
+import { authClient } from "@ekene/auth";
 import { PasswordStrength } from "./password-strength";
 
 export function ResetPasswordForm() {
@@ -18,7 +18,6 @@ export function ResetPasswordForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const token = searchParams.get("token") || "";
-  const email = searchParams.get("email") || "";
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
@@ -35,8 +34,8 @@ export function ResetPasswordForm() {
 
   const passwordValue = useWatch({ control, name: "newPassword" });
 
-  // Guard: token and email must be present in URL
-  if (!token || !email) {
+  // Guard: token must be present in URL
+  if (!token) {
     return (
       <div className="space-y-4 text-center">
         <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-error/10">
@@ -61,10 +60,16 @@ export function ResetPasswordForm() {
   const onSubmit = async (data: ResetPasswordFormValues) => {
     setServerError("");
     try {
-      await resetPassword({ token, email, newPassword: data.newPassword });
+      const { error } = await authClient.resetPassword({
+        newPassword: data.newPassword,
+        token,
+      });
+      
+      if (error) throw error;
+      
       router.push("/login?reset=true");
     } catch (err: any) {
-      const message = err?.response?.data?.message || t("error_expired");
+      const message = err?.message || t("error_expired");
       setServerError(message);
     }
   };

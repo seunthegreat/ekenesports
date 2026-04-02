@@ -9,10 +9,8 @@ import { Loader2, MailCheck, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { getVerifyOtpSchema, type VerifyOtpFormValues } from "@/lib/validations/auth";
-import { verifyOtp, resendOtp } from "@/services/auth";
+import { authClient } from "@ekene/auth";
 import { useAuthStore } from "@/lib/store/auth-store";
-import { storeToken } from "@/utils/cookies";
-import api from "@/utils/api";
 
 const RESEND_COOLDOWN = 60;
 
@@ -21,7 +19,7 @@ export function VerifyEmailForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const email = searchParams.get("email") || "";
-  const { login } = useAuthStore();
+  const { setSession } = useAuthStore();
 
   const [serverError, setServerError] = useState("");
   const [cooldown, setCooldown] = useState(0);
@@ -45,18 +43,19 @@ export function VerifyEmailForm() {
   const onSubmit = async (data: VerifyOtpFormValues) => {
     setServerError("");
     try {
-      const res = await verifyOtp({ email, otp: data.otp });
-      await storeToken({ token: res.accessToken, refreshToken: res.refreshToken });
-      // Fetch full profile to ensure we have real DB data
-      const profileRes = await api.get("/auth/me", {
-        headers: { Authorization: `Bearer ${res.accessToken}` },
-        skipAuth: true,
-      } as any);
-      login(profileRes.data, res.accessToken, res.refreshToken);
+      const { data: session, error } = await authClient.emailOtp.verifyEmail({
+        email,
+        otp: data.otp,
+      });
+      
+      if (error) throw error;
+      
+      if (session) {
+        setSession(session);
+      }
       router.push("/");
     } catch (err: any) {
-      const message =
-        err?.response?.data?.message || t("error_invalid");
+      const message = err?.message || t("error_invalid");
       setServerError(message);
     }
   };
@@ -66,7 +65,10 @@ export function VerifyEmailForm() {
     setResending(true);
     setServerError("");
     try {
-      await resendOtp({ email });
+      await authClient.emailOtp.sendVerificationOtp({
+        email,
+        type: "email-verification",
+      });
       setCooldown(RESEND_COOLDOWN);
     } catch {
       setServerError(t("error_resend"));

@@ -1,0 +1,229 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../client"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  SUPER_ADMIN
+  ADMIN
+  STAFF
+  CUSTOMER
+}
+
+model User {
+  id                    String    @id @default(uuid())
+  name                  String?
+  email                 String    @unique
+  emailVerified         Boolean   @default(false)
+  isEmailVerified      Boolean   @default(false)
+  image                 String?
+  picture               String?
+  password              String?
+  
+  // Profile fields
+  firstName             String?
+  lastName              String?
+  role                  Role      @default(CUSTOMER)
+  googleId              String?   @unique
+  lastLogin             DateTime?
+  stripeCustomerId      String?   @unique
+  
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+  
+  // Relations
+  sessions              Session[]
+  accounts              Account[]
+  orders                Order[]
+
+  @@map("user")
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String
+  createdAt DateTime
+  updatedAt DateTime
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([token])
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime
+  updatedAt             DateTime
+
+  @@map("account")
+}
+
+model Verification {
+  id         String    @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime?
+  updatedAt  DateTime?
+
+  @@map("verification")
+}
+
+model Sport {
+  id          String     @id @default(uuid())
+  name        String
+  slug        String     @unique
+  icon        String?
+  image       String?
+  categories  Category[]
+  products    Product[]
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  @@map("sport")
+}
+
+model Category {
+  id          String     @id @default(uuid())
+  name        String
+  slug        String     @unique
+  image       String?
+  parentId    String?
+  parent      Category?  @relation("SubCategories", fields: [parentId], references: [id])
+  children    Category[] @relation("SubCategories")
+  
+  sportId     String
+  sport       Sport      @relation(fields: [sportId], references: [id])
+  
+  products    Product[]
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  @@map("category")
+}
+
+model Product {
+  id             String           @id @default(uuid())
+  name           String
+  slug           String           @unique
+  brand          String?
+  description    String?
+  basePrice      Float
+  compareAtPrice Float?
+  gender         String?          // men, women, unisex, kids
+  featured       Boolean          @default(false)
+  isNew          Boolean          @default(false)
+  rating         Float            @default(0)
+  reviewCount    Int              @default(0)
+  status         String           @default("active")
+  
+  sportId        String
+  sport          Sport            @relation(fields: [sportId], references: [id])
+  categoryId     String
+  category       Category         @relation(fields: [categoryId], references: [id])
+  
+  images         ProductImage[]
+  variants       ProductVariant[]
+  orderItems     OrderItem[]
+  
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+
+  @@map("product")
+}
+
+model ProductImage {
+  id        String   @id @default(uuid())
+  url       String
+  alt       String?
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  position  Int      @default(0)
+
+  @@map("product_image")
+}
+
+model ProductVariant {
+  id             String      @id @default(uuid())
+  size           String
+  color          String
+  colorHex       String
+  sku            String      @unique
+  price          Float
+  compareAtPrice Float?
+  stock          Int         @default(0)
+  
+  productId      String
+  product        Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
+  
+  orderItems     OrderItem[]
+
+  @@map("product_variant")
+}
+
+model Order {
+  id                     String      @id @default(uuid())
+  orderNumber            String      @unique
+  waybill                String?
+  userId                 String
+  user                   User        @relation(fields: [userId], references: [id])
+  
+  subtotal               Float
+  shippingCost           Float
+  total                  Float
+  status                 String      @default("PENDING")
+  stripePaymentIntentId  String?     @unique
+  
+  // Shipping details
+  shippingAddress        Json?       // Stores the ShippingAddress object
+  shippingRate          Json?       // Stores the ShippingRate object
+  payment               Json?       // Stores payment info
+  
+  items                  OrderItem[]
+  createdAt              DateTime    @default(now())
+  updatedAt              DateTime    @updatedAt
+
+  @@map("order")
+}
+
+model OrderItem {
+  id            String         @id @default(uuid())
+  orderId       String
+  order         Order          @relation(fields: [orderId], references: [id])
+  
+  productId     String
+  product       Product        @relation(fields: [productId], references: [id])
+  variantId     String
+  variant       ProductVariant @relation(fields: [variantId], references: [id])
+  
+  name          String         // Snapshot of product name at time of order
+  variantName   String         // Snapshot of variant (e.g. "Black / M")
+  quantity      Int
+  price         Float          // Snapshot of price at time of order
+  image         String?        // Snapshot of product image
+
+  @@map("order_item")
+}

@@ -9,14 +9,17 @@ export default async function proxy(request: NextRequest) {
   
   // Extract locale from pathname (default to 'en')
   const locale = pathname.split('/')[1] || 'en';
-  const token = request.cookies.get('admin-token');
+  
+  // Check for the correct BetterAuth session cookie
+  const token = request.cookies.get('better-auth.session_token') || 
+                request.cookies.get('__Secure-better-auth.session_token');
   
   // Define auth-related paths
   const authPaths = ['/login', '/forgot-password', '/reset-password'];
   const isAuthPath = authPaths.some(path => pathname.includes(path));
 
   // 1. If unauthenticated and trying to access dashboard routes, redirect to login
-  if (!token && !isAuthPath && pathname !== '/' && !pathname.includes('/_next')) {
+  if (!token && !isAuthPath && (pathname.includes('/(de|en)') || pathname === '/')) {
       const loginUrl = new URL(`/${locale}/login`, request.url);
       return NextResponse.redirect(loginUrl);
   }

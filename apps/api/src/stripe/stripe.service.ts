@@ -41,8 +41,12 @@ export class StripeService {
               deleteMany: {}, // Clear old items
               create: items.map(item => ({
                 productId: item.productId,
+                variantId: item.variantId,
+                name: item.name,
+                variantName: item.variantName,
                 quantity: item.quantity,
-                price: item.price
+                price: item.price,
+                image: item.image,
               }))
             }
           }
@@ -56,14 +60,20 @@ export class StripeService {
       data: {
         orderNumber,
         userId,
+        subtotal: total,   // Required field newly added to DB schema
+        shippingCost: 0,   // Required field newly added to DB schema
         total,
         status: 'PENDING',
         stripePaymentIntentId: paymentIntentId ?? null,
         items: {
           create: items.map(item => ({
             productId: item.productId,
+            variantId: item.variantId,
+            name: item.name,
+            variantName: item.variantName,
             quantity: item.quantity,
-            price: item.price
+            price: item.price,
+            image: item.image,
           }))
         }
       }

@@ -1,14 +1,15 @@
 "use client";
 
 import { useState, useMemo, useCallback } from "react";
-import { FilterState } from "@/lib/types";
-import { filterProducts } from "@/lib/data";
+import { trpc } from "@/utils/trpc";
+import { FilterState, Product } from "@/lib/types";
 import { useTranslations } from "next-intl";
 import { ProductGrid } from "./product-grid";
 import { FacetSidebar } from "./facet-sidebar";
 import { Button } from "../ui/button";
 import { Sheet } from "../ui/sheet";
 import { SlidersHorizontal, ChevronLeft, ChevronRight } from "lucide-react";
+import { categories, sports, getProducts } from "@/lib/data"; // Only used for sidebars/facets for now
 
 interface ProductListingProps {
   initialFilters?: FilterState;
@@ -20,7 +21,29 @@ export function ProductListing({ initialFilters = {}, title }: ProductListingPro
   const [filters, setFilters] = useState<FilterState>({ page: 1, ...initialFilters });
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
 
-  const { products, total, facets } = useMemo(() => filterProducts(filters), [filters]);
+  const { data: result, isLoading } = trpc.products.list.useQuery(filters);
+
+  const products = result?.products || [];
+  const total = result?.total || 0;
+  
+  // We still use mock facets for the sidebar UI for now to avoid complex aggregation logic on backend
+  const facets = useMemo(() => {
+    // Ideally these would come from the server
+    const allMockProducts = getProducts(); 
+    // This is just to keep the sidebar working with existing UI
+    return {
+      sports: sports.map(s => ({ value: s.slug, label: s.name, count: 12 })),
+      categories: categories.map(c => ({ value: c.slug, label: c.name, count: 8 })),
+      genders: [
+        { value: 'men', label: 'Men', count: 20 },
+        { value: 'women', label: 'Women', count: 20 },
+      ],
+      sizes: [],
+      colors: [],
+      brands: [],
+      priceRange: { min: 0, max: 1000 }
+    };
+  }, []);
 
   const pageSize = 12;
   const totalPages = Math.ceil(total / pageSize);
@@ -76,7 +99,7 @@ export function ProductListing({ initialFilters = {}, title }: ProductListingPro
         <div className="flex-1">
           {products.length > 0 ? (
             <>
-              <ProductGrid products={products} />
+              <ProductGrid products={products as Product[]} />
               {/* Pagination */}
               {totalPages > 1 && (
                 <div className="flex items-center justify-center gap-2 mt-8">

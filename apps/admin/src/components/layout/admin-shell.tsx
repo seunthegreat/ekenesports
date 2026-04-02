@@ -21,6 +21,7 @@ import { useTranslations } from "next-intl";
 import { LanguageSwitcher } from "./language-switcher";
 import { useAuthStore } from "@/lib/store/auth-store";
 import { useRouter } from "next/navigation";
+import { authClient } from "@ekene/auth";
 
 const navigation = [
   { name: "Dashboard", href: "/", icon: LayoutDashboard, key: "dashboard" },
@@ -53,21 +54,30 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
   const tNav = useTranslations("Navigation");
   const tUser = useTranslations("User");
   
-  const { user, logout } = useAuthStore();
+  const { user, logout, setSession } = useAuthStore();
   
   const [sidebarWidth, setSidebarWidth] = useState(256);
   const [isResizing, setIsResizing] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
+  useEffect(() => {
+    const syncSession = async () => {
+      const { data } = await authClient.getSession();
+      setSession(data);
+    };
+    syncSession();
+  }, [setSession]);
+
   const initials = user?.firstName && user?.lastName 
     ? `${user.firstName[0]}${user.lastName[0]}`.toUpperCase()
     : "AS";
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    await logout();
     router.push("/login");
   };
+
 
   const isCollapsed = !isMobile && sidebarWidth < 200;
 

@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from '@ekene/db';
 
 const prisma = new PrismaClient();
 
@@ -13,6 +13,8 @@ async function main() {
       description: 'Premium jersey',
       basePrice: 45.0,
       status: 'active',
+      sportId: 's1',
+      categoryId: 'c1',
     },
   });
   console.log('Seed test success');

@@ -10,9 +10,9 @@ import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { GoogleIcon } from "@/components/ui/google-icon";
-import { getLoginSchema, type LoginFormValues } from "@/lib/validations/auth";
-import { loginWithGoogle } from "@/services/auth";
 import { useAuthStore } from "@/lib/store/auth-store";
+import { loginSchema, type LoginFormValues } from "@ekene/shared";
+import { authClient } from "@ekene/auth";
 
 export function LoginForm() {
   const t = useTranslations("Auth.login");
@@ -26,7 +26,7 @@ export function LoginForm() {
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<LoginFormValues>({
-    resolver: zodResolver(getLoginSchema(t)),
+    resolver: zodResolver(loginSchema),
   });
 
   const onSubmit = async (data: LoginFormValues) => {
@@ -34,18 +34,28 @@ export function LoginForm() {
     try {
       await loginWithCredentials(data);
       router.push("/");
+      router.refresh(); // Refresh to pick up session
     } catch (err: any) {
-      const message = err?.response?.data?.message || err?.message || t("error_invalid");
+      const message = err?.message || t("error_invalid");
       setServerError(message);
     }
   };
+
+  const onGoogleLogin = async () => {
+    await authClient.signIn.social({
+      provider: "google",
+      callbackURL: typeof window !== "undefined" ? window.location.origin : "/",
+    });
+  };
+
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-5" noValidate>
       {/* Google OAuth */}
       <Button
         type="button"
-        onClick={loginWithGoogle}
+        onClick={onGoogleLogin}
+
         variant="outline"
         size="lg"
         className="w-full gap-3 border-2 border-[#e5e7eb] bg-white text-neutral-dark hover:border-primary/30 hover:bg-neutral-light hover:text-neutral-dark"

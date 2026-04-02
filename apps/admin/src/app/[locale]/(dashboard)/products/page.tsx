@@ -11,15 +11,8 @@ import {
   Eye,
   Edit2,
   Trash2,
-  Archive,
   Image as ImageIcon,
   AlertCircle,
-  X,
-  MoreVertical,
-  TrendingUp,
-  PackageCheck,
-  ArrowRight,
-  History
 } from "lucide-react";
 import { ActionMenu } from "@/components/ui/action-menu";
 import { Button } from "@/components/ui/button";
@@ -28,9 +21,10 @@ import { mockProducts } from "@/lib/mock-data";
 import { Product } from "@/lib/types";
 import { DataTable } from "@/components/ui/data-table";
 import { Modal } from "@/components/ui/modal";
-import { Select } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
+import { trpc } from "@/utils/trpc";
+import { ProductFilter } from "@/components/products/product-filter";
 
 export default function ProductsPage() {
   const t = useTranslations("Products");
@@ -42,6 +36,11 @@ export default function ProductsPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const pathname = usePathname();
+
+  // Live data fetching
+  const { data: liveProducts } = trpc.products.list.useQuery({
+    limit: 100,
+  });
 
   const currentStatus = searchParams.get("status") || "all";
   const currentSport = searchParams.get("sport") || "all";
@@ -67,15 +66,19 @@ export default function ProductsPage() {
     router.push(`${pathname}?${params.toString()}`);
   };
 
-  const processedProducts = mockProducts.map(p => ({
+  // Safe Swap: Use live products if available, otherwise fallback to mocks
+  const liveArray = liveProducts ? (Array.isArray(liveProducts) ? liveProducts : liveProducts.products) : null;
+  const displayProducts = (liveArray && liveArray.length > 0) ? liveArray : mockProducts;
+
+  const processedProducts = (displayProducts as any[]).map(p => ({
     ...p,
-    totalStock: p.variants ? p.variants.reduce((acc, v) => acc + v.stock, 0) : 0,
+    totalStock: p.variants ? p.variants.reduce((acc: number, v: any) => acc + v.stock, 0) : 0,
     status: (p.status || "active") as "active" | "draft" | "archived"
   })).filter(p => {
-    if (search && !p.name.toLowerCase().includes(search.toLowerCase()) && !p.brand.toLowerCase().includes(search.toLowerCase())) return false;
+    if (search && !p.name.toLowerCase().includes(search.toLowerCase()) && !p.brand?.toLowerCase().includes(search.toLowerCase())) return false;
     if (currentStatus !== "all" && p.status.toLowerCase() !== currentStatus.toLowerCase()) return false;
     if (currentSport !== "all" && p.sportId?.toLowerCase() !== currentSport.toLowerCase()) return false;
-    if (currentBrand !== "all" && p.brand.toLowerCase() !== currentBrand.toLowerCase()) return false;
+    if (currentBrand !== "all" && p.brand?.toLowerCase() !== currentBrand.toLowerCase()) return false;
     return true;
   });
 
@@ -171,7 +174,7 @@ export default function ProductsPage() {
       className: "w-0 whitespace-nowrap"
     },
     {
-      header: t("table.actions"), // I should add this key or just leave it empty. I'll add it.
+      header: t("table.actions"),
       accessor: (product: Product) => (
         <div className="flex items-center">
           <ActionMenu items={[
@@ -200,7 +203,6 @@ export default function ProductsPage() {
 
   return (
     <div className="space-y-10 animate-in fade-in duration-700 pb-10 pt-2">
-      {/* Page Header */}
       <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8">
         <div className="max-w-xl space-y-2">
           <h1 className="text-3xl lg:text-[40px] font-heading font-bold text-neutral-dark tracking-tight leading-none">
@@ -221,67 +223,15 @@ export default function ProductsPage() {
               {t("filters.title")}
             </Button>
 
-            {/* Quick Filter Panel - Now Aligned to the Filters Button explicitly */}
-            {isFilterOpen && (
-              <div className="absolute top-full left-0 mt-3 w-72 bg-white border border-gray-100 rounded-2xl shadow-2xl z-[60] p-6 animate-in fade-in zoom-in-95 duration-200">
-                <div className="flex items-center justify-between mb-5">
-                  <h3 className="text-[11px] font-heading font-bold text-[#1A1A2E]/60 uppercase tracking-widest">{t("filters.panel_title")}</h3>
-                  <button onClick={() => setIsFilterOpen(false)} className="hover:rotate-90 transition-transform">
-                    <X size={14} className="text-gray-300" />
-                  </button>
-                </div>
-                <div className="space-y-4">
-                  <div className="space-y-1.5">
-                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1 block">{t("filters.status")}</label>
-                    <Select
-                      value={currentStatus}
-                      onChange={(e) => updateFilter("status", e.target.value)}
-                    >
-                      <option value="all">{t("filters.all_statuses")}</option>
-                      <option value="active">{t("status.active")}</option>
-                      <option value="draft">{t("status.draft")}</option>
-                      <option value="archived">{t("status.archived")}</option>
-                    </Select>
-                  </div>
-                  <div className="space-y-1.5">
-                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1 block">{t("filters.sport")}</label>
-                    <Select
-                      value={currentSport}
-                      onChange={(e) => updateFilter("sport", e.target.value)}
-                    >
-                      <option value="all">{t("filters.all_sports")}</option>
-                      <option value="football">{t("sports.football")}</option>
-                      <option value="basketball">{t("sports.basketball")}</option>
-                      <option value="running">{t("sports.running")}</option>
-                      <option value="tennis">{t("sports.tennis")}</option>
-                      <option value="training">{t("sports.training")}</option>
-                    </Select>
-                  </div>
-                  <div className="space-y-1.5">
-                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1 block">{t("filters.brand")}</label>
-                    <Select
-                      value={currentBrand}
-                      onChange={(e) => updateFilter("brand", e.target.value)}
-                    >
-                      <option value="all">{t("filters.all_brands")}</option>
-                      <option value="Nike">Nike</option>
-                      <option value="Adidas">Adidas</option>
-                      <option value="Puma">Puma</option>
-                      <option value="Under Armour">Under Armour</option>
-                    </Select>
-                  </div>
-
-                  {(currentStatus !== "all" || currentSport !== "all" || currentBrand !== "all") && (
-                    <button
-                      onClick={() => { clearFilters() }}
-                      className="w-full mt-2 py-2 text-xs font-bold text-gray-400 hover:text-error transition-colors font-heading uppercase tracking-widest"
-                    >
-                      {t("filters.clear")}
-                    </button>
-                  )}
-                </div>
-              </div>
-            )}
+            <ProductFilter
+              isOpen={isFilterOpen}
+              onClose={() => setIsFilterOpen(false)}
+              currentStatus={currentStatus}
+              currentSport={currentSport}
+              currentBrand={currentBrand}
+              onUpdate={updateFilter}
+              onClear={clearFilters}
+            />
           </div>
 
           <Link href="/products/new">
@@ -295,7 +245,6 @@ export default function ProductsPage() {
 
       <div className="h-px w-full bg-gray-100/60" />
 
-      {/* Table Section */}
       <section className="space-y-4 pt-4">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="relative flex-1 max-w-full md:max-w-sm">

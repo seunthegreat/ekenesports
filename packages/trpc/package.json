@@ -1,0 +1,26 @@
+{
+  "name": "@ekene/trpc",
+  "version": "0.1.0",
+  "private": true,
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "scripts": {
+    "build": "tsc"
+  },
+  "dependencies": {
+    "@trpc/server": "^11.0.0-rc.666",
+    "@trpc/client": "^11.0.0-rc.666",
+    "@trpc/react-query": "^11.0.0-rc.666",
+    "@tanstack/react-query": "^5.62.7",
+    "zod": "^3.24.1",
+    "superjson": "^2.2.2"
+  },
+  "peerDependencies": {
+    "@ekene/db": "workspace:*",
+    "@ekene/auth": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.3",
+    "@types/node": "^22.10.7"
+  }
+}

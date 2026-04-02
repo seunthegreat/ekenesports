@@ -1,12 +1,25 @@
+"use client";
+
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/routing";
 import { getNewArrivals } from "@/lib/data";
 import { ProductCard } from "../product/product-card";
+import { trpc } from "@/utils/trpc";
+import { Product } from "@/lib/types";
 
 export function NewArrivals() {
   const t = useTranslations("home");
   const tCommon = useTranslations("common");
-  const products = getNewArrivals(4);
+  
+  // Fetch from live DB
+  const { data: liveData } = trpc.products.list.useQuery({ 
+    limit: 4, 
+    sort: 'newest' 
+  });
+
+  const products = (liveData?.products && liveData.products.length > 0) 
+    ? (liveData.products as Product[]) 
+    : getNewArrivals(4);
 
   return (
     <section className="bg-neutral-light">

@@ -8,6 +8,8 @@ import { useCartStore } from "@/lib/cart-store";
 import { useAuthStore } from "@/lib/store/auth-store";
 import api from "@/utils/api";
 
+import { trpc } from "@/utils/trpc";
+
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || "");
 
 interface StripeElementsWrapperProps {
@@ -26,34 +28,50 @@ export function StripeElementsWrapper({ children }: StripeElementsWrapperProps) 
   const subtotal = useCartStore((s) => s.getSubtotal());
   const currentTotal = subtotal + (shippingRate?.price || 0);
 
+  // Hook for tRPC mutation
+  const createIntent = trpc.checkout.createIntent.useMutation();
+
   useEffect(() => {
-    const shouldFetch = step >= 3 && items.length > 0 && user && shippingRate;
+    const shouldFetch = step >= 3 && items.length > 0 && !!user && !!shippingRate;
     const totalChanged = lastTotalRef.current !== currentTotal;
 
     if (shouldFetch && (!clientSecret || totalChanged) && !fetchingRef.current) {
       const initPayment = async () => {
         fetchingRef.current = true;
         setLoading(true);
+        // Mark total as "attempted" to prevent loop on this total
+        lastTotalRef.current = currentTotal;
+
         try {
           const currentPI = clientSecret?.split('_secret_')[0];
 
-          const res = await api.post("/stripe/create-payment-intent", {
+          if (!user?.id || !items.length) {
+            console.warn("Attempted to create intent without userId or items:", { userId: user?.id, itemCount: items.length });
+            return;
+          }
+
+          const res = await createIntent.mutateAsync({
             userId: user.id,
             items: items.map(i => ({
               productId: i.productId,
+              variantId: i.variantId,
               price: i.variant.price,
-              quantity: i.quantity
+              quantity: i.quantity,
+              name: i.product.name,
+              image: i.product.images[0]?.url || "",
             })),
             shippingCost: shippingRate.price,
             paymentIntentId: currentPI
-          } as any);
+          });
 
-          if (res.data.clientSecret !== clientSecret) {
-            setClientSecret(res.data.clientSecret);
+          if (res.clientSecret && res.clientSecret !== clientSecret) {
+            setClientSecret(res.clientSecret);
           }
-          lastTotalRef.current = currentTotal;
         } catch (err) {
           console.error("Failed to init/update payment intent:", err);
+          // If it failed, reset lastTotalRef so we can retry if anything changes *elsewhere*
+          // Or just leave it as is to wait for the next real change.
+          // Resetting will cause loop IF it triggers a re-render.
         } finally {
           setLoading(false);
           fetchingRef.current = false;
@@ -61,7 +79,8 @@ export function StripeElementsWrapper({ children }: StripeElementsWrapperProps) 
       };
       initPayment();
     }
-  }, [step, clientSecret, items, user, shippingRate, currentTotal, setClientSecret]);
+  }, [step, clientSecret, items, user, shippingRate, currentTotal, setClientSecret, createIntent]);
+
 
   if (step >= 3 && !clientSecret) {
     return (

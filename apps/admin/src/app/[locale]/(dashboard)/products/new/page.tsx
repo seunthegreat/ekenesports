@@ -1,30 +1,26 @@
 "use client";
 
-import { useState, useMemo, useRef, useCallback } from "react";
-import { Link, useRouter } from "@/i18n/routing";
+import { useState, useMemo, useCallback } from "react";
+import { useRouter } from "@/i18n/routing";
 import { useSearchParams } from "next/navigation";
 import {
-  ChevronLeft,
-  Save,
-  Image as ImageIcon,
-  Upload,
   Info,
   Layers,
   Euro,
   Boxes,
-  X,
-  Plus,
-  Star
 } from "lucide-react";
-import { sports, categories, mockProducts } from "@/lib/mock-data";
 import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { useTranslations } from "next-intl";
-import { cn } from "@/lib/utils";
-import Image from "next/image";
-import { MatrixEditor } from "../components/matrix-editor";
+import { MatrixEditor } from "@/components/products/matrix-editor";
+import { ProductFilter } from "@/components/products/product-filter"; // Not used here but good to have consistency
+import { ProductFormHeader } from "@/components/products/product-form-header";
+import { ImageUploadCard } from "@/components/products/image-upload-card";
+import { sports as mockSports, categories as mockCategories, mockProducts } from "@/lib/mock-data";
+import { trpc } from "@/utils/trpc";
+import { toast } from "sonner";
+
 
 export default function ProductFormPage() {
   const t = useTranslations("Products");
@@ -33,6 +29,19 @@ export default function ProductFormPage() {
   const searchParams = useSearchParams();
   const editId = searchParams.get("id");
   const isEditing = !!editId;
+
+  // Live Data Fetching
+  const { data: liveSports } = trpc.sports.list.useQuery();
+  const { data: liveCategories } = trpc.categories.list.useQuery();
+  const createProduct = trpc.products.create.useMutation({
+    onSuccess: () => {
+      toast.success(t("form.success_create"));
+      router.push("/products");
+    },
+    onError: (err) => {
+      toast.error(err.message);
+    }
+  });
 
   const productData = useMemo(() => {
     return isEditing ? mockProducts.find(p => p.id === editId) : null;
@@ -44,21 +53,81 @@ export default function ProductFormPage() {
   const [sportId, setSportId] = useState(productData?.sportId || "");
   const [categoryId, setCategoryId] = useState(productData?.categoryId || "");
   const [variants, setVariants] = useState<any[]>(productData?.variants || []);
+  const [isUploading, setIsUploading] = useState(false);
 
-  // Image state: array of object URLs (from file picker) OR existing src strings
+  // Store File objects instead of just URLs for uploading
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [images, setImages] = useState<string[]>(
     productData?.images?.map(img => img.url) ?? []
   );
   const [primaryIdx, setPrimaryIdx] = useState(0);
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files ?? []);
+    setSelectedFiles(prev => [...prev, ...files]);
+
     const urls = files.map(f => URL.createObjectURL(f));
     setImages(prev => [...prev, ...urls]);
-    // Reset so same file can be picked again
     e.target.value = "";
   }, []);
+
+  const handleSave = async () => {
+    try {
+      setIsUploading(true);
+
+      // 1. Upload NEW images to Cloudinary
+      const uploadedUrls: string[] = [];
+
+      for (const file of selectedFiles) {
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("folder", "products");
+
+        const res = await fetch("/api/media/upload", {
+          method: "POST",
+          body: formData,
+        });
+
+        if (!res.ok) throw new Error("Failed to upload image");
+        const data = await res.json();
+        uploadedUrls.push(data.url);
+      }
+
+      // 2. Combine with existing URLs (if editing)
+      const allImages = [
+        ...images.filter(img => !img.startsWith("blob:")), // Keep existing
+        ...uploadedUrls // Add newly uploaded
+      ].map((url, i) => ({
+        url,
+        alt: `${name} - Image ${i + 1}`,
+      }));
+
+      // 3. Create/Update Product
+      await createProduct.mutateAsync({
+        name,
+        slug: name.toLowerCase().replace(/ /g, "-"),
+        description,
+        basePrice,
+        sportId,
+        categoryId,
+        images: allImages,
+        variants: variants.map(v => ({
+          size: v.size,
+          color: v.color,
+          colorHex: v.colorHex || "#000",
+          sku: v.sku || `${name.slice(0, 3)}-${v.size}-${v.color}`,
+          price: v.price || basePrice,
+          stock: v.stock || 0,
+        })),
+        featured: true,
+      });
+
+    } catch (error: any) {
+      toast.error(error.message);
+    } finally {
+      setIsUploading(false);
+    }
+  };
 
   const removeImage = (index: number) => {
     setImages(prev => {
@@ -66,50 +135,28 @@ export default function ProductFormPage() {
       if (primaryIdx >= next.length) setPrimaryIdx(Math.max(0, next.length - 1));
       return next;
     });
+    const imgUrl = images[index];
+    if (imgUrl.startsWith("blob:")) {
+      setSelectedFiles(prev => prev.filter((_, i) => i !== (index - images.filter(url => !url.startsWith("blob:")).length)));
+    }
   };
 
-  const sportOptions = sports.map(s => ({ label: tSports(s.slug as any), value: s.id }));
-  const categoryOptions = categories.map(c => ({ label: c.name, value: c.id }));
+  // Safe Swap: Use live data if available
+  const finalSports = (liveSports && liveSports.length > 0) ? liveSports : mockSports;
+  const finalCategories = (liveCategories && liveCategories.length > 0) ? liveCategories : mockCategories;
+
+  const sportOptions = finalSports.map(s => ({ label: tSports(s.slug as any), value: s.id }));
+  const categoryOptions = finalCategories.map(c => ({ label: c.name, value: c.id }));
 
   return (
     <div className="space-y-12 animate-in fade-in duration-700 pb-20 pt-4">
       {/* Page Header */}
-      <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8">
-        <div className="flex items-center gap-6">
-          <div className="flex flex-col gap-2">
-            <button
-              onClick={() => router.back()}
-              className="inline-flex items-center gap-2 text-xs font-bold text-gray-400 hover:text-primary transition-colors group mb-1"
-            >
-              <ChevronLeft size={16} className="group-hover:-translate-x-0.5 transition-transform" />
-              {t("form.back")}
-            </button>
-            <div className="max-w-xl space-y-2">
-              <h1 className="text-3xl lg:text-[40px] font-heading font-bold text-neutral-dark tracking-tight leading-none">
-                {isEditing ? t("form.title_edit") : t("form.title_create")}
-              </h1>
-              <div className="flex items-center gap-2 text-[11px] font-bold text-gray-400 uppercase tracking-[0.2em] leading-none ml-1">
-                <span>{t("form.catalog")}</span>
-                <span className="text-gray-200">/</span>
-                <span className="text-primary">
-                  {isEditing ? t("form.modify") : t("form.new")}
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="flex gap-3">
-          {!isEditing && (
-            <Button variant="outline" size="sm">
-              {t("form.save_draft")}
-            </Button>
-          )}
-          <Button variant="default" size="sm" className="gap-2">
-            <Save size={16} />
-            {isEditing ? t("form.update") : t("form.publish")}
-          </Button>
-        </div>
-      </div>
+      <ProductFormHeader
+        isEditing={isEditing}
+        isUploading={isUploading}
+        isPending={createProduct.isPending}
+        onSave={handleSave}
+      />
 
       <div className="h-px w-full bg-gray-100" />
 
@@ -205,118 +252,26 @@ export default function ProductFormPage() {
             <div className="space-y-2">
               <label className="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1">{t("form.retail_price")}</label>
               <div className="relative">
-                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-xl font-bold text-gray-300">€</div>
-                <input
+                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-xl font-bold text-gray-300 z-10">€</div>
+                <Input
                   type="number"
                   value={basePrice}
                   onChange={(e) => setBasePrice(parseFloat(e.target.value) || 0)}
                   placeholder={t("form.retail_price_placeholder")}
-                  className="w-full pl-10 pr-5 py-3.5 bg-neutral-light border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/10 text-2xl font-bold text-neutral-dark outline-none transition-all placeholder:text-gray-200"
+                  className="pl-10 text-2xl font-bold h-14 bg-neutral-light border-gray-100"
                 />
               </div>
             </div>
           </Card>
 
-          {/* Media Card — multi-image */}
-          <Card className="space-y-5" padding="sm" rounded="2xl" shadow="sm">
-            <div className="flex items-center justify-between">
-              <h2 className="text-sm font-heading font-bold text-neutral-dark flex items-center gap-2">
-                <ImageIcon className="text-primary" size={18} />
-                {t("form.media")}
-              </h2>
-              {images.length > 0 && (
-                <span className="text-xs font-bold text-gray-400 bg-gray-50 border border-gray-100 rounded-lg px-2 py-0.5">
-                  {images.length === 1 ? t("form.media_photo", { count: 1 }) : t("form.media_photos", { count: images.length })}
-                </span>
-              )}
-            </div>
-
-            {/* Hidden file input */}
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/*"
-              multiple
-              className="hidden"
-              onChange={handleFileChange}
-            />
-
-            {images.length === 0 ? (
-              /* Empty drop zone */
-              <button
-                type="button"
-                onClick={() => fileInputRef.current?.click()}
-                className="w-full aspect-[4/3] bg-neutral-light border-2 border-dashed border-gray-200 rounded-2xl flex flex-col items-center justify-center text-center p-6 group hover:border-primary/40 hover:bg-primary/5 transition-all cursor-pointer"
-              >
-                <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center text-gray-300 group-hover:scale-105 group-hover:text-primary transition-all mb-3 shadow-sm border border-gray-100">
-                  <Upload size={22} />
-                </div>
-                <p className="text-xs font-bold text-neutral-dark uppercase tracking-tight">{t("form.drop_images")}</p>
-                <p className="text-[10px] text-gray-400 mt-1.5 font-medium">{t("form.select_files")}</p>
-              </button>
-            ) : (
-              <div className="space-y-3">
-                {/* Primary image large preview */}
-                <div className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden bg-neutral-light border border-gray-100 group">
-                  <Image
-                    src={images[primaryIdx]}
-                    alt="Primary product image"
-                    fill
-                    className="object-cover"
-                    unoptimized
-                  />
-                  <div className="absolute top-2 left-2">
-                    <span className="px-2 py-0.5 bg-black/40 text-white text-[9px] font-bold uppercase tracking-widest rounded-md backdrop-blur-sm flex items-center gap-1">
-                      <Star size={10} className="fill-white" /> {t("form.media_primary")}
-                    </span>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => removeImage(primaryIdx)}
-                    className="absolute top-2 right-2 w-7 h-7 bg-white/90 hover:bg-white rounded-full flex items-center justify-center text-neutral-dark shadow-sm opacity-0 group-hover:opacity-100 transition-opacity"
-                  >
-                    <X size={14} />
-                  </button>
-                </div>
-
-                {/* Thumbnail grid */}
-                <div className="grid grid-cols-3 gap-2">
-                  {images.map((src, i) => (
-                    <button
-                      key={i}
-                      type="button"
-                      onClick={() => setPrimaryIdx(i)}
-                      className={cn(
-                        "relative aspect-square rounded-xl overflow-hidden border-2 transition-all group/thumb bg-neutral-light",
-                        i === primaryIdx
-                          ? "border-primary ring-2 ring-primary/20"
-                          : "border-gray-100 hover:border-primary/40"
-                      )}
-                    >
-                      <Image src={src} alt={`Product image ${i + 1}`} fill className="object-cover" unoptimized />
-                      {/* Remove button on each thumbnail */}
-                      <div
-                        onClick={(e) => { e.stopPropagation(); removeImage(i); }}
-                        className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover/thumb:opacity-100 transition-opacity cursor-pointer"
-                      >
-                        <X size={16} className="text-white" />
-                      </div>
-                    </button>
-                  ))}
-
-                  {/* Add more tile */}
-                  <button
-                    type="button"
-                    onClick={() => fileInputRef.current?.click()}
-                    className="aspect-square rounded-xl border-2 border-dashed border-gray-200 flex flex-col items-center justify-center text-gray-300 hover:border-primary/40 hover:text-primary hover:bg-primary/5 transition-all"
-                  >
-                    <Plus size={20} />
-                    <span className="text-[9px] font-bold mt-1 uppercase tracking-wider">{t("form.media_add")}</span>
-                  </button>
-                </div>
-              </div>
-            )}
-          </Card>
+          {/* Media Card */}
+          <ImageUploadCard
+            images={images}
+            primaryIdx={primaryIdx}
+            onPrimaryChange={setPrimaryIdx}
+            onRemove={removeImage}
+            onFileChange={handleFileChange}
+          />
         </div>
       </div>
     </div>

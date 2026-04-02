@@ -6,7 +6,10 @@ const intlMiddleware = createMiddleware(routing);
 
 export default async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  const token = request.cookies.get('auth-token');
+  
+  // Check for the correct BetterAuth session cookie
+  const token = request.cookies.get('better-auth.session_token') || 
+                request.cookies.get('__Secure-better-auth.session_token');
   
   // Define protected routes for customers
   const protectedPaths = ['/orders', '/checkout'];

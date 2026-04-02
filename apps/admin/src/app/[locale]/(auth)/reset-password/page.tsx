@@ -1,4 +1,4 @@
-import { ResetPasswordForm } from "@/app/[locale]/(auth)/reset-password/components/reset-password-form";
+import { ResetPasswordForm } from "@/components/auth/reset-password-form";
 import { getTranslations } from "next-intl/server";
 import type { Metadata } from "next";
 

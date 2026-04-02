@@ -3,8 +3,10 @@
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/routing";
 import { getFeaturedProducts } from "@/lib/data";
+import { trpc } from "@/utils/trpc";
 import { ProductCard } from "../product/product-card";
 import { Product } from "@/lib/types";
+
 import { formatPrice } from "@/lib/utils";
 import { Badge } from "../ui/badge";
 import { Star } from "lucide-react";
@@ -67,8 +69,21 @@ function HeroProductCard({ product, imageIndex = 1 }: { product: Product; imageI
 export function FeaturedProducts() {
   const t = useTranslations("home");
   const tCommon = useTranslations("common");
-  const products = getFeaturedProducts(6);
+
+  // 1. Fetch from live DB via tRPC
+  const { data: liveData, isLoading } = trpc.products.list.useQuery({ 
+    featured: true, 
+    limit: 6 
+  }, {
+    retry: false,
+  });
+
+  const products = (liveData?.products && liveData.products.length > 0) 
+    ? (liveData.products as Product[]) 
+    : getFeaturedProducts(6);
+
   const sectionRef = useRef<HTMLDivElement>(null);
+
   const [isVisible, setIsVisible] = useState(false);
 
   const heroProducts = products.slice(0, 2);

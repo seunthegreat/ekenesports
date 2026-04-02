@@ -1,8 +1,7 @@
 "use client";
 
-import { useState, useMemo, useRef } from "react";
+import { useState, useMemo, useRef, useEffect } from "react";
 import {
-  UserPlus,
   Search,
   Filter,
   User,
@@ -10,51 +9,26 @@ import {
   Lock,
   Eye,
   Trash2,
-  X,
   Download
 } from "lucide-react";
 import { useSearchParams } from "next/navigation";
-import { useRouter, usePathname, Link } from "@/i18n/routing";
+import { useRouter, usePathname } from "@/i18n/routing";
 import { useTranslations } from "next-intl";
 import { mockCustomers } from "@/lib/mock-data";
 import { Customer } from "@/lib/types";
-import { cn } from "@/lib/utils";
 import { DataTable } from "@/components/ui/data-table";
 import { ActionMenu } from "@/components/ui/action-menu";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Select } from "@/components/ui/select";
 import { StatusBadge } from "@/components/ui/badge";
-import { Reveal } from "@/components/ui/reveal";
 
-// Local Components
-import { CustomerFormModal } from "./components/customer-form-modal";
-import { CustomerStats } from "./components/customer-stats";
-import { DeleteCustomerModal } from "./components/delete-customer-modal";
-import { BlockCustomerModal } from "./components/block-customer-modal";
-
-
-function CustomerHeader({ onAdd }: { onAdd: () => void }) {
-  const t = useTranslations("Customers");
-  return (
-    <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8">
-      <div className="max-w-xl space-y-2">
-        <h1 className="text-3xl lg:text-[40px] font-heading font-bold text-neutral-dark tracking-tight leading-none">
-          {t("title_part1")} <span className="text-primary">{t("title_part2")}</span>
-        </h1>
-        <p className="text-sm text-gray-500 font-medium leading-relaxed mt-2">
-          {t("description")}
-        </p>
-      </div>
-      <div className="flex gap-3">
-        <Button variant="default" size="sm" onClick={onAdd}>
-          <UserPlus size={16} />
-          {t("add")}
-        </Button>
-      </div>
-    </div>
-  );
-}
+// Centralized Components
+import { CustomerFormModal } from "@/components/customers/customer-form-modal";
+import { CustomerStats } from "@/components/customers/customer-stats";
+import { DeleteCustomerModal } from "@/components/customers/delete-customer-modal";
+import { BlockCustomerModal } from "@/components/customers/block-customer-modal";
+import { CustomerHeader } from "@/components/customers/customer-header";
+import { CustomerFilter } from "@/components/customers/customer-filter";
 
 export default function CustomersPage() {
   const t = useTranslations("Customers");
@@ -67,13 +41,22 @@ export default function CustomersPage() {
   const filterRef = useRef<HTMLDivElement>(null);
 
   const statusStyles = {
-    active:   { label: t("filters.active"),   bg: "bg-emerald-50", text: "text-emerald-600", dot: "bg-emerald-500" },
-    inactive: { label: t("filters.inactive"), bg: "bg-gray-50",    text: "text-gray-400",    dot: "bg-gray-300"   },
-    blocked:  { label: t("filters.blocked"),  bg: "bg-error/5",    text: "text-error",       dot: "bg-error"      },
+    active: { label: t("filters.active"), bg: "bg-emerald-50", text: "text-emerald-600", dot: "bg-emerald-500" },
+    inactive: { label: t("filters.inactive"), bg: "bg-gray-50", text: "text-gray-400", dot: "bg-gray-300" },
+    blocked: { label: t("filters.blocked"), bg: "bg-error/5", text: "text-error", dot: "bg-error" },
   };
 
   const currentStatus = searchParams.get("status") || "all";
-  const currentSegment = searchParams.get("segment") || "all";
+
+  useEffect(() => {
+    const handleOutside = (e: MouseEvent) => {
+      if (filterRef.current && !filterRef.current.contains(e.target as Node)) {
+        setIsFilterOpen(false);
+      }
+    };
+    if (isFilterOpen) document.addEventListener("mousedown", handleOutside);
+    return () => document.removeEventListener("mousedown", handleOutside);
+  }, [isFilterOpen]);
 
   const updateFilter = (key: string, value: string) => {
     const params = new URLSearchParams(searchParams);
@@ -152,7 +135,7 @@ export default function CustomersPage() {
           </div>
           <div className="flex flex-col">
             <span className="text-sm font-bold text-neutral-dark">{customer.firstName} {customer.lastName}</span>
-          <span className="text-xs text-gray-400 font-medium uppercase">{customer.email}</span>
+            <span className="text-xs text-gray-400 font-medium uppercase">{customer.email}</span>
           </div>
         </div>
       ),
@@ -161,15 +144,15 @@ export default function CustomersPage() {
     {
       header: t("table.status"),
       accessor: (customer: Customer) => {
-        const style = statusStyles[customer.status];
-        return (
+        const style = statusStyles[customer.status as keyof typeof statusStyles];
+        return style ? (
           <StatusBadge
             label={style.label}
             bg={style.bg}
             text={style.text}
             dot={style.dot}
           />
-        );
+        ) : null;
       },
       className: "w-0 whitespace-nowrap"
     },
@@ -263,37 +246,13 @@ export default function CustomersPage() {
                 {t("filters.title")}
               </Button>
 
-              {isFilterOpen && (
-                <div className="absolute top-full right-0 mt-3 w-72 bg-white border border-gray-100 rounded-2xl shadow-2xl z-[60] p-6 animate-in fade-in zoom-in-95 duration-200">
-                  <div className="flex items-center justify-between mb-5">
-                    <h3 className="text-[11px] font-heading font-bold text-[#1A1A2E]/60 uppercase tracking-widest">{t("filters.panel_title")}</h3>
-                    <button onClick={() => setIsFilterOpen(false)}><X size={14} className="text-gray-300" /></button>
-                  </div>
-                  <div className="space-y-4">
-                    <div className="space-y-1.5">
-                      <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1 block">{t("filters.status")}</label>
-                      <Select
-                        value={currentStatus}
-                        onChange={(e) => updateFilter("status", e.target.value)}
-                      >
-                        <option value="all">{t("filters.all")}</option>
-                        <option value="active">{t("filters.active")}</option>
-                        <option value="inactive">{t("filters.inactive")}</option>
-                        <option value="blocked">{t("filters.blocked")}</option>
-                      </Select>
-                    </div>
-
-                    {(currentStatus !== "all") && (
-                      <button
-                        onClick={clearFilters}
-                        className="w-full mt-2 py-2 text-xs font-bold text-gray-400 hover:text-error transition-colors font-heading uppercase tracking-widest"
-                      >
-                        {t("filters.clear")}
-                      </button>
-                    )}
-                  </div>
-                </div>
-              )}
+              <CustomerFilter
+                isOpen={isFilterOpen}
+                onClose={() => setIsFilterOpen(false)}
+                currentStatus={currentStatus}
+                onUpdate={updateFilter}
+                onClear={clearFilters}
+              />
             </div>
           </div>
         </div>

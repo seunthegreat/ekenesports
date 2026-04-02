@@ -1,63 +1,74 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import Cookies from 'js-cookie';
-import { loginUser, registerUser } from '@/services/auth';
-import { type LoginFormValues, type RegisterFormValues } from '@/lib/validations/auth';
-import { AuthUser, RegisterPayload } from '@/types/auth';
+import { authClient } from '@ekene/auth';
+import { type LoginFormValues, type RegisterFormValues } from '@ekene/shared';
+
+interface AuthUser {
+  id: string;
+  email: string;
+  firstName?: string;
+  lastName?: string;
+  role?: string;
+  image?: string;
+}
 
 interface AuthState {
   user: AuthUser | null;
-  accessToken: string | null;
-  refreshToken: string | null;
   isAuthenticated: boolean;
-  login: (user: AuthUser, accessToken: string, refreshToken: string) => void;
-  logout: () => void;
+  setSession: (session: any) => void;
+  logout: () => Promise<void>;
   updateUser: (user: Partial<AuthUser>) => void;
   loginWithCredentials: (data: LoginFormValues) => Promise<void>;
-  registerWithCredentials: (data: RegisterPayload) => Promise<{ requiresVerification: boolean }>;
+  registerWithCredentials: (data: RegisterFormValues) => Promise<{ requiresVerification: boolean }>;
 }
-
-const COOKIE_NAME = 'auth-token';
-const COOKIE_OPTIONS: Cookies.CookieAttributes = { 
-  expires: 7, 
-  secure: true, 
-  sameSite: 'strict' 
-};
 
 export const useAuthStore = create<AuthState>()(
   persist(
     (set) => ({
       user: null,
-      accessToken: null,
-      refreshToken: null,
       isAuthenticated: false,
-      login: (user, accessToken, refreshToken) => {
-        Cookies.set(COOKIE_NAME, accessToken, COOKIE_OPTIONS);
-        set({ user, accessToken, refreshToken, isAuthenticated: true });
+      setSession: (sessionData) => {
+        // Better Auth returns an object with { user, session }
+        const user = sessionData?.user;
+        if (user && user.id) {
+          set({
+            user: user as AuthUser,
+            isAuthenticated: true
+          });
+        } else {
+          set({ user: null, isAuthenticated: false });
+        }
       },
-      logout: () => {
-        Cookies.remove(COOKIE_NAME);
-        set({ user: null, accessToken: null, refreshToken: null, isAuthenticated: false });
+      logout: async () => {
+        await authClient.signOut();
+        set({ user: null, isAuthenticated: false });
       },
       updateUser: (updatedUser) =>
         set((state) => ({
           user: state.user ? { ...state.user, ...updatedUser } : null,
         })),
       loginWithCredentials: async (data) => {
-        const res = await loginUser(data);
-        Cookies.set(COOKIE_NAME, res.accessToken, COOKIE_OPTIONS);
-        set({ user: res.user, accessToken: res.accessToken, refreshToken: res.refreshToken, isAuthenticated: true });
+        const { error } = await authClient.signIn.email({
+          email: data.email,
+          password: data.password,
+          callbackURL: '/',
+        });
+        if (error) throw error;
       },
       registerWithCredentials: async (data) => {
-        const res = await registerUser(data);
-        if (res.accessToken) {
-          Cookies.set(COOKIE_NAME, res.accessToken, COOKIE_OPTIONS);
-          set({ user: res.user, accessToken: res.accessToken, refreshToken: res.refreshToken, isAuthenticated: true });
-          return { requiresVerification: false };
-        }
-        return { requiresVerification: true };
+        const { error } = await authClient.signUp.email({
+          email: data.email,
+          password: data.password,
+          name: `${data.firstName} ${data.lastName}`.trim(),
+          firstName: data.firstName,
+          lastName: data.lastName,
+          callbackURL: '/',
+        });
+        if (error) throw error;
+        // Better Auth typically handles verification redirection or auto-login depending on config.
+        return { requiresVerification: false };
       },
     }),
-    { name: 'auth-storage' }
+    { name: 'ekene-auth-storage' }
   )
 );

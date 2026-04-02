@@ -1,4 +1,4 @@
-import { LoginForm } from "@/app/[locale]/(auth)/login/components/login-form";
+import { LoginForm } from "@/components/auth/login-form";
 import { getTranslations } from "next-intl/server";
 import type { Metadata } from "next";
 

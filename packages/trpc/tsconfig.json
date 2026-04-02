@@ -1,0 +1,12 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@ekene/db": ["../db/src"],
+      "@ekene/auth": ["../auth/src"]
+    },
+    "outDir": "dist"
+  },
+  "include": ["src/**/*"]
+}

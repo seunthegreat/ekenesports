@@ -4,8 +4,8 @@ import { Link, useRouter } from "@/i18n/routing";
 import { useTranslations } from "next-intl";
 import { useCartStore } from "@/lib/cart-store";
 import { useAuthStore } from "@/lib/store/auth-store";
-import { deleteToken } from "@/utils/cookies";
 import { LanguageSwitcher } from "./language-switcher";
+
 import { CartDrawer } from "../cart/cart-drawer";
 import { MobileNav } from "./mobile-nav";
 import { SearchDialog } from "./search-dialog";
@@ -39,10 +39,10 @@ export function Header() {
   const { user, logout: logoutStore, isAuthenticated } = useAuthStore();
 
   const handleLogout = async () => {
-    await deleteToken();
-    logoutStore();
+    await logoutStore();
     router.push("/");
   };
+
 
   return (
     <>

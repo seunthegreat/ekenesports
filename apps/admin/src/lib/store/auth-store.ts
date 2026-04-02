@@ -1,67 +1,74 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import Cookies from 'js-cookie';
-import { loginUser } from '@/services/auth';
-import { type LoginFormValues } from '@/lib/validations/auth';
-import { AuthUser } from '@/types/auth';
+import { authClient } from '@ekene/auth';
+import { type LoginFormValues } from '@ekene/shared';
+
+interface AuthUser {
+  id: string;
+  email: string;
+  firstName?: string;
+  lastName?: string;
+  role?: string;
+  image?: string;
+}
 
 interface AuthState {
   user: AuthUser | null;
-  accessToken: string | null;
-  refreshToken: string | null;
   isAuthenticated: boolean;
-  login: (user: AuthUser, accessToken: string, refreshToken: string) => void;
-  logout: () => void;
+  setSession: (session: any) => void;
+  logout: () => Promise<void>;
   updateUser: (user: Partial<AuthUser>) => void;
   loginWithCredentials: (data: LoginFormValues) => Promise<void>;
 }
-
-const COOKIE_NAME = 'admin-token';
-const COOKIE_OPTIONS: Cookies.CookieAttributes = { 
-  expires: 7, 
-  secure: true, 
-  sameSite: 'strict' 
-};
 
 export const useAuthStore = create<AuthState>()(
   persist(
     (set) => ({
       user: null,
-      accessToken: null,
-      refreshToken: null,
       isAuthenticated: false,
-      login: (user, accessToken, refreshToken) => {
-        // Set cookie for middleware/proxy access
-        Cookies.set(COOKIE_NAME, accessToken, { expires: 7, secure: true, sameSite: 'strict' });
-        set({ user, accessToken, refreshToken, isAuthenticated: true });
+      setSession: (sessionData) => {
+        const user = sessionData?.user;
+        if (user && user.id) {
+          set({
+            user: user as AuthUser,
+            isAuthenticated: true
+          });
+        } else {
+          set({ user: null, isAuthenticated: false });
+        }
       },
-      logout: () => {
-        Cookies.remove(COOKIE_NAME);
-        set({ user: null, accessToken: null, refreshToken: null, isAuthenticated: false });
+      logout: async () => {
+        await authClient.signOut();
+        set({ user: null, isAuthenticated: false });
       },
       updateUser: (updatedUser) =>
         set((state) => ({
           user: state.user ? { ...state.user, ...updatedUser } : null,
         })),
       loginWithCredentials: async (data) => {
-        const res = await loginUser(data);
+        const result = await authClient.signIn.email({
+          email: data.email,
+          password: data.password,
+          callbackURL: '/',
+        });
         
+        if (result.error) throw result.error;
+        const session = result.data;
+
         // Role Protection: Check if the user trying to login is a customer
-        if (res.user.role === 'CUSTOMER') {
+        if (session?.user && (session.user as any).role === 'CUSTOMER') {
+          await authClient.signOut();
           throw new Error('Access Denied: Customers are not allowed to access the admin panel.');
         }
-        
-        // Set cookie for middleware/proxy access
-        Cookies.set(COOKIE_NAME, res.accessToken, { expires: 7, secure: true, sameSite: 'strict' });
 
-        set({ 
-          user: res.user, 
-          accessToken: res.accessToken, 
-          refreshToken: res.refreshToken, 
-          isAuthenticated: true 
-        });
+        if (session?.user) {
+          set({ 
+            user: session.user as AuthUser, 
+            isAuthenticated: true 
+          });
+        }
       },
     }),
-    { name: 'admin-auth-storage' }
+    { name: 'ekene-admin-auth-storage' }
   )
 );

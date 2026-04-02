@@ -10,10 +10,10 @@ import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { GoogleIcon } from "@/components/ui/google-icon";
-import { getRegisterSchema, type RegisterFormValues } from "@/lib/validations/auth";
 import { PasswordStrength } from "./password-strength";
-import { loginWithGoogle } from "@/services/auth";
 import { useAuthStore } from "@/lib/store/auth-store";
+import { registerSchema, type RegisterFormValues } from "@ekene/shared";
+import { authClient } from "@ekene/auth";
 
 export function RegisterForm() {
   const t = useTranslations("Auth.register");
@@ -29,7 +29,7 @@ export function RegisterForm() {
     control,
     formState: { errors, isSubmitting },
   } = useForm<RegisterFormValues>({
-    resolver: zodResolver(getRegisterSchema(t)),
+    resolver: zodResolver(registerSchema),
   });
 
   const passwordValue = useWatch({ control, name: "password" });
@@ -37,21 +37,30 @@ export function RegisterForm() {
   const onSubmit = async (data: RegisterFormValues) => {
     setServerError("");
     try {
-      const { confirmPassword, ...rest } = data;
-      const { requiresVerification } = await registerWithCredentials(rest);
+      const { requiresVerification } = await registerWithCredentials(data);
       router.push(requiresVerification ? `/verify-email?email=${encodeURIComponent(data.email)}` : "/");
+      router.refresh();
     } catch (err: any) {
-      const msg = err?.response?.data?.message || t("error_invalid");
+      const msg = err?.message || t("error_invalid");
       setServerError(Array.isArray(msg) ? msg.join(" ") : msg);
     }
   };
+
+  const onGoogleLogin = async () => {
+    await authClient.signIn.social({
+      provider: "google",
+      callbackURL: typeof window !== "undefined" ? window.location.origin : "/",
+    });
+  };
+
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-5" noValidate>
       {/* Google OAuth */}
       <Button
         type="button"
-        onClick={loginWithGoogle}
+        onClick={onGoogleLogin}
+
         variant="outline"
         size="lg"
         className="w-full gap-3 border-2 border-[#e5e7eb] bg-white text-neutral-dark hover:border-primary/30 hover:bg-neutral-light hover:text-neutral-dark"

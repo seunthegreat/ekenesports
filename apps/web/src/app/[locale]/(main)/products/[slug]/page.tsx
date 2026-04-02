@@ -9,24 +9,41 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useCartStore } from "@/lib/cart-store";
 import { formatPrice } from "@/lib/utils";
-import { Variant } from "@/lib/types";
-import { useState } from "react";
+import { Product, Variant } from "@/lib/types";
+import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/routing";
 import { ShoppingBag, Star, ChevronRight, Check } from "lucide-react";
 import { notFound } from "next/navigation";
+import { trpc } from "@/utils/trpc";
 
 export default function ProductDetailPage() {
   const params = useParams();
   const slug = params.slug as string;
-  const product = getProductBySlug(slug);
   const t = useTranslations("product");
   const tCommon = useTranslations("common");
   const addItem = useCartStore((s) => s.addItem);
-  const [selectedVariant, setSelectedVariant] = useState<Variant | null>(
-    product?.variants[0] ?? null
-  );
+  
+  // 1. Fetch from live DB
+  const { data: dbProduct, isLoading } = trpc.products.getBySlug.useQuery({ slug });
+
+  // 2. Fallback to mock if not found in DB
+  const mockProduct = getProductBySlug(slug);
+  const product = dbProduct ? (dbProduct as Product) : mockProduct;
+
+  const [selectedVariant, setSelectedVariant] = useState<Variant | null>(null);
   const [added, setAdded] = useState(false);
+
+  // Initialize selected variant once product is available
+  useEffect(() => {
+    if (product?.variants?.length && !selectedVariant) {
+      setSelectedVariant(product.variants[0]);
+    }
+  }, [product, selectedVariant]);
+
+  if (isLoading) {
+    return <div className="max-w-7xl mx-auto px-4 py-32 text-center animate-pulse">Loading product details...</div>;
+  }
 
   if (!product) {
     notFound();

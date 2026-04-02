@@ -3,266 +3,277 @@
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import {
-   Truck,
-   Plus,
-   Edit2,
-   Trash2,
-   MapPin,
-   Globe,
-   Clock,
-   Save,
-   Search
+  Truck,
+  Globe,
+  Plus,
+  Trash2,
+  Edit2,
+  Box,
+  BadgeCheck,
+  Building,
+  Save,
+  CheckCircle2
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { cn } from "@/lib/utils";
-import { useHotkeys } from "@/hooks/use-hotkeys";
 import { toast } from "sonner";
-import { CreateZoneModal } from "./components/create-zone-modal";
-import { AddMethodModal } from "./components/add-method-modal";
+import { AddMethodModal } from "@/components/settings/add-method-modal";
+import { CreateZoneModal } from "@/components/settings/create-zone-modal";
+import { SaveSettingsBar } from "@/components/settings/save-settings-bar";
 
-const zones = [
-   { id: "1", key: "domestic", count: 1, countries: ["DE"], active: true },
-   { id: "2", key: "eu", count: 26, countries: ["FR", "IT", "ES", "NL", "..."], active: true },
-   { id: "3", key: "international", count: 195, countries: ["US", "GB", "CN", "JP", "..."], active: false },
-];
+interface ShippingZone {
+  id: string;
+  name: string;
+  countries: string[];
+  methods: ShippingMethod[];
+  active: boolean;
+}
 
-const shippingMethods = [
-   { id: "m1", key: "dhl", zone: "Domestic", price: 0, threshold: 150, days: "1-2", active: true },
-   { id: "m2", key: "standard", zone: "Domestic", price: 4.99, threshold: 50, days: "3-5", active: true },
-   { id: "m3", key: "priority", zone: "EU", price: 12.50, threshold: 200, days: "2-4", active: true },
-];
+interface ShippingMethod {
+  id: string;
+  name: string;
+  carrier: string;
+  price: number;
+  freeThreshold: number;
+  minDays: number;
+  maxDays: number;
+  active: boolean;
+}
 
 export default function ShippingSettings() {
-   const t = useTranslations("Shipping");
-   const [activeZone,       setActiveZone]       = useState(zones[0].id);
-   const [deleteMethod,     setDeleteMethod]     = useState<any>(null);
-   const [isCreateZoneOpen, setIsCreateZoneOpen] = useState(false);
-   const [isAddMethodOpen,  setIsAddMethodOpen]  = useState(false);
-   const [localZones,       setLocalZones]       = useState(zones);
-   const [localMethods,     setLocalMethods]     = useState(shippingMethods);
+  const t = useTranslations("Shipping");
+  const tGen = useTranslations("General");
 
-   const handleSave = () => {
-      toast.success(t("toast.update_success"), { description: t("toast.update_desc") });
-   };
+  // Mock initial state
+  const [zones, setZones] = useState<ShippingZone[]>([
+    {
+      id: "1",
+      name: "Domestic (Germany)",
+      countries: ["Germany"],
+      active: true,
+      methods: [
+        { id: "m1", name: "DHL Standard", carrier: "DHL", price: 4.90, freeThreshold: 50, minDays: 2, maxDays: 3, active: true },
+        { id: "m2", name: "DHL Express", carrier: "DHL", price: 12.00, freeThreshold: 150, minDays: 1, maxDays: 1, active: true },
+      ]
+    },
+    {
+      id: "2",
+      name: "European Union",
+      countries: ["France", "Italy", "Spain", "Austria"],
+      active: true,
+      methods: [
+        { id: "m3", name: "EU Standard", carrier: "DPD", price: 9.90, freeThreshold: 100, minDays: 3, maxDays: 5, active: true },
+      ]
+    }
+  ]);
 
-   useHotkeys("s", handleSave, { ctrlOrCmd: true, preventDefault: true });
+  const [isAddingZone, setIsAddingZone] = useState(false);
+  const [activeZoneForMethod, setActiveZoneForMethod] = useState<ShippingZone | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
 
-   const activeZoneKey  = localZones.find(z => z.id === activeZone)?.key || "";
-   const activeZoneName = localZones.find(z => z.id === activeZone)?.key
-     ? t(`zones.${localZones.find(z => z.id === activeZone)!.key}` as any)
-     : "Selected Zone";
+  const handleSaveAll = () => {
+    setIsSaving(true);
+    setTimeout(() => {
+      setIsSaving(false);
+      setShowSuccess(true);
+      toast.success(tGen("toast.save_success"));
+      setTimeout(() => setShowSuccess(false), 3000);
+    }, 800);
+  };
 
-   const handleAddZone = (data: { name: string; active: boolean }) => {
-     const newZone = {
-       id:        String(Date.now()),
-       key:       data.name.toLowerCase().replace(/\s+/g, "_"),
-       count:     0,
-       countries: [] as string[],
-       active:    data.active,
-       customName: data.name,
-     };
-     setLocalZones(prev => [...prev, newZone]);
-     setActiveZone(newZone.id);
-     toast.success(`Zone "${data.name}" created`);
-   };
+  const handleCreateZone = (data: { name: string; active: boolean }) => {
+    const newZone: ShippingZone = {
+      id: Math.random().toString(36).substr(2, 9),
+      name: data.name,
+      countries: [],
+      active: data.active,
+      methods: []
+    };
+    setZones([...zones, newZone]);
+    toast.success(t("toast.zone_created"));
+  };
 
-   const handleAddMethod = (data: {
-     name: string; carrier: string; price: number;
-     freeThreshold: number; minDays: number; maxDays: number; active: boolean;
-   }) => {
-     const newMethod = {
-       id:        `m${Date.now()}`,
-       key:       "custom",
-       customName: data.name,
-       zone:      activeZoneKey,
-       price:     data.price,
-       threshold: data.freeThreshold,
-       days:      `${data.minDays}-${data.maxDays}`,
-       active:    data.active,
-     };
-     setLocalMethods(prev => [...prev, newMethod]);
-     toast.success(`Method "${data.name}" added`);
-   };
+  const handleAddMethod = (data: any) => {
+    if (!activeZoneForMethod) return;
 
-   return (
-      <div className="space-y-6">
+    const newMethod: ShippingMethod = {
+      id: Math.random().toString(36).substr(2, 9),
+      ...data
+    };
 
-         {/* Zone Selector */}
-         <section className="space-y-6">
-            <div className="flex items-center justify-between">
-               <div className="flex items-center gap-2 text-primary">
-                  <Globe size={18} />
-                  <h2 className="text-sm font-bold text-neutral-dark">{t("title")}</h2>
-               </div>
-               <Button variant="default" size="sm" className="gap-2 shrink-0" onClick={() => setIsCreateZoneOpen(true)}>
-                  <Plus size={16} />
-                  {t("create")}
-               </Button>
-            </div>
+    setZones(zones.map(z =>
+      z.id === activeZoneForMethod.id
+        ? { ...z, methods: [...z.methods, newMethod] }
+        : z
+    ));
+    toast.success(t("toast.method_added"));
+  };
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-               {localZones.map((zone) => (
-                  <div key={zone.id} onClick={() => setActiveZone(zone.id)} className="h-full">
-                     <Card
-                        className={cn(
-                           "p-6 cursor-pointer transition-all border border-gray-100 h-full",
-                           activeZone === zone.id ? "ring-2 ring-primary border-transparent bg-primary/5" : "hover:bg-white hover:shadow-lg hover:shadow-black/5"
-                        )}
-                        padding="none"
-                        rounded="2xl"
-                     >
-                        <div className="flex flex-col h-full">
-                           <div className="flex items-start justify-between mb-4">
-                              <div className={cn(
-                                 "w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-all shadow-sm",
-                                 activeZone === zone.id ? "bg-primary text-white shadow-primary/20" : "bg-white border border-gray-100 text-gray-400 group-hover:bg-neutral-light"
-                              )}>
-                                 <MapPin size={18} />
-                              </div>
-                              <div className={cn(
-                              "px-2 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-widest whitespace-nowrap",
-                              zone.active ? "bg-primary/10 text-primary" : "bg-gray-100 text-gray-400"
-                            )}>
-                                 {zone.active ? t("active") : t("standby")}
-                              </div>
-                           </div>
+  const removeZone = (id: string) => {
+    setZones(zones.filter(z => z.id !== id));
+    toast.error(t("toast.zone_removed"));
+  };
 
-                           <div className="mt-auto">
-                              <h3 className="text-[13px] font-bold text-neutral-dark uppercase tracking-tight mb-0.5">
-                                {(zone as any).customName ?? t(`zones.${zone.key}` as any)}
-                              </h3>
-                              <p className="text-[11px] text-gray-400 font-medium">{zone.count} {t("territories")}</p>
-                           </div>
-                        </div>
-                     </Card>
-                  </div>
-               ))}
-            </div>
-         </section>
+  const toggleMethod = (zoneId: string, methodId: string) => {
+    setZones(zones.map(z => {
+      if (z.id !== zoneId) return z;
+      return {
+        ...z,
+        methods: z.methods.map(m => m.id === methodId ? { ...m, active: !m.active } : m)
+      };
+    }));
+  };
 
-         {/* Shipping Methods for Active Zone */}
-         <section className="space-y-6">
-            <div className="flex items-center justify-between border-b border-gray-100 pb-5">
-               <div className="space-y-1">
-                  <h3 className="text-lg font-heading font-bold text-neutral-dark">{t("methods")}</h3>
-                  <p className="text-xs text-gray-500 font-medium">{t("active_rules", { zone: activeZoneName })}</p>
-               </div>
-               <Button variant="default" size="sm" className="gap-2" onClick={() => setIsAddMethodOpen(true)}>
-                  <Plus size={16} />
-                  {t("add")}
-               </Button>
-            </div>
-
-            <div className="space-y-4">
-               {localMethods.filter(m =>
-                 activeZone === "1" ? m.zone === "Domestic" :
-                 activeZone === "2" ? m.zone === "EU" :
-                 m.zone === activeZoneKey
-               ).map((method) => (
-                  <Card key={method.id} className="p-4 md:p-6 group hover:border-primary/20 transition-all" rounded="2xl" shadow="none">
-                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 sm:gap-8">
-                        <div className="flex items-center gap-4 md:gap-6 flex-1">
-                           <div className="w-10 h-10 md:w-12 md:h-12 bg-neutral-light rounded-xl md:rounded-2xl flex items-center justify-center text-primary border border-gray-50 flex-shrink-0">
-                              <Truck size={20} className="md:size-[22px]" />
-                           </div>
-                           <div className="space-y-0.5 md:space-y-1">
-                              <h4 className="text-xs md:text-sm font-bold text-neutral-dark uppercase tracking-tight">
-                                {(method as any).customName ?? t(`methods_list.${method.key}` as any)}
-                              </h4>
-                              <div className="flex flex-wrap items-center gap-x-3 gap-y-1 md:gap-4 text-[9px] md:text-[10px] font-bold text-gray-400 uppercase tracking-widest">
-                                 <span className="flex items-center gap-1.5"><Clock size={12} className="text-primary shrink-0" /> {t("methods_list.days", { count: method.days })}</span>
-                                 <span className="flex items-center gap-1.5 text-emerald-500 bg-emerald-50 px-2 py-0.5 rounded-md italic">{t("free_over", { amount: `€${method.threshold}` })}</span>
-                              </div>
-                           </div>
-                        </div>
-
-                        <div className="flex items-center justify-between sm:justify-end gap-6 sm:gap-10 border-t sm:border-t-0 pt-4 sm:pt-0 border-gray-100/60 sm:border-transparent">
-                           <div className="sm:text-right">
-                              <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-0.5">{t("rate")}</p>
-                              <p className="text-[18px] md:text-xl font-heading font-bold text-neutral-dark">
-                                 {method.price === 0 ? t("methods_list.free") : `€${method.price.toFixed(2)}`}
-                              </p>
-                           </div>
-                           <div className="flex items-center gap-2 h-10 border-l border-gray-100 sm:border-gray-100 pl-6 sm:pl-8 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
-                              <Button variant="ghost" size="icon" className="w-9 h-9 rounded-xl hover:bg-neutral-light text-gray-400 hover:text-primary transition-all">
-                                 <Edit2 size={16} />
-                              </Button>
-                              <Button variant="ghost" size="icon" onClick={() => setDeleteMethod(method)} className="w-9 h-9 rounded-xl hover:bg-error/5 text-gray-400 hover:text-error transition-all">
-                                 <Trash2 size={16} />
-                              </Button>
-                           </div>
-                        </div>
-                     </div>
-                  </Card>
-               ))}
-            </div>
-         </section>
-
-         {/* Country Mapping Interface */}
-         <section className="space-y-6">
-            <div className="flex items-center gap-2 text-primary mb-2">
-               <MapPin size={18} />
-               <h2 className="text-sm font-bold text-neutral-dark">{t("mapping")}</h2>
-            </div>
-
-            <Card className="p-8 space-y-8" rounded="2xl" border="primary">
-               <div className="flex flex-col md:flex-row gap-6">
-                  <div className="flex-1 relative">
-                     <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
-                     <input
-                        type="text"
-                        placeholder={t("search")}
-                        className="w-full pl-11 pr-4 py-3 bg-neutral-light border border-gray-100 rounded-xl text-xs font-bold outline-none placeholder:text-gray-400 focus:border-primary/20 transition-all shadow-sm h-11"
-                     />
-                  </div>
-                  <Button variant="default" size="sm" onClick={handleSave} className="gap-2">
-                     <Save size={16} />
-                     {t("update")}
-                  </Button>
-               </div>
-
-               <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-3">
-                  {["germany", "france", "spain", "italy", "belgium", "denmark", "sweden", "poland", "austria", "portugal", "greece", "ireland"].map((countryKey) => (
-                     <div key={countryKey} className="px-3 py-2 bg-white border border-gray-100 rounded-xl flex items-center justify-between group hover:border-primary/30 transition-all cursor-pointer">
-                        <span className="text-[10px] font-bold uppercase text-gray-500 group-hover:text-neutral-dark">{t(`countries.${countryKey}`)}</span>
-                        <div className="w-1.5 h-1.5 rounded-full bg-primary" />
-                     </div>
-                  ))}
-                  <div className="px-3 py-2 bg-neutral-light border border-dashed border-gray-200 rounded-xl flex items-center justify-center text-[10px] font-bold text-gray-400 uppercase group hover:border-primary/30 hover:text-primary transition-all cursor-pointer">
-                     {t("more_territories", { count: 14 })}
-                  </div>
-               </div>
-            </Card>
-         </section>
-
-         <ConfirmDialog
-            isOpen={!!deleteMethod}
-            onClose={() => setDeleteMethod(null)}
-            onConfirm={() => {
-              setLocalMethods(prev => prev.filter(m => m.id !== deleteMethod?.id));
-              toast.success(t("toast.remove_success", { name: (deleteMethod as any)?.customName ?? t(`methods_list.${deleteMethod?.key}` as any) }));
-            }}
-            title={t("delete_modal.title")}
-            description={t("delete_modal.desc", { name: (deleteMethod as any)?.customName ?? t(`methods_list.${deleteMethod?.key}` as any) })}
-            confirmLabel={t("delete_modal.confirm")}
-         />
-
-         <CreateZoneModal
-            isOpen={isCreateZoneOpen}
-            onClose={() => setIsCreateZoneOpen(false)}
-            onSave={handleAddZone}
-         />
-
-         <AddMethodModal
-            isOpen={isAddMethodOpen}
-            onClose={() => setIsAddMethodOpen(false)}
-            zoneName={activeZoneName}
-            onSave={handleAddMethod}
-         />
-
+  return (
+    <div className="space-y-10 pb-20">
+      {/* Header with quick add */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3 text-primary">
+          <Truck size={20} />
+          <h2 className="text-sm font-bold text-neutral-dark uppercase tracking-wider">{t("title")}</h2>
+        </div>
+        <Button variant="outline" size="sm" className="gap-2" onClick={() => setIsAddingZone(true)}>
+          <Plus size={14} />
+          {t("add_zone")}
+        </Button>
       </div>
-   );
+
+      <div className="space-y-8">
+        {zones.map((zone) => (
+          <section key={zone.id} className="animate-in fade-in slide-in-from-bottom-2 duration-500">
+            <Card className="overflow-hidden border-none shadow-sm" padding="none" rounded="2xl">
+              {/* Zone Header */}
+              <div className="p-6 bg-neutral-light/50 border-b border-gray-100 flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-primary shadow-sm border border-gray-100">
+                    <Globe size={18} />
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-bold text-neutral-dark">{zone.name}</h3>
+                    <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest leading-none mt-1">
+                      {zone.countries.length > 0 ? zone.countries.join(", ") : t("no_countries")}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <button className="p-2 text-gray-300 hover:text-neutral-dark transition-colors" title={t("edit_zone")}>
+                    <Edit2 size={14} />
+                  </button>
+                  <button
+                    onClick={() => removeZone(zone.id)}
+                    className="p-2 text-gray-300 hover:text-error transition-colors"
+                    title={t("remove_zone")}
+                  >
+                    <Trash2 size={14} />
+                  </button>
+                </div>
+              </div>
+
+              {/* Methods List */}
+              <div className="divide-y divide-gray-50 bg-white">
+                {zone.methods.length === 0 ? (
+                  <div className="p-12 text-center space-y-3">
+                    <Box size={32} className="mx-auto text-gray-100" />
+                    <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">{t("no_methods")}</p>
+                    <Button variant="ghost" size="sm" className="text-primary mt-2" onClick={() => setActiveZoneForMethod(zone)}>
+                      {t("add_first_method")}
+                    </Button>
+                  </div>
+                ) : (
+                  zone.methods.map((method) => (
+                    <div
+                      key={method.id}
+                      className={cn(
+                        "p-6 flex items-center justify-between transition-colors",
+                        !method.active && "opacity-40 grayscale"
+                      )}
+                    >
+                      <div className="flex items-center gap-5">
+                        <div className="w-10 h-10 bg-neutral-light rounded-xl flex items-center justify-center text-gray-400">
+                          {method.carrier === "DHL" ? <BadgeCheck size={20} className="text-blue-500" /> : <Building size={20} />}
+                        </div>
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <h4 className="text-sm font-bold text-neutral-dark">{method.name}</h4>
+                            {method.price === 0 && (
+                              <span className="text-[9px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded uppercase tracking-tighter">
+                                {t("free")}
+                              </span>
+                            )}
+                          </div>
+                          <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-0.5">
+                            {method.carrier} · {method.minDays}–{method.maxDays} {t("days")}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-8">
+                        <div className="text-right">
+                          <p className="text-sm font-bold text-neutral-dark font-mono">
+                            {method.price === 0 ? "€0.00" : `€${method.price.toFixed(2)}`}
+                          </p>
+                          <p className="text-[10px] text-gray-400 font-medium italic">
+                            {method.freeThreshold > 0 ? t("free_over", { amount: method.freeThreshold }) : t("paid_always")}
+                          </p>
+                        </div>
+                        <button
+                          onClick={() => toggleMethod(zone.id, method.id)}
+                          className={cn(
+                            "relative w-10 h-5 rounded-full transition-all duration-300 focus:outline-none shadow-inner",
+                            method.active ? "bg-primary" : "bg-gray-100 border border-gray-200"
+                          )}
+                        >
+                          <span
+                            className={cn(
+                              "absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow-md transition-all duration-300",
+                              method.active ? "translate-x-5" : "translate-x-0"
+                            )}
+                          />
+                        </button>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+
+              {/* Add method trigger */}
+              {zone.methods.length > 0 && (
+                <div className="px-6 py-4 bg-gray-50/30 border-t border-gray-50 flex justify-center">
+                  <button
+                    onClick={() => setActiveZoneForMethod(zone)}
+                    className="text-[10px] font-bold text-gray-400 hover:text-primary uppercase tracking-widest transition-colors flex items-center gap-2"
+                  >
+                    <Plus size={12} />
+                    {t("add_another_method")}
+                  </button>
+                </div>
+              )}
+            </Card>
+          </section>
+        ))}
+      </div>
+
+      {/* Modals */}
+      <CreateZoneModal
+        isOpen={isAddingZone}
+        onClose={() => setIsAddingZone(false)}
+        onSave={handleCreateZone}
+      />
+
+      <AddMethodModal
+        isOpen={!!activeZoneForMethod}
+        onClose={() => setActiveZoneForMethod(null)}
+        zoneName={activeZoneForMethod?.name || ""}
+        onSave={handleAddMethod}
+      />
+
+      <SaveSettingsBar
+        isSaving={isSaving}
+        showSuccess={showSuccess}
+        onSave={handleSaveAll}
+      />
+    </div>
+  );
 }

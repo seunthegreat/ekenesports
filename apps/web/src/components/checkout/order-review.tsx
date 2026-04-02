@@ -11,9 +11,10 @@ import { formatPrice } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Order } from "@/lib/types";
 import { toast } from "sonner";
-import api from "@/utils/api";
+import { trpc } from "@/utils/trpc";
 import { useStripe, useElements } from "@stripe/react-stripe-js";
 import Image from "next/image";
+
 
 export function OrderReview() {
   const stripe = useStripe();
@@ -38,6 +39,9 @@ export function OrderReview() {
 
   const user = useAuthStore((s) => s.user);
 
+  // Hook for tRPC mutation
+  const initializeOrder = trpc.checkout.initialize.useMutation();
+
   async function handlePlaceOrder() {
     if (!user || !stripe || !elements) return;
 
@@ -45,20 +49,25 @@ export function OrderReview() {
       // 1. Create the Order in our DB first
       const paymentIntentId = useCheckoutStore.getState().clientSecret?.split('_secret_')[0];
       
-      const response = await api.post("/stripe/initialize-order", {
+      const response = await initializeOrder.mutateAsync({
         userId: user.id,
         items: items.map((item) => ({
           productId: item.productId,
+          variantId: item.variantId,
           name: item.product.name,
+          variantName: `${item.variant.color} / ${item.variant.size}`,
           price: item.variant.price,
           quantity: item.quantity,
+          image: item.product.images[0]?.url || "",
         })),
+        total,
         paymentIntentId,
-        successUrl: `${window.location.origin}/checkout/success`,
-        cancelUrl: `${window.location.origin}/checkout`,
+        shippingAddress: address,
+        shippingMethod: shippingRate.name,
       });
 
-      const { orderId } = response.data;
+      const orderId = response.orderId;
+
 
       // 2. Confirm the Payment
       const { error } = await stripe.confirmPayment({

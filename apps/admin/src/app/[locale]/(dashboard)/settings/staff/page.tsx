@@ -12,19 +12,17 @@ import {
   Mail,
   Shield,
   Zap,
-  Save
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { ActionMenu } from "@/components/ui/action-menu";
 import { DataTable } from "@/components/ui/data-table";
-import { Modal } from "@/components/ui/modal";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Select } from "@/components/ui/select";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { cn } from "@/lib/utils";
 import { useHotkeys } from "@/hooks/use-hotkeys";
 import { toast } from "sonner";
+import { StaffInviteModal } from "@/components/settings/staff-invite-modal";
 
 const staff = [
   { id: "1", name: "Alexander Schmidt", email: "alex@ekenesport.com", role: "super_admin", lastLogin: "2h ago", status: "active" },
@@ -45,7 +43,6 @@ export default function StaffSettings() {
   const [isInviteOpen, setIsInviteOpen] = useState(false);
   const [selectedStaff, setSelectedStaff] = useState<any>(null);
   const [deleteStaff, setDeleteStaff] = useState<any>(null);
-  const [inviteRole, setInviteRole] = useState("staff_member");
   const [search, setSearch] = useState("");
 
   const filteredStaff = staff.filter(member =>
@@ -54,13 +51,14 @@ export default function StaffSettings() {
     t(`roles.${member.role}`).toLowerCase().includes(search.toLowerCase())
   );
 
-  const handleInvite = () => {
+  const handleInvite = (data: any) => {
+    console.log("Inviting staff member:", data);
     toast.success(t("toast.invite_success"));
     setIsInviteOpen(false);
   };
 
   useHotkeys("s", () => {
-    if (isInviteOpen) handleInvite();
+    // Save behavior could be defined here or inside components
   }, { ctrlOrCmd: true, preventDefault: true });
 
   const columns = [
@@ -143,13 +141,12 @@ export default function StaffSettings() {
 
   return (
     <div className="space-y-6">
-
       {/* Page Content Header */}
       <section className="space-y-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2 text-primary">
             <ShieldCheck size={18} />
-           <h2 className="text-sm font-heading font-bold text-neutral-dark tracking-tight uppercase tracking-widest">{t("title")}</h2>
+            <h2 className="text-sm font-heading font-bold text-neutral-dark tracking-tight uppercase tracking-widest">{t("title")}</h2>
           </div>
           <Button variant="default" size="sm" className="gap-2" onClick={() => setIsInviteOpen(true)}>
             <UserPlus size={16} />
@@ -187,49 +184,11 @@ export default function StaffSettings() {
       </section>
 
       {/* Invite Modal */}
-      <Modal
-        isOpen={isInviteOpen}
-        onClose={() => setIsInviteOpen(false)}
-        title={t("modal.title")}
-        maxWidth="md"
-        footer={(
-          <div className="flex justify-end gap-3 w-full">
-            <Button variant="ghost" onClick={() => setIsInviteOpen(false)} className="px-5 py-2 text-xs font-bold text-gray-400 hover:text-neutral-dark hover:bg-transparent transition-colors h-[36px]">
-              {t("modal.cancel")}
-            </Button>
-            <Button variant="default" size="sm" className="gap-2" onClick={handleInvite}>
-              <Save size={16} />
-              {t("modal.send")}
-            </Button>
-          </div>
-        )}
-      >
-        <div className="space-y-6 pt-2 pb-4">
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            <div className="space-y-1.5">
-              <label className="text-[10px] font-bold text-neutral-dark uppercase tracking-widest ml-1 block">{t("modal.name")}</label>
-              <Input type="text" placeholder={t("modal.name_placeholder")} />
-            </div>
-            <div className="space-y-1.5">
-              <label className="text-[10px] font-bold text-neutral-dark uppercase tracking-widest ml-1 block">{t("modal.email")}</label>
-              <Input type="email" placeholder={t("modal.email_placeholder")} />
-            </div>
-          </div>
-          <div className="space-y-1.5">
-            <label className="text-[10px] font-bold text-neutral-dark uppercase tracking-widest ml-1 block">{t("modal.protocol")}</label>
-            <Select
-              value={inviteRole}
-              onChange={(e) => setInviteRole(e.target.value)}
-            >
-              <option value="super_admin">{t("modal.role_super_admin")}</option>
-              <option value="logistics_manager">{t("modal.role_logistics_manager")}</option>
-              <option value="catalog_editor">{t("modal.role_catalog_editor")}</option>
-              <option value="staff_member">{t("modal.role_staff_member")}</option>
-            </Select>
-          </div>
-        </div>
-      </Modal>
+      <StaffInviteModal 
+        isOpen={isInviteOpen} 
+        onClose={() => setIsInviteOpen(false)} 
+        onInvite={handleInvite} 
+      />
 
       <ConfirmDialog
         isOpen={!!deleteStaff}

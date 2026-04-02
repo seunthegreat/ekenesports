@@ -22,6 +22,8 @@ export async function generateMetadata({
   };
 }
 
+import { TrpcProvider } from "@/providers/trpc-provider";
+
 export default async function LocaleLayout({
   children,
   params
@@ -55,11 +57,14 @@ export default async function LocaleLayout({
       </head>
       <body className="font-body text-neutral-dark antialiased">
         <NextIntlClientProvider messages={messages} locale={locale}>
-          {children}
-          <Toaster position="bottom-right" richColors />
-          <SearchPalette />
+          <TrpcProvider>
+            {children}
+            <Toaster position="bottom-right" richColors />
+            <SearchPalette />
+          </TrpcProvider>
         </NextIntlClientProvider>
       </body>
     </html>
   );
 }
+
