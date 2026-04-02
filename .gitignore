@@ -5,3 +5,7 @@ node_modules
 dist
 *.tsbuildinfo
 .turbo
+
+deployment_checklist.md
+architecture_tree.md
+deployment_plan.md
